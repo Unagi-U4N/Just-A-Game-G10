@@ -13,7 +13,7 @@ class Play():
         self.display = game.display
 
     def run(self):
-        self.player.update(((self.movements[1] - self.movements[0]) * 3, 0))
+        self.player.update(None ,((self.movements[1] - self.movements[0]) * 3, 0))
         self.player.render(self.display)
 
         for event in pygame.event.get():
