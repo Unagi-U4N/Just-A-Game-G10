@@ -15,7 +15,7 @@ class Game:
 
         pygame.display.set_caption('Just A Game')
         self.screen = pygame.display.set_mode((1200, 675))
-        self.display = pygame.Surface((400, 225))
+        self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
 
         self.assets= {
