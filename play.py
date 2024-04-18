@@ -5,14 +5,14 @@ from entities import PhysicsEntity
 class Play():
     def __init__(self, game):
         pygame.init()
-        self.player = PhysicsEntity(game, "player", (50, 50), (8, 15))
+        self.player = PhysicsEntity(game, "player", (50, 50), (24, 45))
         self.movements = [False, False]
         self.clock = game.clock
         self.screen = game.screen
         self.display = game.display
 
     def run(self):
-        self.player.update((self.movements[1] - self.movements[0], 0))
+        self.player.update(((self.movements[1] - self.movements[0]) * 3, 0))
         self.player.render(self.display)
 
         for event in pygame.event.get():

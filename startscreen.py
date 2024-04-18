@@ -7,7 +7,7 @@ class StartScreen:
         self.display = game.display
         self.clock = game.clock
         self.bg = game.assets["background"]
-        self.bg = pygame.transform.scale(self.bg, (400, 225))
+        # self.bg = pygame.transform.scale(self.bg, (400, 225))
         self.enter = False
 
     def draw_text(self, text, font_name, color, x, y, size):
@@ -20,7 +20,7 @@ class StartScreen:
 
     def run(self):
         self.display.blit(self.bg, (0, 0))
-        self.draw_text("Press SPACE to enter", "arialblack", (0, 0, 0), 20, 20, 5)  # Adjust the position of the text
+        self.draw_text("Press SPACE to enter", "arialblack", (0, 0, 0), 20, 20, 50)  # Adjust the position of the text
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
