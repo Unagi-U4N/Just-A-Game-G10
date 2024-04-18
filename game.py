@@ -6,6 +6,7 @@
 
 import pygame, sys
 from utils import *
+from startscreen import StartScreen
 import play
 
 class Game:
@@ -17,24 +18,33 @@ class Game:
         self.display = pygame.Surface((400, 225))
         self.clock = pygame.time.Clock()
 
-        # self.movements = [False, False]
-        self.game = play.Play(self)
-
         self.assets= {
-            "player": load_image("entities/player.png")
-        }
+            "player": load_image("entities/player.png"),
+            "decor": load_images("tiles/decor"),
+            "grass": load_images("tiles/grass"),
+            "stone": load_images("tiles/stone"),
+            "large_decor": load_images("tiles/large_decor"),
+            "background": load_image("background.png")
 
-        # self.player = PhysicsEntity(self, "player", (50, 50), (8, 15))
+        }
         
-        self.state = "game"
+        self.game = play.Play(self)
+        self.startscreen = StartScreen(self)
+        
+        self.state = "start"
 
     def run(self):
         while True:
             
             self.display.fill((255,255,255))
 
+            if self.state == "start":
+                self.startscreen.run()
+                if self.startscreen.enter:
+                    self.state = "game"
+                    self.startscreen.enter = False
+
             if self.state == "game":
-                
                 self.game.run()
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
