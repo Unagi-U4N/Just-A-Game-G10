@@ -35,9 +35,7 @@ class Game:
 
     def run(self):
         while True:
-            
-            self.display.fill((255,255,255))
-
+        
             if self.state == "start":
                 self.startscreen.run()
                 if self.startscreen.enter:
