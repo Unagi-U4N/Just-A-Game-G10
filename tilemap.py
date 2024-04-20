@@ -34,9 +34,22 @@ class Tilemap:
                 rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
         return rect
 
-    def render(self, display):
+    def render(self, display, offset=(0, 0)):
 
-        # Tiles that are rendered off the grid, visible but unable to interact
+        # # For all of the offgrid objects that are visible on the screen, render them
+        # # Tiles that are rendered off the grid, visible but unable to interact
+        # for x in range(offset[0], offset[0] + display.get_width()):
+        #     for y in range(offset[1], offset[1] + display.get_height()):
+        #         tile_loc = str(x) + ';' + str(y)
+        #         if tile_loc in self.offgrid_tiles:
+        #             tile_type = tile['type']
+        #             tile_variant = tile['variant']
+        #             tile_pos = tile['pos']
+        #             display_tile = self.game.assets[tile_type][tile_variant]
+        #             display_tile = pygame.transform.scale(display_tile, (self.tile_size, self.tile_size))
+
+        #             display.blit(display_tile, (tile_pos[0]-offset[0], tile_pos[1]-offset[1]))
+
         for tile in self.offgrid_tiles:
             tile_type = tile['type']
             tile_variant = tile['variant']
@@ -44,14 +57,29 @@ class Tilemap:
             display_tile = self.game.assets[tile_type][tile_variant]
             display_tile = pygame.transform.scale(display_tile, (self.tile_size, self.tile_size))
 
-            display.blit(display_tile, tile_pos)
-
+            display.blit(display_tile, (tile_pos[0]-offset[0], tile_pos[1]-offset[1]))
+            
+        # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
-        for tile in self.tilemap:
-            tile_type = self.tilemap[tile]['type']
-            tile_variant = self.tilemap[tile]['variant']
-            tile_pos = self.tilemap[tile]['pos']
-            display_tile = self.game.assets[tile_type][tile_variant]
-            display_tile = pygame.transform.scale(display_tile, (self.tile_size, self.tile_size))
+        for x in range(offset[0] // self.tile_size, (offset[0] + display.get_width()) // self.tile_size + 1):
+            for y in range(offset[1] // self.tile_size, (offset[1] + display.get_height()) // self.tile_size + 1):
+                tile_loc = str(x) + ';' + str(y)
+                if tile_loc in self.tilemap:
+                    tile = self.tilemap[tile_loc]
+                    tile_type = tile['type']
+                    tile_variant = tile['variant']
+                    tile_pos = tile['pos']
+                    display_tile = self.game.assets[tile_type][tile_variant]
+                    display_tile = pygame.transform.scale(display_tile, (self.tile_size, self.tile_size))
 
-            display.blit(display_tile, (tile_pos[0] * self.tile_size, tile_pos[1] * self.tile_size))
+                    display.blit(display_tile, (tile_pos[0] * self.tile_size - offset[0], tile_pos[1] * self.tile_size - offset[1]))
+
+        # # Tiles that are rendered on the grid, visible and interactable
+        # for tile in self.tilemap:
+        #     tile_type = self.tilemap[tile]['type']
+        #     tile_variant = self.tilemap[tile]['variant']
+        #     tile_pos = self.tilemap[tile]['pos']
+        #     display_tile = self.game.assets[tile_type][tile_variant]
+        #     display_tile = pygame.transform.scale(display_tile, (self.tile_size, self.tile_size))
+
+        #     display.blit(display_tile, (tile_pos[0] * self.tile_size - offset[0], tile_pos[1] * self.tile_size - offset[1]))
