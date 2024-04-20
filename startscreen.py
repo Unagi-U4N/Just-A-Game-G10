@@ -26,6 +26,7 @@ class StartScreen:
         self.display.blit(text_surface, text_rect)
         pygame.display.update()
     
+    # Still not working, might need to change text to image to use transsparency feature
     def update(self):
         if self.transparency == 255:
             self.transparency = 0
