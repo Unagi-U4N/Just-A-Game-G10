@@ -24,8 +24,10 @@ class Game:
             "grass": load_images("tiles/grass"),
             "stone": load_images("tiles/stone"),
             "large_decor": load_images("tiles/large_decor"),
-            "background": load_image("background.png")
-
+            "background": load_image("background/background.png"),
+            "day": load_image("background/daybg.png"),
+            "night": load_image("background/nightbg.png"),
+            "clouds": load_images("clouds"),
         }
         
         self.game = play.Play(self)
@@ -35,9 +37,7 @@ class Game:
 
     def run(self):
         while True:
-            
-            self.display.fill((255,255,255))
-
+        
             if self.state == "start":
                 self.startscreen.run()
                 if self.startscreen.enter:
