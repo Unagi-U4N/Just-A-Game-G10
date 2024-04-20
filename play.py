@@ -1,3 +1,6 @@
+# Some of the python files are not complete yet, to test them please comment out the parts that are undone
+# Undone part used in this file: Tilemap, Clouds
+
 
 import pygame, sys
 from utils import *
