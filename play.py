@@ -4,7 +4,7 @@
 
 import pygame, sys
 from utils import *
-from entities import PhysicsEntity
+from entities import PhysicsEntity, Player
 from tilemap import Tilemap
 from clouds import Clouds
 
@@ -13,9 +13,9 @@ class Play():
         pygame.init()
         self.game = game
         self.clouds = Clouds(game.assets["clouds"], 16)
-        self.player = PhysicsEntity(game, "player", (100, 50), (16, 30))
+        self.player = Player(game, (100, 50), (16, 30))
         self.tilemap = Tilemap(game, tile_Size=32)
-        self.daybg = pygame.transform.scale(game.assets["day"], (1200, 675))
+        self.daybg = scale_images(game.assets["day"],(1200, 675))
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]

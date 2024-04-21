@@ -1,4 +1,5 @@
 import random, pygame
+from utils import *
 
 class Cloud:
     def __init__(self, pos, img, speed, depth):
@@ -6,7 +7,7 @@ class Cloud:
         self.speed = speed
         self.depth = depth
         self.img = img
-        self.img = pygame.transform.scale(self.img, (int(self.img.get_width() * 2), int(self.img.get_height() * 2)))
+        self.img = scale_images(self.img, scale=2)
         self.img = pygame.transform.flip(self.img, True, False)
 
     def update(self):

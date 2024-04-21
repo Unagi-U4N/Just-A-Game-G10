@@ -28,6 +28,11 @@ class Game:
             "day": load_image("background/daybg.png"),
             "night": load_image("background/nightbg.png"),
             "clouds": load_images("clouds"),
+            "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=6),
+            "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=4),
+            "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=4, loop=False),
+            "player/slide": Animation(scale_images(load_images("entities/player/slide")), img_dur=4, loop=False),
+            "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=4, loop=False),
         }
         
         self.game = play.Play(self)
