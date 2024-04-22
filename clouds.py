@@ -7,7 +7,7 @@ class Cloud:
         self.speed = speed
         self.depth = depth
         self.img = img
-        self.img = scale_images(self.img, scale=2)
+        self.img = scale_images(self.img)
         self.img = pygame.transform.flip(self.img, True, False)
 
     def update(self):

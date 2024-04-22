@@ -14,7 +14,7 @@ class PhysicsEntity:
         self.collisions = {"up": False, "down": False, "left": False, "right": False}
 
         self.action = ""
-        self.anim_offset = (-6, -6) # offset for the animation rendering
+        # self.anim_offset = (-6, -6) # offset for the animation rendering
         self.flip = False
         self.set_action("idle")
 
@@ -42,12 +42,10 @@ class PhysicsEntity:
                 if frame_movement[0] > 0:
                     entity_rect.right = rect.left
                     self.collisions["right"] = True
-                    self.anim_offset = (-6, -6)
                     # print("collide right")
                 if frame_movement[0] < 0:
                     entity_rect.left = rect.right
                     self.collisions["left"] = True
-                    self.anim_offset = (-6, -6)
                     # print("collide left")
                 self.pos[0] = entity_rect.x
 
@@ -59,13 +57,11 @@ class PhysicsEntity:
                     entity_rect.bottom = rect.top
                     self.collisions["down"] = True
                     self.velocity[1] = 0
-                    self.anim_offset = (-6, -6)
                     # print("collide bottom")
                 if frame_movement[1] < 0:
                     entity_rect.top = rect.bottom
                     self.collisions["up"] = True
                     self.velocity[1] = 0
-                    self.anim_offset = (-6, -3)
                     # print("collide top")
                 self.pos[1] = entity_rect.y
 
@@ -96,6 +92,7 @@ class Player(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, "player", pos, size)
         self.air_time = 0
+        self.anim_offset = (-6, -6)
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
@@ -114,3 +111,10 @@ class Player(PhysicsEntity):
             self.set_action("run")
         else:
             self.set_action("idle")
+
+        # Set animation offset by (-6, -3) if the player's head collides with the ceiling
+        if self.collisions["up"]:
+            self.anim_offset = (-6, -3)
+        elif self.collisions["down"] or self.collisions["left"] or self.collisions["right"]:
+            self.anim_offset = (-6, -6)
+        
