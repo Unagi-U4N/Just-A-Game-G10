@@ -2,6 +2,7 @@ import pygame, sys
 from utils import *
 from tilemap import Tilemap
 
+# No use of render scale, we render 1:1
 RENDER_SCALE = 2
 
 class Editor:

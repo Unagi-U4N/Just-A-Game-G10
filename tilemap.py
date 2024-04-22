@@ -37,8 +37,10 @@ class Tilemap:
 
     def render(self, display, offset=(0, 0)):
 
-        # Needs optimization, try to only render whats on the screen, instead of everything
-        # Maybe can check the location of the player (center) as reference, and only render what is visible
+        """
+        Needs optimization, try to only render whats on the screen, instead of everything
+        Maybe can check the location of the player (center) as reference, and only render what is visible
+        """
         self.count = 0
         for tile in self.offgrid_tiles:
             self.count += 1
