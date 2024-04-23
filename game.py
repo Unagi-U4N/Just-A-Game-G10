@@ -15,17 +15,24 @@ class Game:
 
         pygame.display.set_caption('Just A Game')
         self.screen = pygame.display.set_mode((1200, 675))
-        self.display = pygame.Surface((400, 225))
+        self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
 
         self.assets= {
             "player": load_image("entities/player.png"),
-            "decor": load_images("tiles/decor"),
-            "grass": load_images("tiles/grass"),
-            "stone": load_images("tiles/stone"),
-            "large_decor": load_images("tiles/large_decor"),
-            "background": load_image("background.png")
-
+            "decor": scale_images(load_images("tiles/decor")),
+            "grass": scale_images(load_images("tiles/grass")),
+            "stone": scale_images(load_images("tiles/stone")),
+            "large_decor": scale_images(load_images("tiles/large_decor")),
+            "background": load_image("background/background.png"),
+            "day": load_image("background/daybg.png"),
+            "night": load_image("background/nightbg.png"),
+            "clouds": load_images("clouds"),
+            "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=6),
+            "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=4),
+            "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=4, loop=False),
+            "player/slide": Animation(scale_images(load_images("entities/player/slide")), img_dur=4, loop=False),
+            "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=4, loop=False),
         }
         
         self.game = play.Play(self)
@@ -35,9 +42,7 @@ class Game:
 
     def run(self):
         while True:
-            
-            self.display.fill((255,255,255))
-
+        
             if self.state == "start":
                 self.startscreen.run()
                 if self.startscreen.enter:
