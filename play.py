@@ -53,7 +53,7 @@ class Play():
                 if event.key == pygame.K_d:
                     self.movements[1] = True
                 if event.key == pygame.K_w:
-                    self.player.velocity[1] = -5
+                    self.player.velocity[1] = -7
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     self.movements[0] = False
