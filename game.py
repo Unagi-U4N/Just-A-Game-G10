@@ -33,6 +33,9 @@ class Game:
             "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=2, loop=False),
             "player/slide": Animation(scale_images(load_images("entities/player/slide")), img_dur=2, loop=False),
             "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=2, loop=False),
+            "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
+            "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
+
         }
         
         self.game = play.Play(self)

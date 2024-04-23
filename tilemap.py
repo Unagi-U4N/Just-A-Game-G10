@@ -15,7 +15,7 @@ class Tilemap:
         for i in range (10):
             self.tilemap[str(3 + i) + ';10'] = {'type': 'grass', 'variant': 1, 'pos': (3 + i, 10)}
             self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
-        self.tilemap["10;10"] = {'type': 'large_decor', 'variant': 2, 'pos': (10, 10)}
+        self.tilemap["8;7"] = {'type': 'large_decor', 'variant': 2, 'pos': (8, 7)}
 
     def tiles_around(self, pos):
         tiles = []
@@ -50,7 +50,7 @@ class Tilemap:
             display_tile = self.game.assets[tile_type][tile_variant]
             display.blit(display_tile, (tile_pos[0]-offset[0], tile_pos[1]-offset[1]))
 
-        print("Offgrid tiles: " + str(self.count))
+        # print("Offgrid tiles: " + str(self.count))
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
@@ -66,4 +66,4 @@ class Tilemap:
                     tile_pos = tile['pos']
                     display_tile = self.game.assets[tile_type][tile_variant]
                     display.blit(display_tile, (tile_pos[0] * self.tile_size - offset[0], tile_pos[1] * self.tile_size - offset[1]))
-        print("Ongrid tiles: " + str(self.tilecount))
+        # print("Ongrid tiles: " + str(self.tilecount))
