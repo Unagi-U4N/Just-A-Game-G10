@@ -4,7 +4,7 @@ import pygame, os
 
 def get_path():
     path = os.getcwd()
-    if "Just A Game" not in path:
+    if "Just-A-Game-G10" not in path:
         return "Just-A-Game-G10/data/images/"
     else:
         return "data/images/"
