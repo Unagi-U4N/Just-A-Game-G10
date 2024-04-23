@@ -3,9 +3,6 @@ import random
 
 import pygame
 
-from scripts.particle import Particle
-from scripts.spark import Spark
-
 class PhysicsEntity:
 
     # Size must be scaled with the same ratio as the original
