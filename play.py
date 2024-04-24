@@ -55,7 +55,7 @@ class Play():
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
         self.tilemap.render(self.display, offset=render_scroll)
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 3, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 4, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
 
         """
