@@ -7,7 +7,8 @@ from utils import *
 from entities import PhysicsEntity, Player
 from tilemap import Tilemap
 from clouds import Clouds
-# from particle import Particle
+from particle import Particle
+from spark import Spark
 
 class Play():
     def __init__(self, game):
