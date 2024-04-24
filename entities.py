@@ -197,9 +197,9 @@ class Player(PhysicsEntity):
 
         # Slows down the repulsion after wall jump
         if self.velocity[0] > 0:
-            self.velocity[0] = max(self.velocity[0] -0.1, 0)
+            self.velocity[0] = max(self.velocity[0] -0.15, 0)
         else:
-            self.velocity[0] = min(self.velocity[0] +0.1, 0)
+            self.velocity[0] = min(self.velocity[0] +0.15, 0)
 
     def render(self, surf, offset=(0, 0)):
         if abs(self.dashing) <= 50:
@@ -209,13 +209,13 @@ class Player(PhysicsEntity):
         # If wall jump, jump in the opposite direction of the wall and up, and reduce the amount of jumps left
         if self.wall_slide:
             if self.flip and self.last_movement[0] < 0:
-                self.velocity[0] = 7
+                self.velocity[0] = 6
                 self.velocity[1] = -5
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
             elif not self.flip and self.last_movement[0] > 0:
-                self.velocity[0] = -7
+                self.velocity[0] = -6
                 self.velocity[1] = -5
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
