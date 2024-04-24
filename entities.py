@@ -35,6 +35,7 @@ class PhysicsEntity:
 
         frame_movement = (movement[0] + self.velocity[0], movement[1] + self.velocity[1])
 
+        # Check for collisions with the tilemap
         self.pos[0] += frame_movement[0]
         entity_rect = self.rect()
         for rect in tilemap.physics_rects_around(self.pos):
@@ -59,6 +60,7 @@ class PhysicsEntity:
                     self.collisions['up'] = True
                 self.pos[1] = entity_rect.y
 
+        # Flip the sprite based on the movement
         if movement[0] > 0:
             self.flip = False
         if movement[0] < 0:
@@ -66,7 +68,7 @@ class PhysicsEntity:
 
         self.last_movement = movement
 
-        self.velocity[1] = min(7, self.velocity[1] + 0.4)
+        self.velocity[1] = min(7, self.velocity[1] + 0.35)
 
         if self.collisions['down'] or self.collisions['up']:
             self.velocity[1] = 0
@@ -161,7 +163,7 @@ class Player(PhysicsEntity):
         self.wall_slide = False
         if (self.collisions['right'] or self.collisions['left']) and self.air_time > 4:
             self.wall_slide = True
-            self.velocity[1] = min(self.velocity[1], 1)
+            self.velocity[1] = min(self.velocity[1], 1.5)
             if self.collisions['right']:
                 self.flip = False
             else:
@@ -181,7 +183,7 @@ class Player(PhysicsEntity):
              angle = random.random() * math.pi * 2
              speed = random.random() * 0.5 + 0.5
              pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
-             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.radiant(0, 7)))
+             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
         if self.dashing > 0:
             self.dashing = max(0, self.dashing - 1)
         if self.dashing < 0:
@@ -191,8 +193,9 @@ class Player(PhysicsEntity):
             if asb(self.dashing) == 51:
                 self.velocity[0] *= 0.1
             pvelocity = [abs(self.dashing) / self.dashing * random.random() * 3, 0]
-            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.radiant(0, 7)))
+            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.radint(0, 7)))
 
+        # Slows down the repulsion after wall jump
         if self.velocity[0] > 0:
             self.velocity[0] = max(self.velocity[0] -0.1, 0)
         else:
@@ -203,22 +206,24 @@ class Player(PhysicsEntity):
             super().render(surf, offset=offset)
 
     def jump(self):
+        # If wall jump, jump in the opposite direction of the wall and up, and reduce the amount of jumps left
         if self.wall_slide:
             if self.flip and self.last_movement[0] < 0:
-                self.velocity[0] = 3.5
-                self.velocity[1] = -2.5
+                self.velocity[0] = 7
+                self.velocity[1] = -5
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
             elif not self.flip and self.last_movement[0] > 0:
-                self.velocity[0] = -3.5
-                self.velocity[1] = -2.5
+                self.velocity[0] = -7
+                self.velocity[1] = -5
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
 
+        # If not wall jump, jump up and reduce the amount of jumps left
         elif self.jumps:
-            self.velocity[1] = -3
+            self.velocity[1] = -7
             self.jumps -= 1
             self.air_time = 5
             return True
