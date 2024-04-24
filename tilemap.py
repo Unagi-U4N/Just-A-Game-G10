@@ -12,9 +12,9 @@ class Tilemap:
         self.offgrid_tiles = []
 
         # Generate a 10 grid of grass tiles, and a 10 grid of stone tiles for example
-        for i in range (10):
+        for i in range (20):
             self.tilemap[str(3 + i) + ';10'] = {'type': 'grass', 'variant': 1, 'pos': (3 + i, 10)}
-            self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
+            # self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
         self.tilemap["8;7"] = {'type': 'large_decor', 'variant': 2, 'pos': (8, 7)}
 
     def tiles_around(self, pos):

@@ -2,9 +2,8 @@ import math
 import random
 
 import pygame
+from particle import Particle
 
-# from scripts.particle import Particle
-# from scripts.spark import Spark
 
 class PhysicsEntity:
     def __init__(self, game, e_type, pos, size):
@@ -36,7 +35,7 @@ class PhysicsEntity:
         frame_movement = (movement[0] + self.velocity[0], movement[1] + self.velocity[1])
 
         # Check for collisions with the tilemap
-        self.pos[0] += frame_movement[0]
+        self.pos[0] += frame_movement[0]*2
         entity_rect = self.rect()
         for rect in tilemap.physics_rects_around(self.pos):
             if entity_rect.colliderect(rect):
@@ -177,24 +176,31 @@ class Player(PhysicsEntity):
                 self.set_action('run')
             else:
                 self.set_action('idle')
+        
+        
+        if self.dashing > 0:
+            self.dashing = max(0, self.dashing - 1)
+        if self.dashing < 0:
+            self.dashing = min(0, self.dashing + 1)
 
+        # Dash is only 10 frames, the remaining 50 are for the cooldown
+        if abs(self.dashing) > 50:
+            self.velocity[0] = abs(self.dashing) / self.dashing * 10
+
+            # Once the dash reaches the end, stop abruptly
+            if abs(self.dashing) == 51:
+                self.velocity[0] *= 0.1
+            pvelocity = [abs(self.dashing) / self.dashing * random.random() * 3, 0]
+            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+        
+        # During the dash
         if abs(self.dashing) in {60, 50}:
             for i in range(20):
              angle = random.random() * math.pi * 2
              speed = random.random() * 0.5 + 0.5
              pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
              self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
-        if self.dashing > 0:
-            self.dashing = max(0, self.dashing - 1)
-        if self.dashing < 0:
-            self.dashing = min(0, self.dashing + 1)
-        if abs(self.dashing) > 50:
-            self.velocity[0] = abs(self.dashing) / self.dashing * 8
-            if asb(self.dashing) == 51:
-                self.velocity[0] *= 0.1
-            pvelocity = [abs(self.dashing) / self.dashing * random.random() * 3, 0]
-            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.radint(0, 7)))
-
+        
         # Slows down the repulsion after wall jump
         if self.velocity[0] > 0:
             self.velocity[0] = max(self.velocity[0] -0.15, 0)
@@ -229,8 +235,10 @@ class Player(PhysicsEntity):
             return True
         
     def dash(self):
+
+        # Cooldown = 60
         if not self.dashing:
-            self.game.sfx['dash'].play()
+            # self.game.sfx['dash'].play()
             if self.flip:
                 self.dashing = -60
             else:

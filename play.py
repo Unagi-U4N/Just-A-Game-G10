@@ -34,6 +34,7 @@ class Play():
         self.clock = game.clock
         self.screen = game.screen
         self.display = game.display
+        self.particles = game.particles
 
     def run(self):
         
@@ -56,18 +57,16 @@ class Play():
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
         self.tilemap.render(self.display, offset=render_scroll)
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 4, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
-
-        """
-        for particle in self.game.particles.copy():
+        
+        for particle in self.particles.copy():
             kill = particle.update()
             particle.render(self.display, offset=render_scroll)
             if particle.type == 'leaf':
                 particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3
             if kill:
-                self.game.particles.remove(particle)
-        """
+                self.particles.remove(particle)
 
         # This part will check the movements of the player
         for event in pygame.event.get():
