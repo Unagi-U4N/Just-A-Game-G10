@@ -14,18 +14,17 @@ class Tilemap:
         # Generate a 10 grid of grass tiles, and a 10 grid of stone tiles for example
         for i in range (20):
             self.tilemap[str(3 + i) + ';10'] = {'type': 'grass', 'variant': 1, 'pos': (3 + i, 10)}
+            self.tilemap['10', str(1 + i)] = {'type': 'stone', 'variant': 1, 'pos': (3 + i, 11)}
             # self.tilemap['10;' + str(5 + i)] = {'type': 'stone', 'variant': 1, 'pos': (10, 5 + i)}
         self.tilemap["8;7"] = {'type': 'large_decor', 'variant': 2, 'pos': (8, 7)}
         self.tilemap["8;8"] = {'type': 'spawners', 'variant': 0, 'pos': (8, 8)}
         self.tilemap["8;9"] = {'type': 'spawners', 'variant': 1, 'pos': (8, 9)}
 
     def solid_check(self, pos):
-        # Check if the player is on a solid tile
-        tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
-        loc = str(tile_loc[0]) + ';' + str(tile_loc[1])
-        if loc in self.tilemap:
-            if self.tilemap[loc]['type'] in PHYSICS_TILES:
-                return self.tilemap[loc]
+        tile_loc = str(int(pos[0] // self.tile_size)) + ';' + str(int(pos[1] // self.tile_size))
+        if tile_loc in self.tilemap:
+            if self.tilemap[tile_loc]['type'] in PHYSICS_TILES:
+                return self.tilemap[tile_loc]
 
     def extract(self, id_pairs, keep=False):
         # Get all the tiles that match the id_pairs

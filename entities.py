@@ -3,6 +3,7 @@ import random
 
 import pygame
 from particle import Particle
+from spark import Spark
 
 
 class PhysicsEntity:
@@ -138,16 +139,45 @@ class Enemy(PhysicsEntity):
     
     def update(self, tilemap, movement=(0, 0)):
         if self.walking:
-            # Move for 0.5 pixels every frame, until the walking counter reaches 0
-            movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+            # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
+            tile_loc = (self.rect().centerx + (-14 if self.flip else 14), self.pos[1] + 46)
+            if tilemap.solid_check(tile_loc):
+                if (self.collisions['right'] or self.collisions['left']):
+                    self.flip = not self.flip
+
+                else:
+                    # Move for 0.5 pixels every frame, until the walking counter reaches 0
+                    movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+            else:
+                self.flip = not self.flip
             self.walking = max(0, self.walking - 1)
+            if not self.walking:
+                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+                if (abs(dis[1]) < 32):
+                    if (self.flip and dis[0] < 0):
+                        self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1.5, 0])
+                    if (not self.flip and dis[0] > 0):
+                        self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], 1.5, 0])
 
         # 1 in 100 chance
         elif random.random() < 0.01:
             self.walking = random.randint(30, 120)
         
         super().update(tilemap, movement=movement)
-    
+
+        if movement[0] != 0:
+            self.set_action('run')
+        else:
+            self.set_action('idle')
+
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
+
+        if self.flip:
+            surf.blit(pygame.transform.flip(self.game.assets["gun"], True, False), (self.rect().centerx - 6 - self.game.assets["gun"].get_width() - offset[0], self.rect().centery - offset[1]))
+        else:
+            surf.blit(self.game.assets["gun"], (self.rect().centerx + 6 - offset[0], self.rect().centery - offset[1]))
+
 class Player(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, 'player', pos, size)

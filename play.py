@@ -25,7 +25,7 @@ class Play():
 
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
-            self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 4 + tree["pos"][1], 23, 13))
+            self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 20 + tree["pos"][1], 23, 13))
         
 
         self.enemies = []
@@ -42,7 +42,18 @@ class Play():
         self.clock = game.clock
         self.screen = game.screen
         self.display = game.display
+
+        if game.particles is not None:
+            game.particles.clear()
         self.particles = game.particles
+
+        if game.sparks is not None:
+            game.sparks.clear()
+        self.sparks = game.sparks
+
+        if game.projectiles is not None:
+            game.projectiles.clear()
+        self.projectiles = game.projectiles
 
     def run(self):
         
@@ -72,6 +83,22 @@ class Play():
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
         
+        # [[x, y], direction, timer]
+        for projectile in self.projectiles.copy():
+            projectile[0][0] += projectile[1]
+            projectile[2] += 1
+            img = self.assets["projectile"]
+            self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1]))
+            if self.tilemap.solid_check(projectile[0]):
+                self.projectiles.remove(projectile)
+            elif projectile[2] > 360:
+                self.projectiles.remove(projectile)
+            
+            # When dash, invincible
+            elif abs(self.player.dashing) < 50:
+                if self.player.rect().collidepoint(projectile[0]):
+                    self.projectiles.remove(projectile)
+                    
         for particle in self.particles.copy():
             kill = particle.update()
             particle.render(self.display, offset=render_scroll)
@@ -99,3 +126,4 @@ class Play():
                     self.movements[0] = False
                 if event.key == pygame.K_d:
                     self.movements[1] = False
+        
