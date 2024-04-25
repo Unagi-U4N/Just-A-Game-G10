@@ -114,6 +114,8 @@ class Editor:
                         # Loop through the backgrounds
                         self.count += 1
                         self.count %= len(self.bgs)
+                    if event.kry == pygame.K_o:
+                        self.tilemap.save("map.json")
                     if event.key == pygame.K_a:
                         self.movements[0] = True
                     if event.key == pygame.K_d:

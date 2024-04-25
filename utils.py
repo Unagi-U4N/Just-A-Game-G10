@@ -5,11 +5,18 @@ import pygame, os
 def get_path():
     path = os.getcwd()
     if "Just-A-Game-G10" not in path:
-        return "Just-A-Game-G10/data/images/"
+        return "Just-A-Game-G10/"
     else:
-        return "data/images/"
+        return ""
     
-BASE_IMG_PATH = get_path()
+BASE_IMG_PATH = get_path() + "data/images/"
+BASE_SCENE_PATH = get_path() + "data/cutscenes/"
+
+
+def load_script(path):
+    # gets the script from the cutscenes folder, return it as a list of strings
+    with open(BASE_SCENE_PATH + path, "r") as f:
+        return [line for line in f.read().split("\n") if line != ""]
 
 def load_image(path):
     img = pygame.image.load(BASE_IMG_PATH + path).convert()

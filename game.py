@@ -17,6 +17,7 @@ class Game:
         self.screen = pygame.display.set_mode((1200, 675))
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
+        self.particles = []
 
         self.assets= {
             "player": load_image("entities/player.png"),
@@ -33,7 +34,26 @@ class Game:
             "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=2, loop=False),
             "player/slide": Animation(scale_images(load_images("entities/player/slide")), img_dur=2, loop=False),
             "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=2, loop=False),
+            "enemy/idle": Animation(scale_images(load_images("entities/enemy/idle")), img_dur=2),
+            "enemy/run": Animation(scale_images(load_images("entities/enemy/run")), img_dur=2),
+            "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
+            "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
+
         }
+
+        self.sfx = {
+            'jump': pygame.mixer.Sound('data/sfx/jump.wav'),
+            'dash': pygame.mixer.Sound('data/sfx/dash.wav'),
+            'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
+            'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
+            'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
+        }
+        
+        self.sfx['ambience'].set_volume(0.2)
+        self.sfx['shoot'].set_volume(0.4)
+        self.sfx['hit'].set_volume(0.8)
+        self.sfx['dash'].set_volume(0.3)
+        self.sfx['jump'].set_volume(0.7)
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
@@ -43,6 +63,12 @@ class Game:
     def run(self):
         while True:
         
+            # pygame.mixer.music.load('data/music.wav')
+            # pygame.mixer.music.set_volume(0.5)
+            # pygame.mixer.music.play(-1)
+
+            # self.sfx['ambience'].play(-1)
+            
             if self.state == "start":
                 self.startscreen.run()
                 if self.startscreen.enter:
