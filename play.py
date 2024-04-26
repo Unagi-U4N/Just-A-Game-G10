@@ -91,12 +91,18 @@ class Play():
             projectile[2] += 1
             img = self.assets['projectile']
             self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1]))
+            
+            # Check if the projectile hits a solid tile
             if self.tilemap.solid_check(projectile[0]):
                 self.projectiles.remove(projectile)
                 for i in range(4):
                     self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random(), (255,0,0)))
+            
+            # Check if the projectile is out of bounds
             elif projectile[2] > 360:
                 self.projectiles.remove(projectile)
+            
+            # Check if the projectile hits the player, when the player is not dashing
             elif abs(self.player.dashing) < 50:
                 if self.player.rect().collidepoint(projectile[0]):
                     self.projectiles.remove(projectile)
