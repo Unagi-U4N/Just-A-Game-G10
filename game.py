@@ -41,7 +41,7 @@ class Game:
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
             "gun": scale_images(load_image("gun.png")),
-            "projectile": scale_images(load_image("projectile.png")),
+            "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
 
         }
 

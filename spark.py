@@ -3,8 +3,9 @@ import math
 import pygame
 
 class Spark:
-    def __init__(self, pos, angle, speed):
+    def __init__(self, pos, angle, speed, color):
         self.pos = list(pos)
+        self.color = color
         self.angle = angle
         self.speed = speed
     
@@ -24,4 +25,4 @@ class Spark:
        
         ]
 
-        pygame.draw.polygon(surf, (255, 255, 255), render_points)
+        pygame.draw.polygon(surf, self.color, render_points)
