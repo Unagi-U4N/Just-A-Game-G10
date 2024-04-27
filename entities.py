@@ -91,7 +91,9 @@ class Enemy(PhysicsEntity):
         # self.projectile = 3
     
     def update(self, tilemap, movement=(0, 0)):
-
+        
+        # 1. Wont chase players
+        # 2. Only shoot when parallel and same direction as player
         if self.difficulty == 1:
             
             self.speed = 2
@@ -130,10 +132,17 @@ class Enemy(PhysicsEntity):
             elif random.random() < 0.01:
                 self.walking = random.randint(30, 120)
 
+        # 1. Will chase players
+        # 2. Will shoot when player is within 100 pixels
+        # 3. Only shoot when stationary
         elif self.difficulty == 2:
            
             self.speed = 3
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+
+            if abs(dis[0]) < 100 and abs(dis[1]) < 100:
+                self.game.exclamation.append([self.rect().centerx, self.rect().centery])
+
             if self.walking:
                 # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
                 tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
@@ -147,12 +156,16 @@ class Enemy(PhysicsEntity):
                             self.flip = not self.flip
                     
                     # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
-                    if not (abs(dis[0]) < 100) and not (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                    elif not (abs(dis[0]) < 100) and not (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
                         self.flip = not self.flip
 
                     # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
-                    if (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                    elif (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
                         self.walking = 0
+                    
+                    # If the enemy hits the wall, turn around
+                    elif (self.collisions['right'] or self.collisions['left']):
+                        self.flip = not self.flip
 
                     else:
                         # Move for 0.5 pixels every frame, until the walking counter reaches 0
@@ -161,6 +174,11 @@ class Enemy(PhysicsEntity):
                 else:
                     # If there is a drop, and no players nearby, turn around
                     if (abs(dis[0]) > 100):
+                        if dis[0] < 0:
+                            self.flip = True
+                        else:
+                            self.flip = False
+                    else:
                         self.flip = not self.flip
 
                 self.walking = max(0, self.walking - 1)
@@ -178,24 +196,31 @@ class Enemy(PhysicsEntity):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
 
             # 1 in 100 chance
-            elif random.random() < 0.01:
+            elif random.random() < 0.01 and not abs(dis[0]) < 10:
                 self.walking = random.randint(30, 120)
         
+        # 1. Will chase players
+        # 2. Will shoot when player is within 300 pixels
+        # 3. Shoot when moving and stationary
         elif self.difficulty == 3:
            
             self.speed = 4
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+
+            if abs(dis[0]) < 300 and abs(dis[1]) < 300:
+                self.game.exclamation.append([self.rect().centerx, self.rect().centery])
+
             if self.walking:
                 # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
                 tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
 
                 # If cooldown is 0, shoot
                 if self.walking % 20 == 0:
-                    if (self.flip and dis[0] < 0):
+                    if (self.flip and dis[0] < 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
                         self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
-                    if (not self.flip and dis[0] > 0):
+                    if (not self.flip and dis[0] > 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
                         self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
@@ -210,12 +235,16 @@ class Enemy(PhysicsEntity):
                             self.flip = not self.flip
                     
                     # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
-                    if not (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                    elif not (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
                         self.flip = not self.flip
 
                     # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
-                    if (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                    elif (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
                         self.walking = 0
+
+                    # If the enemy hits the wall, turn around
+                    elif (self.collisions['right'] or self.collisions['left']):
+                        self.flip = not self.flip
 
                     else:
                         # Move for 0.5 pixels every frame, until the walking counter reaches 0
@@ -224,6 +253,11 @@ class Enemy(PhysicsEntity):
                 else:
                     # If there is a drop, and no players nearby, turn around
                     if (abs(dis[0]) > 300):
+                        if dis[0] < 0:
+                            self.flip = True
+                        else:
+                            self.flip = False
+                    else:
                         self.flip = not self.flip
 
                 self.walking = max(0, self.walking - 1)
@@ -241,7 +275,7 @@ class Enemy(PhysicsEntity):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
 
             # 1 in 100 chance
-            elif random.random() < 0.01:
+            elif random.random() < 0.01 and not abs(dis[0]) < 10:
                 self.walking = random.randint(30, 120)
 
         super().update(tilemap, movement=movement)

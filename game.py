@@ -20,6 +20,7 @@ class Game:
         self.particles = []
         self.sparks = []    
         self.projectiles = []
+        self.exclamation = []
 
         self.assets= {
             "player": load_image("entities/player.png"),
@@ -42,7 +43,7 @@ class Game:
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
             "gun": scale_images(load_image("gun.png")),
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
-
+            "!": scale_images(load_image("!.png"), scale= 0.8),
         }
 
         self.sfx = {

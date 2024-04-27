@@ -55,6 +55,10 @@ class Play():
             self.game.projectiles.clear()
         self.projectiles = self.game.projectiles
 
+        if self.game.exclamation is not None:
+            self.game.exclamation.clear()
+        self.exclamation = self.game.exclamation
+
     def run(self):
         
         # Make sure that the player is always in the middle of the screen
@@ -78,12 +82,21 @@ class Play():
         
         for enemy in self.enemies.copy():
             kill = enemy.update(self.tilemap, (0, 0))
-            enemy.render(self.display, offset=render_scroll)
+            if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+                enemy.render(self.display, offset=render_scroll)
+
             if kill:
                 self.enemies.remove(enemy)
-
+        
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
+
+        # exclamation mark above enemy heads
+        for exclamation in self.exclamation.copy():
+            img = self.assets['!']
+            if int(exclamation[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+                self.display.blit(img, (exclamation[0] - img.get_width() / 2 - render_scroll[0], exclamation[1] - img.get_height() - render_scroll[1] - 20))
+                self.exclamation.remove(exclamation)
         
         # [[x, y], direction, timer]
         for projectile in self.projectiles.copy():
