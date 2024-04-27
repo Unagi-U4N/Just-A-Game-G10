@@ -18,6 +18,9 @@ class Game:
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
         self.particles = []
+        self.sparks = []    
+        self.projectiles = []
+        self.exclamation = []
 
         self.assets= {
             "player": load_image("entities/player.png"),
@@ -38,7 +41,9 @@ class Game:
             "enemy/run": Animation(scale_images(load_images("entities/enemy/run")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
-
+            "gun": scale_images(load_image("gun.png")),
+            "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
+            "!": scale_images(load_image("!.png"), scale= 0.8),
         }
 
         self.sfx = {
