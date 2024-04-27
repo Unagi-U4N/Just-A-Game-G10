@@ -35,11 +35,16 @@ class Play():
         for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1)]):
             if spawner["variant"] == 0:
                 self.player.pos = spawner["pos"]
+                self.player.air_time = 0
             else:
                 self.enemies.append(Enemy(self, spawner["pos"], (16, 30))) # Scaled
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
+        self.dead = 0 
+        self.firsthit = False
+        self.deadscreen = False
+        self.deadscreentrans = 0
 
         self.movements = [False, False]
 
@@ -61,6 +66,12 @@ class Play():
 
     def run(self):
         
+        # Dead screen transition
+        if self.dead or self.player.airtime():
+            self.deadscreen = True
+            self.dead += 1
+            self.deadscreentrans = min(150, self.deadscreentrans + 3)
+                            
         # Make sure that the player is always in the middle of the screen
         self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
         self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5) / 20
@@ -87,6 +98,7 @@ class Play():
 
             if kill:
                 self.enemies.remove(enemy)
+        
         
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
@@ -118,6 +130,9 @@ class Play():
             # Check if the projectile hits the player, when the player is not dashing
             elif abs(self.player.dashing) < 50:
                 if self.player.rect().collidepoint(projectile[0]):
+                    if not self.firsthit:
+                        self.dead += 1
+                        self.firsthit = True
                     self.projectiles.remove(projectile)
                     for i in range(30):
                         angle = random.random() * math.pi * 2
@@ -138,6 +153,17 @@ class Play():
                 particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3
             if kill:
                 self.particles.remove(particle)
+        
+        # Load dead screen
+        if self.deadscreen:
+            img = pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(self.deadscreentrans)
+            self.display.blit(img, (0,0))
+            if self.dead > 120:
+                self.dead = 0
+                self.firsthit = False
+                self.load_level(0)
 
         # This part will check the movements of the player
         for event in pygame.event.get():

@@ -291,10 +291,10 @@ class Enemy(PhysicsEntity):
                 for i in range(30):
                     angle = random.random() * math.pi * 2
                     speed = random.random() * 5
-                    self.game.sparks.append(Spark(self.game.player.rect().center, angle, 2 + random.random(), (0,255,0)))
+                    self.game.sparks.append(Spark(self.game.player.rect().center, angle, 2 + random.random(), (255,255,255)))
                     self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-                self.game.sparks.append(Spark(self.game.player.rect().center, 0, 5 + random.random(), (0,0,255)))
-                self.game.sparks.append(Spark(self.game.player.rect().center, math.pi, 5 + random.random(), (255,0,0)))
+                self.game.sparks.append(Spark(self.game.player.rect().center, 0, 5 + random.random(), (0,0,0)))
+                self.game.sparks.append(Spark(self.game.player.rect().center, math.pi, 5 + random.random(), (255,255,255)))
                 return True
 
     def render(self, surf, offset=(0, 0)):
@@ -314,15 +314,14 @@ class Player(PhysicsEntity):
         self.dashing = 0
         self.speed = 1.5 # default
 
+    def airtime(self):
+        if self.air_time > 120:
+            return True
+
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
 
         self.air_time += 1
-
-        if self.air_time > 1200:
-            if not self.game.dead:
-                      self.game.screenshake = max(16, self.game.screenshake)
-            self.game.dead += 1
 
         if self.collisions['down']:
             self.air_time = 0
