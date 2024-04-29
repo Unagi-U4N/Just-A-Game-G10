@@ -18,7 +18,7 @@ class Play():
         self.display = game.display
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
-        self.player = Player(game, (100, 50), (16, 30))
+        self.player = Player(game, (100, 50), (16, 30), 1.5)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = scale_images(self.assets["day"],(1200, 675))
 
@@ -100,7 +100,7 @@ class Play():
                 self.enemies.remove(enemy)
         
         
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.player.speed, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
 
         # exclamation mark above enemy heads

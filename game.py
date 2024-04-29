@@ -75,10 +75,14 @@ class Game:
             # self.sfx['ambience'].play(-1)
             
             if self.state == "start":
-                self.startscreen.run()
-                if self.startscreen.enter:
+                newloadexit = self.startscreen.run()
+                if newloadexit == "new game":
                     self.state = "game"
-                    self.startscreen.enter = False
+                elif newloadexit == "load game":
+                    pass
+                elif newloadexit == "exit game":
+                    pygame.quit()
+                    sys.exit()
 
             if self.state == "game":
                 self.game.run()

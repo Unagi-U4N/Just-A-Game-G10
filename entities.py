@@ -81,12 +81,12 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1] + self.anim_offset[1]))
 
 class Enemy(PhysicsEntity):
-    def __init__(self, game, pos, size, name=None):
+    def __init__(self, game, pos, size, name=None, difficulty=1):
         super().__init__(game, 'enemy', pos, size)
 
         self.walking = 0
         self.speed = 2
-        self.difficulty = 3
+        self.difficulty = difficulty
         self.name = name
 
         # self.projectile = 3
@@ -308,13 +308,13 @@ class Enemy(PhysicsEntity):
             surf.blit(self.game.assets["gun"], (self.rect().centerx + 6 - offset[0], self.rect().centery - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, pos, size):
+    def __init__(self, game, pos, size, speed=2):
         super().__init__(game, 'player', pos, size)
         self.air_time = 0
         self.jumps = 1
         self.wall_slide = False
         self.dashing = 0
-        self.speed = 1.5 # default
+        self.speed = speed # default
 
     def airtime(self):
         if self.air_time > 120:

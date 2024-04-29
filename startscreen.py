@@ -19,9 +19,11 @@ class StartScreen:
         self.player = Player(game, (100, 50), (16, 30))
         self.tilemap = Tilemap(game, tile_Size=32)
         self.bg = scale_images(self.assets["day"],(1200, 675))
-        self.enter = False
+        self.cooldown = 60
+        self.startcountdown = False
+        self.name = ""
 
-        self.load_level("start")
+        self.load_level("map")
 
     def load_level(self, map_id):
 
@@ -86,9 +88,15 @@ class StartScreen:
                 enemy.render(self.display, offset=render_scroll)
 
             if kill:
-                print(enemy.name)
+                self.startcountdown = True
+                self.name = enemy.name
                 self.enemies.remove(enemy)
         
+        if self.startcountdown:
+            self.cooldown -= 1
+        if self.cooldown <= 0:
+            return self.name
+
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
         
@@ -116,8 +124,6 @@ class StartScreen:
                     self.movements[0] = True
                 if event.key == pygame.K_d:
                     self.movements[1] = True
-                if event.key == pygame.K_w:
-                    self.player.jump()
                 if event.key == pygame.K_SPACE:
                     self.player.dash()
             if event.type == pygame.KEYUP:
