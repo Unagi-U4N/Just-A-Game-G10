@@ -23,7 +23,7 @@ class StartScreen:
         self.startcountdown = False
         self.name = ""
 
-        self.load_level("map")
+        self.load_level("start")
 
     def load_level(self, map_id):
 
@@ -44,11 +44,11 @@ class StartScreen:
         # Sort the enemies based on their position
         self.enemies.sort(key=lambda x: x.pos[0])
         for i, enemy in enumerate(self.enemies):
-            if i == 0:
+            if i == 1:
                 enemy.name = "new game"
-            elif i == 1:
+            elif i == 2:
                 enemy.name = "load game"
-            else:
+            elif i == 3:
                 enemy.name = "exit game"
 
         self.movements = [False, False]
