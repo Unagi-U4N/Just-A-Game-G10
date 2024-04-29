@@ -19,27 +19,34 @@ class Editor:
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
+            "spawners": scale_images(load_images("tiles/spawners")),
         }
         
         self.tilemap = Tilemap(self, tile_Size=32)
         self.movements = [False, False, False, False]
-        self.scroll = [0, 0]
 
-        self.bgs = [
-                    scale_images(load_image("background/daybg.png")), 
-                    scale_images(load_image("background/nightbg.png"))
-                    ]
-        self.count = 0
-        self.bg = self.bgs[self.count]
+        try:
+            self.tilemap.load('map.json')
+        except FileNotFoundError:
+            pass
+
+        self.scroll = [0, 0]
 
         self.tile_list = list(self.assets)
         self.tile_group = 0
         self.tile_variant = 0
-
+        
         self.clicking = False
         self.right_clicking = False
         self.shift = False
         self.ongrid = True
+        self.count = 0
+
+        self.bgs = [
+                    scale_images(load_image("background/daybg.png"), (1200, 675)), 
+                    scale_images(load_image("background/nightbg.png"), (1200, 675))
+                    ]
+        
 
     def run(self):
         while True:
@@ -114,7 +121,7 @@ class Editor:
                         # Loop through the backgrounds
                         self.count += 1
                         self.count %= len(self.bgs)
-                    if event.kry == pygame.K_o:
+                    if event.key == pygame.K_o:
                         self.tilemap.save("map.json")
                     if event.key == pygame.K_a:
                         self.movements[0] = True
