@@ -22,7 +22,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = scale_images(self.assets["day"],(1200, 675))
 
-        self.load_level(0)
+        self.load_level("start")
 
     def load_level(self, map_id):
 
@@ -89,7 +89,7 @@ class Play():
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
 
-        self.tilemap.render(self.display, offset=render_scroll)
+        self.tilemap.render(self.display, offset=render_scroll, player_pos=(self.player.pos[0], self.player.pos[1]))
         
         for enemy in self.enemies.copy():
             kill = enemy.update(self.tilemap, (0, 0))
