@@ -89,7 +89,7 @@ class Play():
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
 
-        self.tilemap.render(self.display, offset=render_scroll)
+        self.tilemap.render(self.display, offset=render_scroll, player_pos=(self.player.pos[0], self.player.pos[1]))
         
         for enemy in self.enemies.copy():
             kill = enemy.update(self.tilemap, (0, 0))
