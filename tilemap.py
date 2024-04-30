@@ -73,9 +73,9 @@ class Tilemap:
         self.count = 0
         for tile in self.offgrid_tiles:
             display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
+            
 
-
-        # print("Offgrid tiles: " + str(self.count))
+        print("Offgrid tiles: " + str(self.count))
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
