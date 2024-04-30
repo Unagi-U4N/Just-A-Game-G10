@@ -7,12 +7,13 @@ from spark import Spark
 
 
 class PhysicsEntity:
-    def __init__(self, game, e_type, pos, size, speed=2):
+    def __init__(self, game, e_type, pos, size, speed=2, name=""):
         self.speed = speed
         self.game = game
         self.type = e_type
         self.pos = list(pos)
         self.size = size
+        self.name = name
         self.velocity = [0, 0]
         self.collisions = {'up': False, 'down': False, 'right': False, 'left': False}
 
@@ -22,6 +23,9 @@ class PhysicsEntity:
         self.set_action('idle')
 
         self.last_movement = [0, 0]
+
+    def inetractablerect(self):
+        return pygame.Rect(self.pos[0] - self.size[0] * 3, self.pos[1] - self.size[1] * 3, self.size[0] * 7, self.size[1] * 7)
 
     def rect(self):
         return pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
@@ -81,13 +85,14 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1] + self.anim_offset[1]))
 
 class Enemy(PhysicsEntity):
-    def __init__(self, game, pos, size, name=None, difficulty=1):
-        super().__init__(game, 'enemy', pos, size)
+    def __init__(self, game, pos, size, name="", difficulty=1):
+        super().__init__(game, 'enemy', pos, size, name)
 
         self.walking = 0
         self.speed = 2
         self.difficulty = difficulty
         self.name = name
+        self.interact = self.inetractablerect()
 
         # self.projectile = 3
     
@@ -308,10 +313,11 @@ class Enemy(PhysicsEntity):
             surf.blit(self.game.assets["gun"], (self.rect().centerx + 6 - offset[0], self.rect().centery - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, pos, size, speed=2):
-        super().__init__(game, 'player', pos, size)
+    def __init__(self, game, pos, size, speed, name=""):
+        super().__init__(game, 'player', pos, size, speed, name)
         self.air_time = 0
         self.jumps = 1
+        self.name = name
         self.wall_slide = False
         self.dashing = 0
         self.speed = speed # default

@@ -16,7 +16,7 @@ class StartScreen:
         self.height = 675
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
-        self.player = Player(game, (100, 50), (16, 30))
+        self.player = Player(game, (100, 50), (16, 30), 1.5)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.bg = scale_images(self.assets["day"],(1200, 675))
         self.cooldown = 60
@@ -38,18 +38,18 @@ class StartScreen:
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
             else:
-                enemy = Enemy(self, spawner["pos"], (16, 30), name="choice") # Scaled
+                enemy = Enemy(self, spawner["pos"], (16, 30), name="") # Scaled
                 self.enemies.append(enemy)
 
         # Sort the enemies based on their position
         self.enemies.sort(key=lambda x: x.pos[0])
         for i, enemy in enumerate(self.enemies):
             if i == 1:
-                enemy.name = "new game"
+                enemy.name = "New Game"
             elif i == 2:
-                enemy.name = "load game"
+                enemy.name = "Load Game"
             elif i == 3:
-                enemy.name = "exit game"
+                enemy.name = "Exit Game"
 
         self.movements = [False, False]
 
@@ -84,8 +84,14 @@ class StartScreen:
         
         for enemy in self.enemies.copy():
             kill = enemy.update(self.tilemap, (0, 0), move=False)
-            if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+            if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 300), int(self.player.pos[0] + self.display.get_width() / 2 + 300)):
                 enemy.render(self.display, offset=render_scroll)
+                if enemy.name != "":
+                    font1 = pygame.font.Font('freesansbold.ttf', 32)
+                    font2 = pygame.font.Font('freesansbold.ttf', 24)
+                    render_text(enemy.name, font1, (0, 0, 0), enemy.pos[0] - self.scroll[0], enemy.pos[1] - self.scroll[1] - 50, self.display, False)
+                    if self.player.rect().colliderect(enemy.interact):
+                        render_text("Press SPACE to dash", font2, (0, 0, 0), 600, 550, self.display)
 
             if kill:
                 self.startcountdown = True

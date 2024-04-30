@@ -21,8 +21,16 @@ class Play():
         self.player = Player(game, (100, 50), (16, 30), 1.5)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = scale_images(self.assets["day"],(1200, 675))
+        self.level = 0
+        self.reasonofdeath = None
+        self.playedwaste = False
+        self.deadmsg = ""
+        self.death_msg = {
+            "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+            "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
+        }
 
-        self.load_level(0)
+        self.load_level(self.level)
 
     def load_level(self, map_id):
 
@@ -37,7 +45,7 @@ class Play():
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
             else:
-                self.enemies.append(Enemy(self, spawner["pos"], (16, 30))) # Scaled
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=map_id+1)) # Scaled
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -70,6 +78,9 @@ class Play():
         if self.dead or self.player.airtime():
             self.deadscreen = True
             self.dead += 1
+            if self.reasonofdeath is None:
+                self.reasonofdeath = "fall"
+                self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
             self.deadscreentrans = min(150, self.deadscreentrans + 3)
                             
         # Make sure that the player is always in the middle of the screen
@@ -100,7 +111,7 @@ class Play():
                 self.enemies.remove(enemy)
         
         
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.player.speed, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
 
         # exclamation mark above enemy heads
@@ -132,6 +143,9 @@ class Play():
                 if self.player.rect().collidepoint(projectile[0]):
                     if not self.firsthit:
                         self.dead += 1
+                        if self.reasonofdeath is None:
+                            self.reasonofdeath = "enemy"
+                            self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
                         self.firsthit = True
                     self.projectiles.remove(projectile)
                     for i in range(30):
@@ -156,32 +170,50 @@ class Play():
         
         # Load dead screen
         if self.deadscreen:
+            self.movements = [False, False]
+            if not self.playedwaste:
+                self.playedwaste = True   
+                # self.game.sfx['ambience'].stop()
+                self.game.sfx['wasted'].play()
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(self.deadscreentrans)
             self.display.blit(img, (0,0))
-            if self.dead > 120:
-                self.dead = 0
-                self.firsthit = False
-                self.load_level(0)
+            if self.dead > 130:
+                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 64), (255, 0, 0), 600, 250, self.display)
+                render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
+                render_text("Press SPACE to restart", pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 600, self.display)
+                pygame.display.update()
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            self.dead = 0
+                            self.firsthit = False
+                            self.deadscreen = False
+                            self.deadmsg = ""
+                            self.reasonofdeath = None
+                            self.load_level(self.level)
+                            self.playedwaste = False
+                            # self.game.sfx['ambience'].play(-1)
 
         # This part will check the movements of the player
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.movements[0] = True
-                if event.key == pygame.K_d:
-                    self.movements[1] = True
-                if event.key == pygame.K_w:
-                    self.player.jump()
-                if event.key == pygame.K_SPACE:
-                    self.player.dash()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    self.movements[0] = False
-                if event.key == pygame.K_d:
-                    self.movements[1] = False
-        
+        if not self.dead:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        self.movements[0] = True
+                    if event.key == pygame.K_d:
+                        self.movements[1] = True
+                    if event.key == pygame.K_w:
+                        self.player.jump()
+                    if event.key == pygame.K_SPACE:
+                        self.player.dash()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_a:
+                        self.movements[0] = False
+                    if event.key == pygame.K_d:
+                        self.movements[1] = False
+            
