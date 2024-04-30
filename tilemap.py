@@ -75,7 +75,7 @@ class Tilemap:
         player_pos = int(player_pos[0]), int(player_pos[1])
         for tile in self.offgrid_tiles:
             self.xcount += 1
-            if tile["pos"][0] in range(player_pos[0] - display.get_width() // 2, player_pos[0] + display.get_width() // 2) and tile["pos"][1] in range(player_pos[1] - display.get_height() // 2, player_pos[1] + display.get_height() // 2):
+            if tile["pos"][0] in range(player_pos[0] - display.get_width() // 2 - 300, player_pos[0] + display.get_width() // 2 + 300) and tile["pos"][1] in range(player_pos[1] - display.get_height() // 2 - 300, player_pos[1] + display.get_height() // 2 + 300):
                 display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
                 self.count += 1
 

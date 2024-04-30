@@ -22,7 +22,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = scale_images(self.assets["day"],(1200, 675))
 
-        self.load_level(0)
+        self.load_level("start")
 
     def load_level(self, map_id):
 
