@@ -24,6 +24,7 @@ class Play():
         self.level = 0
         self.reasonofdeath = None
         self.playedwaste = False
+        self.restart = False
         self.deadmsg = ""
         self.death_msg = {
             "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
@@ -179,22 +180,31 @@ class Play():
             img.fill((0,0,0))
             img.set_alpha(self.deadscreentrans)
             self.display.blit(img, (0,0))
-            if self.dead > 130:
-                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 64), (255, 0, 0), 600, 250, self.display)
+
+            if self.dead > 135:
+                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 72), (255, 0, 0), 600, 250, self.display)
                 render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
                 render_text("Press SPACE to restart", pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 600, self.display)
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
-                            self.dead = 0
-                            self.firsthit = False
-                            self.deadscreen = False
-                            self.deadmsg = ""
-                            self.reasonofdeath = None
-                            self.load_level(self.level)
-                            self.playedwaste = False
-                            # self.game.sfx['ambience'].play(-1)
+                            if self.dead > 135:
+                                self.restart = True
+            else:
+                pygame.event.clear()
+                            
+            if self.restart:
+                self.dead = 0
+                self.firsthit = False
+                self.deadscreen = False
+                self.deadmsg = ""
+                self.reasonofdeath = None
+                self.load_level(self.level)
+                self.playedwaste = False
+                self.restart = False
+                self.game.sfx['wasted'].stop()
+                # self.game.sfx['ambience'].play(-1)
 
         # This part will check the movements of the player
         if not self.dead:
