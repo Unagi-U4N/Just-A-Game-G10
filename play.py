@@ -23,7 +23,7 @@ class Play():
         self.daybg = self.assets["day"]
         self.level = 0
         self.reasonofdeath = None
-        self.transition = -225
+        self.transition = -135
         self.playedwaste = False
         self.restart = False
         self.deadmsg = ""
@@ -199,7 +199,7 @@ class Play():
                             
             if self.restart:
                 self.transition += 1
-                if self.transition > 150:
+                if self.transition > 135:
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -209,7 +209,7 @@ class Play():
                     self.playedwaste = False
                     self.restart = False
                     self.game.sfx['wasted'].stop()
-                    self.transition = -225
+                    self.transition = -135
                     # self.game.sfx['ambience'].play(-1)
 
 
@@ -233,14 +233,25 @@ class Play():
                         self.movements[0] = False
                     if event.key == pygame.K_d:
                         self.movements[1] = False
+            
+        print(self.transition)
 
+        # Dim the screen and slowly light up evertime the map refreshes
+        if self.transition != 0:
+            img = pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(min(200, abs(self.transition) * 2))
+            self.display.blit(img, (0,0))
+
+        # Secondary screen, used for transition
         if self.transition:
             transition_surf = pygame.Surface((1200, 675))
             if self.transition < 0:
-                transition_surf.blit(self.assets["night"], (0, min(337, -1012 - self.transition * 3)))
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 5)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 5)))
             elif self.transition > 0:
-                transition_surf.blit(self.assets["night"], (0, min(-337, -675 + self.transition * 3)))
-            # transition_surf.blit(self.assets["night"], (0, -600 + (abs(self.transition)) * 10))
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 5)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 5)))
             transition_surf.set_colorkey((0, 0, 0))
             # pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
             # transition_surf.set_colorkey((255, 255, 255))
