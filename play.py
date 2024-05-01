@@ -26,6 +26,7 @@ class Play():
         self.transition = -135
         self.playedwaste = False
         self.restart = False
+        self.shut = False
         self.deadmsg = ""
         self.death_msg = {
             "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
@@ -210,6 +211,7 @@ class Play():
                     self.restart = False
                     self.game.sfx['wasted'].stop()
                     self.transition = -135
+                    self.shut = False
                     # self.game.sfx['ambience'].play(-1)
 
 
@@ -246,6 +248,7 @@ class Play():
         # Secondary screen, used for transition
         if self.transition:
             transition_surf = pygame.Surface((1200, 675))
+            self.shut = True if self.transition in range(70, 135) else False
             if self.transition < 0:
                 transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 5)))
                 transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 5)))
@@ -256,4 +259,7 @@ class Play():
             # pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
             # transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
+
+        if self.shut:
+            render_text("<{=.....", pygame.font.Font('freesansbold.ttf', 32), (0, 0, 0), 1000, 330, self.display, centered=True)
             
