@@ -23,7 +23,7 @@ class Play():
         self.daybg = self.assets["day"]
         self.level = 0
         self.reasonofdeath = None
-        self.transition = -60
+        self.transition = -225
         self.playedwaste = False
         self.restart = False
         self.deadmsg = ""
@@ -200,7 +200,7 @@ class Play():
                             
             if self.restart:
                 self.transition += 1
-                if self.transition > 60:
+                if self.transition > 150:
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -210,7 +210,7 @@ class Play():
                     self.playedwaste = False
                     self.restart = False
                     self.game.sfx['wasted'].stop()
-                    self.transition = -60
+                    self.transition = -225
                     # self.game.sfx['ambience'].play(-1)
 
 
@@ -237,8 +237,13 @@ class Play():
 
         if self.transition:
             transition_surf = pygame.Surface((1200, 675))
-            # transition_surf.blit(self.assets["night"], (0, 600 + self.transition * 10))
-            pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
-            transition_surf.set_colorkey((255, 255, 255))
+            if self.transition < 0:
+                transition_surf.blit(self.assets["night"], (0, min(337, -1012 - self.transition * 3)))
+            elif self.transition > 0:
+                transition_surf.blit(self.assets["night"], (0, min(-337, -675 + self.transition * 3)))
+            # transition_surf.blit(self.assets["night"], (0, -600 + (abs(self.transition)) * 10))
+            transition_surf.set_colorkey((0, 0, 0))
+            # pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
+            # transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
             
