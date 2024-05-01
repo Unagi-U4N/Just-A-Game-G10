@@ -82,7 +82,7 @@ class Play():
             if self.reasonofdeath is None:
                 self.reasonofdeath = "fall"
                 self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
-            self.deadscreentrans = min(150, self.deadscreentrans + 3)
+            self.deadscreentrans = min(200, self.deadscreentrans + 3)
                             
         # Make sure that the player is always in the middle of the screen
         self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
