@@ -12,6 +12,15 @@ def get_path():
 BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
 
+def render_text(text, font, color, x, y, display, centered=True):
+    # render text on the display, make sure the text is centered
+    text = font.render(text, True, color)
+    if centered:
+        text_rect = text.get_rect(center=(x, y))
+    else:
+        text_rect = (x, y)
+    display.blit(text, text_rect)
+    return text_rect
 
 def load_script(path):
     # gets the script from the cutscenes folder, return it as a list of strings

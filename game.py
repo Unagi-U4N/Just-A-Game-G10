@@ -29,8 +29,8 @@ class Game:
             "stone": scale_images(load_images("tiles/stone")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "background": load_image("background/background.png"),
-            "day": load_image("background/daybg.png"),
-            "night": load_image("background/nightbg.png"),
+            "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
+            "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
@@ -52,6 +52,7 @@ class Game:
             'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
+            'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -59,6 +60,7 @@ class Game:
         self.sfx['hit'].set_volume(0.8)
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(0.7)
+        self.sfx['wasted'].set_volume(1.5)
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
@@ -75,10 +77,14 @@ class Game:
             # self.sfx['ambience'].play(-1)
             
             if self.state == "start":
-                self.startscreen.run()
-                if self.startscreen.enter:
+                newloadexit = self.startscreen.run()
+                if newloadexit == "New Game":
                     self.state = "game"
-                    self.startscreen.enter = False
+                elif newloadexit == "Load Game":
+                    pass
+                elif newloadexit == "Exit Game":
+                    pygame.quit()
+                    sys.exit()
 
             if self.state == "game":
                 self.game.run()

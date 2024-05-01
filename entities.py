@@ -7,12 +7,13 @@ from spark import Spark
 
 
 class PhysicsEntity:
-    def __init__(self, game, e_type, pos, size, speed=2):
+    def __init__(self, game, e_type, pos, size, speed=2, name=""):
         self.speed = speed
         self.game = game
         self.type = e_type
         self.pos = list(pos)
         self.size = size
+        self.name = name
         self.velocity = [0, 0]
         self.collisions = {'up': False, 'down': False, 'right': False, 'left': False}
 
@@ -22,6 +23,9 @@ class PhysicsEntity:
         self.set_action('idle')
 
         self.last_movement = [0, 0]
+
+    def inetractablerect(self):
+        return pygame.Rect(self.pos[0] - self.size[0] * 3, self.pos[1] - self.size[1] * 3, self.size[0] * 7, self.size[1] * 7)
 
     def rect(self):
         return pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
@@ -81,202 +85,205 @@ class PhysicsEntity:
         surf.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1] + self.anim_offset[1]))
 
 class Enemy(PhysicsEntity):
-    def __init__(self, game, pos, size):
-        super().__init__(game, 'enemy', pos, size)
+    def __init__(self, game, pos, size, name="", difficulty=1):
+        super().__init__(game, 'enemy', pos, size, name)
 
         self.walking = 0
         self.speed = 2
-        self.difficulty = 3
+        self.difficulty = difficulty
+        self.name = name
+        self.interact = self.inetractablerect()
 
         # self.projectile = 3
     
-    def update(self, tilemap, movement=(0, 0)):
+    def update(self, tilemap, movement=(0, 0), move=True):
         
-        # 1. Wont chase players
-        # 2. Only shoot when parallel and same direction as player
-        if self.difficulty == 1:
+        if move:
+            # 1. Wont chase players
+            # 2. Only shoot when parallel and same direction as player
+            if self.difficulty == 1:
+                
+                self.speed = 2
+                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+                if self.walking:
+                    # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
+                    tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
+                    if tilemap.solid_check(tile_loc):
+
+                        # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
+                        if (self.collisions['right'] or self.collisions['left']):
+                            self.flip = not self.flip
+
+                        else:
+                            # Move for 0.5 pixels every frame, until the walking counter reaches 0
+                            movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+
+                    else:
+                        self.flip = not self.flip
+
+                    self.walking = max(0, self.walking - 1)
+
+                    if not self.walking:
+                        # get gunshot sparks and bullets
+                        if (abs(dis[1]) < 32):
+                            if (self.flip and dis[0] < 0):
+                                self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
+                            if (not self.flip and dis[0] > 0):
+                                self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
+
+                # 1 in 100 chance
+                elif random.random() < 0.01:
+                    self.walking = random.randint(30, 120)
+
+            # 1. Will chase players
+            # 2. Will shoot when player is within 100 pixels
+            # 3. Only shoot when stationary
+            elif self.difficulty == 2:
             
-            self.speed = 2
-            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-            if self.walking:
-                # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
-                tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
-                if tilemap.solid_check(tile_loc):
+                self.speed = 3
+                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
 
-                    # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
-                    if (self.collisions['right'] or self.collisions['left']):
-                        self.flip = not self.flip
+                if abs(dis[0]) < 100 and abs(dis[1]) < 100:
+                    self.game.exclamation.append([self.rect().centerx, self.rect().centery])
 
-                    else:
-                        # Move for 0.5 pixels every frame, until the walking counter reaches 0
-                        movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+                if self.walking:
+                    # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
+                    tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
+                    if tilemap.solid_check(tile_loc):
 
-                else:
-                    self.flip = not self.flip
-
-                self.walking = max(0, self.walking - 1)
-
-                if not self.walking:
-                    # get gunshot sparks and bullets
-                    if (abs(dis[1]) < 32):
-                        if (self.flip and dis[0] < 0):
-                            self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
-                        if (not self.flip and dis[0] > 0):
-                            self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
-
-            # 1 in 100 chance
-            elif random.random() < 0.01:
-                self.walking = random.randint(30, 120)
-
-        # 1. Will chase players
-        # 2. Will shoot when player is within 100 pixels
-        # 3. Only shoot when stationary
-        elif self.difficulty == 2:
-           
-            self.speed = 3
-            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-
-            if abs(dis[0]) < 100 and abs(dis[1]) < 100:
-                self.game.exclamation.append([self.rect().centerx, self.rect().centery])
-
-            if self.walking:
-                # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
-                tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
-                if tilemap.solid_check(tile_loc):
-
-                    # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
-                    if (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and not(self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        if (not self.flip and dis[0] < 0):
+                        # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
+                        if (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and not(self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                            if (not self.flip and dis[0] < 0):
+                                self.flip = not self.flip
+                            if (self.flip and dis[0] > 0):
+                                self.flip = not self.flip
+                        
+                        # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
+                        elif not (abs(dis[0]) < 100) and not (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
                             self.flip = not self.flip
-                        if (self.flip and dis[0] > 0):
+
+                        # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
+                        elif (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                            self.walking = 0
+                        
+                        # If the enemy hits the wall, turn around
+                        elif (self.collisions['right'] or self.collisions['left']):
                             self.flip = not self.flip
-                    
-                    # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
-                    elif not (abs(dis[0]) < 100) and not (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        self.flip = not self.flip
 
-                    # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
-                    elif (abs(dis[0]) < 100) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        self.walking = 0
-                    
-                    # If the enemy hits the wall, turn around
-                    elif (self.collisions['right'] or self.collisions['left']):
-                        self.flip = not self.flip
-
-                    else:
-                        # Move for 0.5 pixels every frame, until the walking counter reaches 0
-                        movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
-
-                else:
-                    # If there is a drop, and no players nearby, turn around
-                    if (abs(dis[0]) > 100):
-                        if dis[0] < 0:
-                            self.flip = True
                         else:
-                            self.flip = False
-                    else:
-                        self.flip = not self.flip
-
-                self.walking = max(0, self.walking - 1)
-
-                if not self.walking:
-                    # get gunshot sparks and bullets
-                    if (abs(dis[1]) < 32):
-                        if (self.flip and dis[0] < 0):
-                            self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
-                        if (not self.flip and dis[0] > 0):
-                            self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
-                            for i in range(4):
-                                self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
-
-            # 1 in 100 chance
-            elif random.random() < 0.01 and not abs(dis[0]) < 10:
-                self.walking = random.randint(30, 120)
-        
-        # 1. Will chase players
-        # 2. Will shoot when player is within 300 pixels
-        # 3. Shoot when moving and stationary
-        elif self.difficulty == 3:
-           
-            self.speed = 4
-            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-
-            if abs(dis[0]) < 300 and abs(dis[1]) < 300:
-                self.game.exclamation.append([self.rect().centerx, self.rect().centery])
-
-            if self.walking:
-                # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
-                tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
-
-                # If cooldown is 0, shoot
-                if self.walking % 20 == 0:
-                    if (self.flip and dis[0] < 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
-                        self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
-                    if (not self.flip and dis[0] > 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
-                        self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
-
-                if tilemap.solid_check(tile_loc):
-
-                    # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
-                    if (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and not(self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        if (not self.flip and dis[0] < 0):
-                            self.flip = not self.flip
-                        if (self.flip and dis[0] > 0):
-                            self.flip = not self.flip
-                    
-                    # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
-                    elif not (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        self.flip = not self.flip
-
-                    # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
-                    elif (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
-                        self.walking = 0
-
-                    # If the enemy hits the wall, turn around
-                    elif (self.collisions['right'] or self.collisions['left']):
-                        self.flip = not self.flip
+                            # Move for 0.5 pixels every frame, until the walking counter reaches 0
+                            movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
 
                     else:
-                        # Move for 0.5 pixels every frame, until the walking counter reaches 0
-                        movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
-
-                else:
-                    # If there is a drop, and no players nearby, turn around
-                    if (abs(dis[0]) > 300):
-                        if dis[0] < 0:
-                            self.flip = True
+                        # If there is a drop, and no players nearby, turn around
+                        if (abs(dis[0]) > 100):
+                            if dis[0] < 0:
+                                self.flip = True
+                            else:
+                                self.flip = False
                         else:
-                            self.flip = False
-                    else:
-                        self.flip = not self.flip
+                            self.flip = not self.flip
 
-                self.walking = max(0, self.walking - 1)
+                    self.walking = max(0, self.walking - 1)
 
-                if not self.walking:
-                    # get gunshot sparks and bullets
-                    if (abs(dis[1]) < 32) and (abs(dis[0]) < 300):
-                        if (self.flip and dis[0] < 0):
+                    if not self.walking:
+                        # get gunshot sparks and bullets
+                        if (abs(dis[1]) < 32):
+                            if (self.flip and dis[0] < 0):
+                                self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
+                            if (not self.flip and dis[0] > 0):
+                                self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
+
+                # 1 in 100 chance
+                elif random.random() < 0.01 and not abs(dis[0]) < 10:
+                    self.walking = random.randint(30, 120)
+            
+            # 1. Will chase players
+            # 2. Will shoot when player is within 300 pixels
+            # 3. Shoot when moving and stationary
+            elif self.difficulty == 3:
+            
+                self.speed = 4
+                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+
+                if abs(dis[0]) < 300 and abs(dis[1]) < 300:
+                    self.game.exclamation.append([self.rect().centerx, self.rect().centery])
+
+                if self.walking:
+                    # Check the 7 pixels in front, 23 pixels below of the enemy, if it's solid, turn around
+                    tile_loc = (self.rect().centerx + (-32 if self.flip else 32), self.pos[1] + 46)
+
+                    # If cooldown is 0, shoot
+                    if self.walking % 20 == 0:
+                        if (self.flip and dis[0] < 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
                             self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
                             for i in range(4):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
-                        if (not self.flip and dis[0] > 0):
+                        if (not self.flip and dis[0] > 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
                             self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
                             for i in range(4):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
 
-            # 1 in 100 chance
-            elif random.random() < 0.01 and not abs(dis[0]) < 10:
-                self.walking = random.randint(30, 120)
+                    if tilemap.solid_check(tile_loc):
+
+                        # If the player is within boundaries, not on top of the player, and there is no obstacle beside them, make the enemy turn around
+                        if (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and not(self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                            if (not self.flip and dis[0] < 0):
+                                self.flip = not self.flip
+                            if (self.flip and dis[0] > 0):
+                                self.flip = not self.flip
+                        
+                        # If the player is out of boundaries, not on top of the player, and there is an obstacle beside them, make the enemy turn around
+                        elif not (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                            self.flip = not self.flip
+
+                        # If the player is in boundaries, there is obstacle, enemy is still running, stop the enemy immediately
+                        elif (abs(dis[0]) < 300) and (abs(dis[1]) < 32) and (self.collisions['right'] or self.collisions['left']) and not (abs(dis[0]) == 0):
+                            self.walking = 0
+
+                        # If the enemy hits the wall, turn around
+                        elif (self.collisions['right'] or self.collisions['left']):
+                            self.flip = not self.flip
+
+                        else:
+                            # Move for 0.5 pixels every frame, until the walking counter reaches 0
+                            movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1])
+
+                    else:
+                        # If there is a drop, and no players nearby, turn around
+                        if (abs(dis[0]) > 300):
+                            if dis[0] < 0:
+                                self.flip = True
+                            else:
+                                self.flip = False
+                        else:
+                            self.flip = not self.flip
+
+                    self.walking = max(0, self.walking - 1)
+
+                    if not self.walking:
+                        # get gunshot sparks and bullets
+                        if (abs(dis[1]) < 32) and (abs(dis[0]) < 300):
+                            if (self.flip and dis[0] < 0):
+                                self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
+                            if (not self.flip and dis[0] > 0):
+                                self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
+
+                # 1 in 100 chance
+                elif random.random() < 0.01 and not abs(dis[0]) < 10:
+                    self.walking = random.randint(30, 120)
 
         super().update(tilemap, movement=movement)
 
@@ -306,13 +313,14 @@ class Enemy(PhysicsEntity):
             surf.blit(self.game.assets["gun"], (self.rect().centerx + 6 - offset[0], self.rect().centery - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, pos, size):
-        super().__init__(game, 'player', pos, size)
+    def __init__(self, game, pos, size, speed, name=""):
+        super().__init__(game, 'player', pos, size, speed, name)
         self.air_time = 0
         self.jumps = 1
+        self.name = name
         self.wall_slide = False
         self.dashing = 0
-        self.speed = 1.5 # default
+        self.speed = speed # default
 
     def airtime(self):
         if self.air_time > 120:
