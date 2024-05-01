@@ -22,15 +22,15 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = self.assets["day"]
         self.level = 0
-        self.reasonofdeath = None
-        self.transition = -225
-        self.playedwaste = False
+        # self.reasonofdeath = None
+        # self.transition = -225
+        # self.playedwaste = False
         self.restart = False
-        self.deadmsg = ""
-        self.death_msg = {
-            "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
-            "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
-        }
+        # self.deadmsg = ""
+        # self.death_msg = {
+        #     "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+        #     "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
+        # }
 
         self.load_level(self.level)
 
@@ -78,16 +78,16 @@ class Play():
         
         self.display.blit(self.daybg, (0, 0))
 
-        if self.transition < 0:
-            self.transition += 1
+        # if self.transition < 0:
+        #     self.transition += 1
         
         # Dead screen transition
         if self.dead or self.player.airtime():
             self.deadscreen = True
             self.dead += 1
-            if self.reasonofdeath is None:
-                self.reasonofdeath = "fall"
-                self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
+            # if self.reasonofdeath is None:
+            #     self.reasonofdeath = "fall"
+            #     self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
             self.deadscreentrans = min(200, self.deadscreentrans + 3)
                             
         # Make sure that the player is always in the middle of the screen
@@ -105,7 +105,7 @@ class Play():
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
 
-        self.tilemap.render(self.display, offset=render_scroll, player_pos=(self.player.pos[0], self.player.pos[1]))
+        self.tilemap.render(self.display, offset=render_scroll)
         
         for enemy in self.enemies.copy():
             kill = enemy.update(self.tilemap, (0, 0))
@@ -148,9 +148,9 @@ class Play():
                 if self.player.rect().collidepoint(projectile[0]):
                     if not self.firsthit:
                         self.dead += 1
-                        if self.reasonofdeath is None:
-                            self.reasonofdeath = "enemy"
-                            self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
+                        # if self.reasonofdeath is None:
+                        #     self.reasonofdeath = "enemy"
+                        #     self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
                         self.firsthit = True
                     self.projectiles.remove(projectile)
                     for i in range(30):
@@ -176,18 +176,17 @@ class Play():
         # Load dead screen
         if self.deadscreen:
             self.movements = [False, False]
-            if not self.playedwaste:
-                self.playedwaste = True   
-                # self.game.sfx['ambience'].stop()
-                self.game.sfx['wasted'].play()
+            # if not self.playedwaste:
+                # self.playedwaste = True   
+                # self.game.sfx['wasted'].play()
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(self.deadscreentrans)
             self.display.blit(img, (0,0))
 
             if self.dead > 135:
-                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 72), (255, 0, 0), 600, 250, self.display)
-                render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
+                # render_text("Wasted", pygame.font.Font('freesansbold.ttf', 72), (255, 0, 0), 600, 250, self.display)
+                # render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
                 render_text("Press SPACE to restart", pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 600, self.display)
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -199,19 +198,19 @@ class Play():
                 pygame.event.clear()
                             
             if self.restart:
-                self.transition += 1
-                if self.transition > 150:
-                    self.dead = 0
-                    self.firsthit = False
-                    self.deadscreen = False
-                    self.deadmsg = ""
-                    self.reasonofdeath = None
-                    self.load_level(self.level)
-                    self.playedwaste = False
-                    self.restart = False
-                    self.game.sfx['wasted'].stop()
-                    self.transition = -225
-                    # self.game.sfx['ambience'].play(-1)
+                # self.transition += 1
+                # if self.transition > 150:
+                self.dead = 0
+                self.firsthit = False
+                self.deadscreen = False
+                # self.deadmsg = ""
+                # self.reasonofdeath = None
+                self.load_level(self.level)
+                # self.playedwaste = False
+                self.restart = False
+                # self.game.sfx['wasted'].stop()
+                # self.transition = -225
+                # self.game.sfx['ambience'].play(-1)
 
 
         # This part will check the movements of the player
@@ -235,15 +234,15 @@ class Play():
                     if event.key == pygame.K_d:
                         self.movements[1] = False
 
-        if self.transition:
-            transition_surf = pygame.Surface((1200, 675))
-            if self.transition < 0:
-                transition_surf.blit(self.assets["night"], (0, min(337, -1012 - self.transition * 3)))
-            elif self.transition > 0:
-                transition_surf.blit(self.assets["night"], (0, min(-337, -675 + self.transition * 3)))
-            # transition_surf.blit(self.assets["night"], (0, -600 + (abs(self.transition)) * 10))
-            transition_surf.set_colorkey((0, 0, 0))
-            # pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
-            # transition_surf.set_colorkey((255, 255, 255))
-            self.display.blit(transition_surf, (0, 0))
+        # if self.transition:
+        #     transition_surf = pygame.Surface((1200, 675))
+        #     if self.transition < 0:
+        #         transition_surf.blit(self.assets["night"], (0, min(337, -1012 - self.transition * 3)))
+        #     elif self.transition > 0:
+        #         transition_surf.blit(self.assets["night"], (0, min(-337, -675 + self.transition * 3)))
+        #     # transition_surf.blit(self.assets["night"], (0, -600 + (abs(self.transition)) * 10))
+        #     transition_surf.set_colorkey((0, 0, 0))
+        #     # pygame.draw.circle(transition_surf, (255, 255, 255), (600, 337), (60 - abs(self.transition)) * 15)
+        #     # transition_surf.set_colorkey((255, 255, 255))
+        #     self.display.blit(transition_surf, (0, 0))
             

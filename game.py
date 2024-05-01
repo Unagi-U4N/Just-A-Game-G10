@@ -65,7 +65,7 @@ class Game:
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
         
-        self.state = "game"
+        self.state = "start"
 
     def run(self):
         while True:
