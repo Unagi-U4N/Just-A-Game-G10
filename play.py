@@ -25,7 +25,7 @@ class Play():
         self.daybg = self.assets["day"]
         self.level = 0
         self.reasonofdeath = None
-        self.transition = -75
+        self.transition = 0
         self.felltransition = 0
         self.deductlife = True
         self.playedwaste = False
@@ -163,7 +163,10 @@ class Play():
             # Check if the projectile hits the player, when the player is not dashing
             elif abs(self.player.dashing) < 50:
                 if self.player.rect().collidepoint(projectile[0]):
-                    if not self.firsthit:
+                    if self.lives > 1 and not self.dead:
+                        self.lives -= 1
+
+                    elif not self.firsthit and self.lives == 1:
                         self.dead += 1
                         if self.reasonofdeath is None:
                             self.reasonofdeath = "enemy"
@@ -299,3 +302,5 @@ class Play():
             pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (60 - abs(self.felltransition)) * 30)
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
+
+        # print(self.lives, self.player.lives)
