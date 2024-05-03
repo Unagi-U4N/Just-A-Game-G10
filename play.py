@@ -34,7 +34,7 @@ class Play():
         self.respawn = False
         self.deadmsg = ""
         self.death_msg = {
-            "fall" : [f"Apparently {self.player.lives} isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+            "fall" : [f"Apparently {self.player.lives} lives isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
@@ -279,7 +279,7 @@ class Play():
         if self.felltransition != 0:
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
-            img.set_alpha(min(120, abs(self.felltransition) * 2))
+            img.set_alpha(min(200, abs(self.felltransition) * 4))
             self.display.blit(img, (0,0))
 
         # Secondary screen, used for transition when dead
