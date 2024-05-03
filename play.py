@@ -19,13 +19,13 @@ class Play():
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0), (16, 30), 1.5)
-        self.lives = 3
+        self.lives = self.player.lives
         self.playerrespawn = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = self.assets["day"]
         self.level = 0
         self.reasonofdeath = None
-        self.transition = -135
+        self.transition = -75
         self.felltransition = 0
         self.deductlife = True
         self.playedwaste = False
@@ -34,7 +34,7 @@ class Play():
         self.respawn = False
         self.deadmsg = ""
         self.death_msg = {
-            "fall" : ["You fell to your death", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+            "fall" : [f"Apparently {self.player.lives} isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
@@ -227,8 +227,8 @@ class Play():
             # Restart the game
             if self.restart:
                 self.transition += 1
-                if self.transition > 135:
-                    self.lives = 3
+                if self.transition > 75:
+                    self.lives = self.player.lives
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -238,7 +238,7 @@ class Play():
                     self.playedwaste = False
                     self.restart = False
                     self.game.sfx['wasted'].stop()
-                    self.transition = -135
+                    self.transition = -75
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
 
@@ -284,12 +284,12 @@ class Play():
             transition_surf = pygame.Surface((1200, 675))
             self.shut = True if self.transition in range(70, 135) else False
             if self.transition < 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 5)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 5)))
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
 
             elif self.transition > 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 5)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 5)))
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
             transition_surf.set_colorkey((0, 0, 0))
             self.display.blit(transition_surf, (0, 0))
 
