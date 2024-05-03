@@ -29,6 +29,8 @@ class Game:
             "stone": scale_images(load_images("tiles/stone")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "background": load_image("background/background.png"),
+            "loadscreen1": load_image("loadscreen1.png"),
+            "loadscreen2": load_image("loadscreen2.png"),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
@@ -65,7 +67,7 @@ class Game:
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
         
-        self.state = "start"
+        self.state = "game"
 
     def run(self):
         while True:
