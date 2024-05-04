@@ -8,6 +8,7 @@ import pygame, sys
 from utils import *
 from startscreen import StartScreen
 import play
+from cutscenes import *
 
 class Game:
     def __init__(self):
@@ -66,8 +67,7 @@ class Game:
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
-        
-        self.state = "game"
+        self.state = "Intro"
 
     def run(self):
         while True:
@@ -81,15 +81,21 @@ class Game:
             if self.state == "start":
                 newloadexit = self.startscreen.run()
                 if newloadexit == "New Game":
-                    self.state = "game"
+                    # self.state = "newgame"
+                    self.state = "Intro"
                 elif newloadexit == "Load Game":
-                    pass
+                    self.state = "game"
                 elif newloadexit == "Exit Game":
                     pygame.quit()
                     sys.exit()
 
             if self.state == "game":
                 self.game.run()
+
+            if self.state == "Intro":
+                cutscene = get_cutscene("Intro", self.screen)
+                run_cutscene(cutscene)
+                self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

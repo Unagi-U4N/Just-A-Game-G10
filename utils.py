@@ -23,12 +23,26 @@ def render_text(text, font, color, x, y, display, centered=True):
     return text_rect
 
 def load_script(path):
-    # gets the script from the cutscenes folder, return it as a list of strings
-    with open(BASE_SCENE_PATH + path, "r") as f:
-        return [line for line in f.read().split("\n") if line != ""]
+    # path = INTRO, OUTRO, etc.
+    cutscenes = {}
+    # gets the script from the cutscenes folder, return it as a dictionary of list of strings
+    for scene in os.listdir(BASE_SCENE_PATH + path):
+        try :
+            int(scene.split(".")[0])
+        except:
+            continue
+        if scene.split(".")[1] != "txt":
+            continue
+        else:
+            with open(BASE_SCENE_PATH + path + "/" + scene, "r") as f:
+                cutscenes[scene.split(".")[0]] = [line for line in f.read().split("\n") if line != ""], scale_images(load_image((BASE_SCENE_PATH + path + "/" + scene.split(".")[0]+".png"), False), (1200, 675))
+    return cutscenes
 
-def load_image(path):
-    img = pygame.image.load(BASE_IMG_PATH + path).convert()
+def load_image(path, includeBASE=True):
+    if not includeBASE:
+        img = pygame.image.load(path)
+    else:
+        img = pygame.image.load(BASE_IMG_PATH + path).convert()
     img.set_colorkey("black")
     return img
 
