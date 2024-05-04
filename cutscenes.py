@@ -1,12 +1,45 @@
 import pygame
 from utils import *
 
-cutscenes = {
-    "Intro": load_script("Intro"),
-}
+def get_cutscene(game, scenes, cutscenes, screen):
+    
+    Intro = {}
+    
+
+    for scene in cutscenes["Intro"]:
+        Intro[scene] = Cutscene(game, cutscenes["Intro"][scene][0], (50, 50), 20, 50, screen, cutscenes["Intro"][scene][1])
+
+    if scenes == "Intro":
+        return Intro
+
+def run_cutscene(cutscene):
+    num = 0
+    while num <= len(cutscene) - 1:
+        scene = str(num)
+        skip = False
+        next = False
+        scene = cutscene[scene]
+        scene.draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    skip = True
+                    if skip and scene.done:
+                        next = True
+
+        if skip:
+            scene.alldone = True
+
+        if next and scene.done and skip:
+            num += 1
+    
+    return True
 
 class Cutscene:
-    def __init__(self, msgs, pos, size, speed, screen, img=None, color="white"):
+    def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
+        self.game = game
         self.msgs = msgs
         self.lines = 0
         self.msg = self.msgs[self.lines]
@@ -24,9 +57,14 @@ class Cutscene:
         self.status = {msg: False for msg in self.msgs}
 
     def draw(self):
-        # self.screen.blit(self.img, (0, 0))
         self.screen.fill((0, 0, 0))
+        self.screen.blit(self.img, (0, 0))
 
+        if self.alldone:
+            self.status = {msg: True for msg in self.msgs}
+            self.done = True
+            render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
+        
         # If the first line of message is done, and there is still message beneath, move to the next line
         if self.done and self.lines < len(self.msgs) - 1:
             self.status[self.msg] = True
@@ -57,44 +95,4 @@ class Cutscene:
         if all([self.status[msg] for msg in self.msgs]):
             self.alldone = True
         
-        if self.alldone:
-            for msg in self.msgs:
-                self.status[msg] = True
-
         pygame.display.flip()
-
-def get_cutscene(scenes, screen):
-    
-    Intro = {}
-    
-
-    for scene in cutscenes["Intro"]:
-        Intro[scene] = Cutscene(cutscenes["Intro"][scene][0], (50, 50), 20, 50, screen, cutscenes["Intro"][scene][1].convert())
-
-    if scenes == "Intro":
-        return Intro
-
-def run_cutscene(cutscene):
-    num = 0
-    while num <= len(cutscene) - 1:
-        scene = str(num)
-        skip = False
-        next = False
-        scene = cutscene[scene]
-        scene.draw()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    skip = True
-                    if skip and scene.done:
-                        next = True
-
-        if skip:
-            scene.alldone = True
-
-        if next and scene.done and skip:
-            num += 1
-    
-    return True

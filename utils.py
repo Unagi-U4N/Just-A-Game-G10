@@ -22,6 +22,15 @@ def render_text(text, font, color, x, y, display, centered=True):
     display.blit(text, text_rect)
     return text_rect
 
+def render_img(img, x, y, display, centered=True):
+    # render image on the display, make sure the image is centered
+    if centered:
+        img_rect = img.get_rect(center=(x, y))
+    else:
+        img_rect = (x, y)
+    display.blit(img, img_rect)
+    return img_rect
+
 def load_script(path):
     # path = INTRO, OUTRO, etc.
     cutscenes = {}
@@ -38,11 +47,14 @@ def load_script(path):
                 cutscenes[scene.split(".")[0]] = [line for line in f.read().split("\n") if line != ""], scale_images(load_image((BASE_SCENE_PATH + path + "/" + scene.split(".")[0]+".png"), False), (1200, 675))
     return cutscenes
 
-def load_image(path, includeBASE=True):
+def load_image(path, includeBASE=True, convert=True):
     if not includeBASE:
         img = pygame.image.load(path)
     else:
-        img = pygame.image.load(BASE_IMG_PATH + path).convert()
+        if not convert:
+            img = pygame.image.load(BASE_IMG_PATH + path)
+        else:
+            img = pygame.image.load(BASE_IMG_PATH + path).convert()
     img.set_colorkey("black")
     return img
 
