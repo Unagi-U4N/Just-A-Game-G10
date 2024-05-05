@@ -1,25 +1,24 @@
 import pygame
 from utils import *
 
-def get_cutscene(game, scenes, cutscenes, screen):
+def get_cutscene(game, type, cutscenes, screen):
     
-    Intro = {}
+    Cutscenes = {}
     
 
-    for scene in cutscenes["Intro"]:
-        Intro[scene] = Cutscene(game, cutscenes["Intro"][scene][0], (50, 50), 20, 50, screen, cutscenes["Intro"][scene][1])
+    for scene in cutscenes[type]:
+        Cutscenes[scene] = Cutscene(game, cutscenes[type][scene][0], (50, 50), 20, 50, screen, cutscenes[type][scene][1])
 
-    if scenes == "Intro":
-        return Intro
+    return Cutscenes
 
-def run_cutscene(cutscene):
+def run(scenes, fade=False):
     num = 0
-    while num <= len(cutscene) - 1:
+    while num <= len(scenes) - 1:
         scene = str(num)
         skip = False
         next = False
-        scene = cutscene[scene]
-        scene.draw()
+        scene = scenes[scene]
+        scene.draw(fade)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -39,6 +38,7 @@ def run_cutscene(cutscene):
 
 class Cutscene:
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
+        self.fadescreen = 255
         self.game = game
         self.msgs = msgs
         self.lines = 0
@@ -56,43 +56,55 @@ class Cutscene:
         self.snip = self.font.render("", True, self.color)
         self.status = {msg: False for msg in self.msgs}
 
-    def draw(self):
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(self.img, (0, 0))
+    def draw(self, fade=False):
 
-        if self.alldone:
-            self.status = {msg: True for msg in self.msgs}
-            self.done = True
-            render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
+        if fade and self.fadescreen > 0:
+            self.fadescreen = max(0, self.fadescreen - 2)
+            self.screen.blit(self.img, (0, 0))
+            img = pygame.Surface((1200, 675))
+            img.fill((0, 0, 0))
+            img.set_alpha(self.fadescreen)
+            self.screen.blit(img, (0, 0))
+            pygame.display.flip()
         
-        # If the first line of message is done, and there is still message beneath, move to the next line
-        if self.done and self.lines < len(self.msgs) - 1:
-            self.status[self.msg] = True
-            self.lines += 1
-            self.msg = self.msgs[self.lines]
-            self.frame = 0
-            self.done = False
-            self.pos[1] += self.size * 1.5
-
-        elif self.done and self.lines == len(self.msgs) - 1:
-            self.status[self.msg] = True
-
-        if self.frame < self.speed * len(self.msg):
-            self.frame += 1
-
-        elif self.frame >= self.speed * len(self.msg):
-            self.done = True
-        
-        for lines in range(self.lines + 1):
+        else:
             
-            # Check if the message is printed once, if so print the whole message
-            if self.status[self.msgs[lines]]:
-                self.snip = self.font.render(self.msgs[lines], True, self.color)
-            else:
-                self.snip = self.font.render(self.msgs[lines][0:(self.frame // self.speed)], True, self.color)
-            self.screen.blit(self.snip, (self.pos[0], self.pos[1] - (self.lines - lines) * self.size * 1.5))
+            self.screen.blit(self.img, (0, 0))
 
-        if all([self.status[msg] for msg in self.msgs]):
-            self.alldone = True
+            if self.alldone:
+                self.status = {msg: True for msg in self.msgs}
+                self.done = True
+                render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
+            
+            # If the first line of message is done, and there is still message beneath, move to the next line
+            if self.done and self.lines < len(self.msgs) - 1:
+                self.status[self.msg] = True
+                self.lines += 1
+                self.msg = self.msgs[self.lines]
+                self.frame = 0
+                self.done = False
+                self.pos[1] += self.size * 1.5
+
+            elif self.done and self.lines == len(self.msgs) - 1:
+                self.status[self.msg] = True
+
+            if self.frame < self.speed * len(self.msg):
+                self.frame += 1
+
+            elif self.frame >= self.speed * len(self.msg):
+                self.done = True
+            
+            for lines in range(self.lines + 1):
+                
+                # Check if the message is printed once, if so print the whole message
+                if self.status[self.msgs[lines]]:
+                    self.snip = self.font.render(self.msgs[lines], True, self.color)
+                else:
+                    self.snip = self.font.render(self.msgs[lines][0:(self.frame // self.speed)], True, self.color)
+                self.screen.blit(self.snip, (self.pos[0], self.pos[1] - (self.lines - lines) * self.size * 1.5))
+
+            if all([self.status[msg] for msg in self.msgs]):
+                self.alldone = True
+            
+            pygame.display.flip()
         
-        pygame.display.flip()
