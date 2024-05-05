@@ -89,8 +89,9 @@ class Game:
                 newloadexit = self.startscreen.run()
                 if newloadexit == "New Game":
                     # self.state = "newgame"
-                    self.state = "cutscene"
-                    self.cutscene = "Intro"
+                    # self.state = "cutscene"
+                    # self.cutscene = "Intro"
+                    self.state = "game"
                 elif newloadexit == "Load Game":
                     self.state = "game"
                 elif newloadexit == "Exit Game":
@@ -100,11 +101,11 @@ class Game:
             if self.state == "game":
                 self.game.run()
 
-            if self.state == "cutscene":
-                if self.cutscene == "Intro":
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.run(cutscene, True)
-                    self.state = "game"
+            # if self.state == "cutscene":
+            #     if self.cutscene == "Intro":
+            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+            #         cutscenes.run(cutscene, True)
+            #         self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
