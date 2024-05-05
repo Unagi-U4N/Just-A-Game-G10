@@ -103,7 +103,7 @@ class Game:
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.run_cutscene(cutscene)
+                    cutscenes.run(cutscene, True)
                     self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
