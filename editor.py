@@ -1,12 +1,14 @@
 import pygame
 import button
-import csv
-import pickle
+import json
 
 pygame.init()
 
 clock = pygame.time.Clock()
 FPS = 60
+
+
+ 
 
 #game window
 SCREEN_WIDTH = 800
@@ -64,6 +66,8 @@ for row in range(ROWS):
 #create ground
 for tile in range(0, MAX_COLS):
 	world_data[ROWS - 1][tile] = 0
+
+SAVE_FILE_PATH = f'level{level}_data.json'
 
 
 #function for outputting text onto the screen
@@ -131,24 +135,18 @@ while run:
 
 	#save and load data
 	if save_button.draw(screen):
-		#save level data
-		with open(f'level{level}_data.csv', 'w', newline='') as csvfile:
-			writer = csv.writer(csvfile, delimiter = ',')
-			for row in world_data:
-				writer.writerow(row)
-		#alternative pickle method
-		#pickle_out = open(f'level{level}_data', 'wb')
-		#pickle.dump(world_data, pickle_out)
-		#pickle_out.close()
+		#save level data to JSON file
+		save_file_path = f'level{level}_data.json'
+		with open(SAVE_FILE_PATH, 'w', newline='') as jsonfile:
+			json.dump(world_data, json_file)
+
 	if load_button.draw(screen):
-		#load in level data
+		#Load level data from JSON file
 		#reset scroll back to the start of the level
 		scroll = 0
-		with open(f'level{level}_data.csv', newline='') as csvfile:
-			reader = csv.reader(csvfile, delimiter = ',')
-			for x, row in enumerate(reader):
-				for y, tile in enumerate(row):
-					world_data[x][y] = int(tile)
+		save_file_path = f'level{level}_data.json'
+		with open(SAVE_FILE_PATH, 'r') as json_file:
+			world_data = json.load(json_file)
 		#alternative pickle method
 		#world_data = []
 		#pickle_in = open(f'level{level}_data', 'rb')
