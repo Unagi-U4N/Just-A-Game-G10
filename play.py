@@ -49,22 +49,22 @@ class Play():
 
         self.load_level(self.level)
 
-    def check_button(self, mousepos):
+    def check_button(self):
         # Check if the pause or info button is clicked
-        pause = render_img(self.assets["pause"], 70, 70, self.display, True)
-        info = render_img(self.assets["info"], 140, 70, self.display, True)
-        if pygame.mouse.get_pressed()[0]:
-            self.clickpause = True
-            if pause.collidepoint(mousepos):
-                if self.pausetimer > 50:
-                    self.pause = not self.pause
-                    self.choice = "pause"
-                    self.pausetimer = 0
-            elif info.collidepoint(mousepos):
-                if self.pausetimer > 50:
-                    self.pause = not self.pause
-                    self.choice = "info"
-                    self.pausetimer = 0
+        pause = render_img(self.assets["pausebuttonround"], 70, 70, self.display, True, True)
+        info = render_img(self.assets["info"], 140, 70, self.display, True, True)
+
+        self.clickpause = True
+        if pause:
+            if self.pausetimer > 50:
+                self.pause = not self.pause
+                self.choice = "pause"
+                self.pausetimer = 0
+        elif info:
+            if self.pausetimer > 50:
+                self.pause = not self.pause
+                self.choice = "info"
+                self.pausetimer = 0
 
         # Limit the button to be clicked once every 50 frames
         if self.clickpause:
@@ -114,6 +114,7 @@ class Play():
     def update(self):
         self.clouds.update()
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.render(self.display, offset=self.render_scroll)
 
         for enemy in self.enemies.copy():
             self.enemykill = enemy.update(self.tilemap, (0, 0))
@@ -178,6 +179,12 @@ class Play():
                 particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3
             if kill:
                 self.particles.remove(particle)
+
+        for spark in self.sparks.copy():
+            kill = spark.update()
+            spark.render(self.display, offset=self.render_scroll)
+            if kill:
+                self.sparks.remove(spark)
         
     def run(self):
         
@@ -217,17 +224,9 @@ class Play():
         for enemy in self.enemies:
             enemy.render(self.display, offset=self.render_scroll)
 
-        self.check_button(self.mousepos)
+        self.check_button()
         if not self.pause:
             self.update()
-
-        self.player.render(self.display, offset=self.render_scroll)
-
-        for spark in self.sparks.copy():
-            kill = spark.update()
-            spark.render(self.display, offset=self.render_scroll)
-            if kill:
-                self.sparks.remove(spark)
         
         # Load respawn screen
         if self.respawn:
@@ -282,6 +281,9 @@ class Play():
                     # self.game.sfx['ambience'].play(-1)
 
         if self.pause:
+
+            self.player.render(self.display, offset=self.render_scroll)
+
             # [[x, y], direction, timer]
             for projectile in self.projectiles.copy():
                 img = self.assets['projectile']
@@ -318,11 +320,29 @@ class Play():
 
             for particle in self.particles.copy():
                 particle.render(self.display, offset=self.render_scroll)
+
+            for spark in self.sparks.copy():
+                spark.render(self.display, offset=self.render_scroll)
             
             img=pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(150)
             self.display.blit(img, (0,0))
+            render_img(self.assets["pause"], 0, 0, self.display, centered=False)
+            quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
+            resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause = not self.pause
+
+            if resume:
+                self.pause = not self.pause
+
+            if quit:
+                pygame.quit()
+                sys.exit()
 
         # This part will check the controls of the player
         if not self.dead and not self.pause:
@@ -331,6 +351,8 @@ class Play():
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause = not self.pause
                     if event.key == pygame.K_a:
                         self.movements[0] = True
                     if event.key == pygame.K_d:

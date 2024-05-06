@@ -26,6 +26,7 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+            "Ending": load_script("Ending"),
         }
         
         self.assets= {
@@ -53,8 +54,13 @@ class Game:
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
             "arrow": scale_images(load_image("arrow.png"), scale= 2),
-            "pause": scale_images(load_image("pause.png"), scale=0.15),
-            "info": scale_images(load_image("info.png"), scale=0.15),
+            "quit": scale_images(load_image("button/quit.png"), scale=0.5),
+            "resume": scale_images(load_image("button/resume.png"), scale=0.5),
+            "quit2": scale_images(load_image("button/quit2.png"), scale=0.5),
+            "resume2": scale_images(load_image("button/resume2.png"), scale=0.5),
+            "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
+            "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
+            "info": scale_images(load_image("button/info.png"), scale=0.15),
         }
 
         self.sfx = {
@@ -103,11 +109,11 @@ class Game:
             if self.state == "game":
                 self.game.run()
 
-            # if self.state == "cutscene":
-            #     if self.cutscene == "Intro":
-            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-            #         cutscenes.run(cutscene, True)
-            #         self.state = "game"
+            if self.state == "cutscene":
+                if self.cutscene == "Intro":
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.run(cutscene, True)
+                    self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
