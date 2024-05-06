@@ -316,6 +316,7 @@ class Player(PhysicsEntity):
     def __init__(self, game, pos, size, speed, name=""):
         super().__init__(game, 'player', pos, size, speed, name)
         self.air_time = 0
+        self.lives = 3
         self.jumps = 1
         self.name = name
         self.wall_slide = False
