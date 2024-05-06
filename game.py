@@ -8,6 +8,7 @@ import pygame, sys
 from utils import *
 from startscreen import StartScreen
 import play
+import cutscenes
 
 class Game:
     def __init__(self):
@@ -21,7 +22,12 @@ class Game:
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
+        self.intro = {}
 
+        self.cutscenes = {
+            "Intro": load_script("Intro"),
+        }
+        
         self.assets= {
             "player": load_image("entities/player.png"),
             "decor": scale_images(load_images("tiles/decor")),
@@ -29,8 +35,10 @@ class Game:
             "stone": scale_images(load_images("tiles/stone")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "background": load_image("background/background.png"),
-            "day": load_image("background/daybg.png"),
-            "night": load_image("background/nightbg.png"),
+            "loadscreen1": load_image("loadscreen1.png"),
+            "loadscreen2": load_image("loadscreen2.png"),
+            "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
+            "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
@@ -44,6 +52,7 @@ class Game:
             "gun": scale_images(load_image("gun.png")),
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
+            "arrow": scale_images(load_image("arrow.png"), scale= 2),
         }
 
         self.sfx = {
@@ -52,6 +61,7 @@ class Game:
             'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
+            'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -59,11 +69,12 @@ class Game:
         self.sfx['hit'].set_volume(0.8)
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(0.7)
+        self.sfx['wasted'].set_volume(1.5)
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
-        
-        self.state = "start"
+        self.state = "cutscene"
+        self.cutscene = "Intro"
 
     def run(self):
         while True:
@@ -75,13 +86,26 @@ class Game:
             # self.sfx['ambience'].play(-1)
             
             if self.state == "start":
-                self.startscreen.run()
-                if self.startscreen.enter:
+                newloadexit = self.startscreen.run()
+                if newloadexit == "New Game":
+                    # self.state = "newgame"
+                    # self.state = "cutscene"
+                    # self.cutscene = "Intro"
                     self.state = "game"
-                    self.startscreen.enter = False
+                elif newloadexit == "Load Game":
+                    self.state = "game"
+                elif newloadexit == "Exit Game":
+                    pygame.quit()
+                    sys.exit()
 
             if self.state == "game":
                 self.game.run()
+
+            # if self.state == "cutscene":
+            #     if self.cutscene == "Intro":
+            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+            #         cutscenes.run(cutscene, True)
+            #         self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

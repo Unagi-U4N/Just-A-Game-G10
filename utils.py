@@ -12,14 +12,49 @@ def get_path():
 BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
 
+def render_text(text, font, color, x, y, display, centered=True):
+    # render text on the display, make sure the text is centered
+    text = font.render(text, True, color)
+    if centered:
+        text_rect = text.get_rect(center=(x, y))
+    else:
+        text_rect = (x, y)
+    display.blit(text, text_rect)
+    return text_rect
+
+def render_img(img, x, y, display, centered=True):
+    # render image on the display, make sure the image is centered
+    if centered:
+        img_rect = img.get_rect(center=(x, y))
+    else:
+        img_rect = (x, y)
+    display.blit(img, img_rect)
+    return img_rect
 
 def load_script(path):
-    # gets the script from the cutscenes folder, return it as a list of strings
-    with open(BASE_SCENE_PATH + path, "r") as f:
-        return [line for line in f.read().split("\n") if line != ""]
+    # path = INTRO, OUTRO, etc.
+    cutscenes = {}
+    # gets the script from the cutscenes folder, return it as a dictionary of list of strings
+    for scene in os.listdir(BASE_SCENE_PATH + path):
+        try :
+            int(scene.split(".")[0])
+        except:
+            continue
+        if scene.split(".")[1] != "txt":
+            continue
+        else:
+            with open(BASE_SCENE_PATH + path + "/" + scene, "r") as f:
+                cutscenes[scene.split(".")[0]] = [line for line in f.read().split("\n") if line != ""], scale_images(load_image((BASE_SCENE_PATH + path + "/" + scene.split(".")[0]+".png"), False), (1200, 675))
+    return cutscenes
 
-def load_image(path):
-    img = pygame.image.load(BASE_IMG_PATH + path).convert()
+def load_image(path, includeBASE=True, convert=True):
+    if not includeBASE:
+        img = pygame.image.load(path)
+    else:
+        if not convert:
+            img = pygame.image.load(BASE_IMG_PATH + path)
+        else:
+            img = pygame.image.load(BASE_IMG_PATH + path).convert()
     img.set_colorkey("black")
     return img
 

@@ -9,6 +9,7 @@ from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
 from spark import Spark
+from cutscenes import *
 
 class Play():
     def __init__(self, game):
@@ -18,11 +19,27 @@ class Play():
         self.display = game.display
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
-        self.player = Player(game, (100, 50), (16, 30))
+        self.player = Player(game, (0, 0), (16, 30), 1.5)
+        self.lives = self.player.lives
+        self.playerrespawn = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
-        self.daybg = scale_images(self.assets["day"],(1200, 675))
+        self.daybg = self.assets["day"]
+        self.level = 0
+        self.reasonofdeath = None
+        self.transition = 0
+        self.felltransition = 0
+        self.deductlife = True
+        self.playedwaste = False
+        self.restart = False
+        self.shut = False
+        self.respawn = False
+        self.deadmsg = ""
+        self.death_msg = {
+            "fall" : [f"Apparently {self.player.lives} lives isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+            "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
+        }
 
-        self.load_level(0)
+        self.load_level(self.level)
 
     def load_level(self, map_id):
 
@@ -34,10 +51,11 @@ class Play():
         self.enemies = []
         for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1)]):
             if spawner["variant"] == 0:
+                self.playerrespawn = spawner["pos"]
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
             else:
-                self.enemies.append(Enemy(self, spawner["pos"], (16, 30))) # Scaled
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=1)) # Scaled
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -66,11 +84,29 @@ class Play():
 
     def run(self):
         
+        self.display.blit(self.daybg, (0, 0))
+
+        if self.transition < 0:
+            self.transition += 1
+
+        if self.felltransition < 0:
+            self.felltransition += 1
+        
+        # Respawn transition
+        if self.lives > 1 and self.deductlife and self.player.airtime() and not self.dead:
+            self.player.air_time = 0
+            self.deductlife = False
+            self.respawn = True
+            self.lives -= 1
+
         # Dead screen transition
-        if self.dead or self.player.airtime():
+        if self.dead or self.player.airtime() and self.lives == 1:
             self.deadscreen = True
             self.dead += 1
-            self.deadscreentrans = min(150, self.deadscreentrans + 3)
+            if self.reasonofdeath is None:
+                self.reasonofdeath = "fall"
+                self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
+            self.deadscreentrans = min(200, self.deadscreentrans + 3)
                             
         # Make sure that the player is always in the middle of the screen
         self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
@@ -83,8 +119,6 @@ class Play():
                 pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                 self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
         
-
-        self.display.blit(self.daybg, (0, 0))
 
         self.clouds.update()
         self.clouds.render(self.display, offset=render_scroll)
@@ -100,7 +134,7 @@ class Play():
                 self.enemies.remove(enemy)
         
         
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
 
         # exclamation mark above enemy heads
@@ -130,8 +164,14 @@ class Play():
             # Check if the projectile hits the player, when the player is not dashing
             elif abs(self.player.dashing) < 50:
                 if self.player.rect().collidepoint(projectile[0]):
-                    if not self.firsthit:
+                    if self.lives > 1 and not self.dead:
+                        self.lives -= 1
+
+                    elif not self.firsthit and self.lives == 1:
                         self.dead += 1
+                        if self.reasonofdeath is None:
+                            self.reasonofdeath = "enemy"
+                            self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
                         self.firsthit = True
                     self.projectiles.remove(projectile)
                     for i in range(30):
@@ -154,34 +194,114 @@ class Play():
             if kill:
                 self.particles.remove(particle)
         
+        # Load respawn screen
+        if self.respawn:
+            self.felltransition += 1
+            if self.felltransition > 60:
+                self.player.pos = self.playerrespawn
+                self.deductlife = True
+                self.respawn = False
+                self.felltransition = -60
+
         # Load dead screen
         if self.deadscreen:
+            self.movements = [False, False]
+            if not self.playedwaste and not self.respawn:
+                self.playedwaste = True   
+                self.game.sfx['wasted'].play()
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(self.deadscreentrans)
             self.display.blit(img, (0,0))
-            if self.dead > 120:
-                self.dead = 0
-                self.firsthit = False
-                self.load_level(0)
+
+            if self.dead > 135 and not self.respawn:
+                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 72), (255, 0, 0), 600, 250, self.display)
+                render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
+                render_text("Press SPACE to restart", pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 600, self.display)
+                pygame.display.update()
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            if self.dead > 135:
+                                self.restart = True
+
+            else:
+                pygame.event.clear()
+            
+            # Restart the game
+            if self.restart:
+                self.transition += 1
+                if self.transition > 75:
+                    self.lives = self.player.lives
+                    self.dead = 0
+                    self.firsthit = False
+                    self.deadscreen = False
+                    self.deadmsg = ""
+                    self.reasonofdeath = None
+                    self.load_level(self.level)
+                    self.playedwaste = False
+                    self.restart = False
+                    self.game.sfx['wasted'].stop()
+                    self.transition = -75
+                    self.shut = False
+                    # self.game.sfx['ambience'].play(-1)
+
 
         # This part will check the movements of the player
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.movements[0] = True
-                if event.key == pygame.K_d:
-                    self.movements[1] = True
-                if event.key == pygame.K_w:
-                    self.player.jump()
-                if event.key == pygame.K_SPACE:
-                    self.player.dash()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    self.movements[0] = False
-                if event.key == pygame.K_d:
-                    self.movements[1] = False
+        if not self.dead:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        self.movements[0] = True
+                    if event.key == pygame.K_d:
+                        self.movements[1] = True
+                    if event.key == pygame.K_w:
+                        self.player.jump()
+                    if event.key == pygame.K_SPACE:
+                        self.player.dash()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_a:
+                        self.movements[0] = False
+                    if event.key == pygame.K_d:
+                        self.movements[1] = False
+        else:
+            pygame.event.clear()
         
+        # Dim the screen and slowly light up evertime the map refreshes
+        if self.transition != 0:
+            img = pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(min(200, abs(self.transition) * 2))
+            self.display.blit(img, (0,0))
+
+        if self.felltransition != 0:
+            img = pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(min(200, abs(self.felltransition) * 4))
+            self.display.blit(img, (0,0))
+
+        # Secondary screen, used for transition when dead
+        if self.transition:
+            transition_surf = pygame.Surface((1200, 675))
+            self.shut = True if self.transition in range(70, 135) else False
+            if self.transition < 0:
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
+
+            elif self.transition > 0:
+                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
+                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
+            transition_surf.set_colorkey((0, 0, 0))
+            self.display.blit(transition_surf, (0, 0))
+
+        # secondary screen, used for transition when falling
+        if self.felltransition:
+            transition_surf = pygame.Surface((1200, 675))
+            pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (60 - abs(self.felltransition)) * 30)
+            transition_surf.set_colorkey((255, 255, 255))
+            self.display.blit(transition_surf, (0, 0))
+
+        # print(self.lives, self.player.lives)
