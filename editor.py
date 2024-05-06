@@ -1,218 +1,184 @@
 import pygame
-import button
-import json
+import sys
+from utils import *
+from tilemap import Tilemap
 
-pygame.init()
+# No use of render scale, we render 1:1
+RENDER_SCALE = 2
 
-clock = pygame.time.Clock()
-FPS = 60
+class Editor:
+    def __init__(self):
+        pygame.init()
 
+        pygame.display.set_caption('Just A Game')
+        self.screen = pygame.display.set_mode((1200, 675))
+        self.display = pygame.Surface((1200, 675))
+        self.clock = pygame.time.Clock()
 
- 
+        self.assets = {
+            "decor": scale_images(load_images("tiles/decor")),
+            "grass": scale_images(load_images("tiles/grass")),
+            "stone": scale_images(load_images("tiles/stone")),
+            "large_decor": scale_images(load_images("tiles/large_decor")),
+            "spawners": scale_images(load_images("tiles/spawners")),
+        }
 
-#game window
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 640
-LOWER_MARGIN = 100
-SIDE_MARGIN = 300
+        self.tilemap = Tilemap(self, tile_Size=32)
+        self.movements = [False, False, False, False]
 
-screen = pygame.display.set_mode((SCREEN_WIDTH + SIDE_MARGIN, SCREEN_HEIGHT + LOWER_MARGIN))
-pygame.display.set_caption('Just A Game')
+        try:
+            self.tilemap.load('map.json')
+        except FileNotFoundError:
+            pass
 
+        self.scroll = [0, 0]
 
-#define game variables
-ROWS = 16
-MAX_COLS = 150
-TILE_SIZE = SCREEN_HEIGHT // ROWS
-TILE_TYPES = 21
-level = 0
-current_tile = 0
-scroll_left = False
-scroll_right = False
-scroll = 0
-scroll_speed = 1
+        self.tile_list = list(self.assets)
+        self.tile_group = 0
+        self.tile_variant = 0
 
+        self.clicking = False
+        self.right_clicking = False
+        self.shift = False
+        self.ongrid = True
+        self.count = 0
 
-#load images
-pine1_img = pygame.image.load('data/images/background/pine1.png').convert_alpha()
-pine2_img = pygame.image.load('data/images/background/pine2.png').convert_alpha()
-mountain_img = pygame.image.load('data/images/background/mountain.png').convert_alpha()
-sky_img = pygame.image.load('data/images/background/sky_cloud.png').convert_alpha()
-#store tiles in a list
-img_list = []
-for x in range(TILE_TYPES):
-	img = pygame.image.load(f'data/images/tiles/{x}.png').convert_alpha()
-	img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
-	img_list.append(img)
+        self.bgs = [
+            scale_images(load_image("background/daybg.png"), (1200, 675)),
+            scale_images(load_image("background/nightbg.png"), (1200, 675))
+        ]
 
-save_img = pygame.image.load('data/images/save_btn.png').convert_alpha()
-load_img = pygame.image.load('data/images/load_btn.png').convert_alpha()
+    def draw_tile_selector(self):
+        # Draw the tile selector
+        tile_selector_y = 20
+        for i, tile_group in enumerate(self.tile_list):
+            tile_img = self.assets[tile_group][0]  # Only use the first variant for the selector
+            self.display.blit(tile_img, (20, tile_selector_y))
+            if i == self.tile_group:
+                pygame.draw.rect(self.display, (255, 0, 0), (18, tile_selector_y - 2, tile_img.get_width() + 4, tile_img.get_height() + 4), 2)
+            tile_selector_y += tile_img.get_height() + 10
 
+    def draw_grid(self):
+        # Draw grid if needed
+        if self.ongrid:
+            for x in range(0, self.display.get_width(), self.tilemap.tile_size):
+                pygame.draw.line(self.display, (100, 100, 100), (x, 0), (x, self.display.get_height()))
+            for y in range(0, self.display.get_height(), self.tilemap.tile_size):
+                pygame.draw.line(self.display, (100, 100, 100), (0, y), (self.display.get_width(), y))
 
-#define colours
-GREEN = (144, 201, 120)
-WHITE = (255, 255, 255)
-RED = (200, 25, 25)
+    def run(self):
+        while True:
 
-#define font
-font = pygame.font.SysFont('Futura', 30)
+            self.scroll[0] += (self.movements[1] - self.movements[0])
+            self.scroll[1] += (self.movements[3] - self.movements[2])
 
-#create empty tile list
-world_data = []
-for row in range(ROWS):
-	r = [-1] * MAX_COLS
-	world_data.append(r)
+            self.display.fill((255, 255, 255))
+            self.display.blit(self.bgs[self.count], (0, 0))
 
-#create ground
-for tile in range(0, MAX_COLS):
-	world_data[ROWS - 1][tile] = 0
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+            self.tilemap.render(self.display, offset=render_scroll)
 
-SAVE_FILE_PATH = f'level{level}_data.json'
+            self.draw_tile_selector()  # Draw tile selector
+            self.draw_grid()  # Draw grid
 
+            current_tile = self.assets[self.tile_list[self.tile_group]][self.tile_variant].copy()
+            current_tile.set_alpha(200)
 
-#function for outputting text onto the screen
-def draw_text(text, font, text_col, x, y):
-	img = font.render(text, True, text_col)
-	screen.blit(img, (x, y))
+            mousepos = pygame.mouse.get_pos()
+            tile_pos = (int((mousepos[0] + self.scroll[0]) // self.tilemap.tile_size),
+                        int((mousepos[1] + self.scroll[1]) // self.tilemap.tile_size))
+            if self.ongrid:
+                self.display.blit(current_tile, (tile_pos[0] * self.tilemap.tile_size - self.scroll[0],
+                                                  tile_pos[1] * self.tilemap.tile_size - self.scroll[1]))
+            else:
+                self.display.blit(current_tile, mousepos)
 
+            if self.clicking and self.ongrid:
+                self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])] = {'type': self.tile_list[self.tile_group],
+                                                                                    'variant': self.tile_variant,
+                                                                                    'pos': tile_pos}
+            if self.right_clicking:
+                if str(tile_pos[0]) + ';' + str(tile_pos[1]) in self.tilemap.tilemap:
+                    del self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])]
 
-#create function for drawing background
-def draw_bg():
-	screen.fill(GREEN)
-	width = sky_img.get_width()
-	for x in range(4):
-		screen.blit(sky_img, ((x * width) - scroll * 0.5, 0))
-		screen.blit(mountain_img, ((x * width) - scroll * 0.6, SCREEN_HEIGHT - mountain_img.get_height() - 300))
-		screen.blit(pine1_img, ((x * width) - scroll * 0.7, SCREEN_HEIGHT - pine1_img.get_height() - 150))
-		screen.blit(pine2_img, ((x * width) - scroll * 0.8, SCREEN_HEIGHT - pine2_img.get_height()))
+                for tile in self.tilemap.offgrid_tiles.copy():
+                    tile_img = self.assets[tile['type']][tile['variant']]
+                    tile_r = pygame.Rect(tile['pos'][0] - self.scroll[0], tile['pos'][1] - self.scroll[1],
+                                          tile_img.get_width(), tile_img.get_height())
+                    if tile_r.collidepoint(mousepos):
+                        self.tilemap.offgrid_tiles.remove(tile)
 
-#draw grid
-def draw_grid():
-	#vertical lines
-	for c in range(MAX_COLS + 1):
-		pygame.draw.line(screen, WHITE, (c * TILE_SIZE - scroll, 0), (c * TILE_SIZE - scroll, SCREEN_HEIGHT))
-	#horizontal lines
-	for c in range(ROWS + 1):
-		pygame.draw.line(screen, WHITE, (0, c * TILE_SIZE), (SCREEN_WIDTH, c * TILE_SIZE))
+            self.display.blit(current_tile, (20, 20))
 
+            # This part will check the movements of the player
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.clicking = True
+                        if not self.ongrid:
+                            self.tilemap.offgrid_tiles.append({'type': self.tile_list[self.tile_group],
+                                                                'variant': self.tile_variant,
+                                                                'pos': (mousepos[0] + self.scroll[0],
+                                                                        mousepos[1] + self.scroll[1])})
+                    if event.button == 3:
+                        self.right_clicking = True
+                    if self.shift:
+                        if event.button == 4:
+                            self.tile_variant = (self.tile_variant - 1) % len(
+                                self.assets[self.tile_list[self.tile_group]])
+                        if event.button == 5:
+                            self.tile_variant = (self.tile_variant + 1) % len(
+                                self.assets[self.tile_list[self.tile_group]])
+                    else:
+                        if event.button == 4:
+                            self.tile_group = (self.tile_group - 1) % len(self.tile_list)
+                            self.tile_variant = 0
+                        if event.button == 5:
+                            self.tile_group = (self.tile_group + 1) % len(self.tile_list)
+                            self.tile_variant = 0
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        self.clicking = False
+                    if event.button == 3:
+                        self.right_clicking = False
 
-#function for drawing the world tiles
-def draw_world():
-	for y, row in enumerate(world_data):
-		for x, tile in enumerate(row):
-			if tile >= 0:
-				screen.blit(img_list[tile], (x * TILE_SIZE - scroll, y * TILE_SIZE))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        # Loop through the backgrounds
+                        self.count += 1
+                        self.count %= len(self.bgs)
+                    if event.key == pygame.K_o:
+                        self.tilemap.save("map.json")
+                    if event.key == pygame.K_a:
+                        self.movements[0] = True
+                    if event.key == pygame.K_d:
+                        self.movements[1] = True
+                    if event.key == pygame.K_w:
+                        self.movements[2] = True
+                    if event.key == pygame.K_s:
+                        self.movements[3] = True
+                    if event.key == pygame.K_g:
+                        self.ongrid = not self.ongrid
+                    if event.key == pygame.K_LSHIFT:
+                        self.shift = True
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_a:
+                        self.movements[0] = False
+                    if event.key == pygame.K_d:
+                        self.movements[1] = False
+                    if event.key == pygame.K_w:
+                        self.movements[2] = False
+                    if event.key == pygame.K_s:
+                        self.movements[3] = False
+                    if event.key == pygame.K_LSHIFT:
+                        self.shift = False
 
-
-
-#create buttons
-save_button = button.Button(SCREEN_WIDTH // 2, SCREEN_HEIGHT + LOWER_MARGIN - 50, save_img, 1)
-load_button = button.Button(SCREEN_WIDTH // 2 + 200, SCREEN_HEIGHT + LOWER_MARGIN - 50, load_img, 1)
-#make a button list
-button_list = []
-button_col = 0
-button_row = 0
-for i in range(len(img_list)):
-	tile_button = button.Button(SCREEN_WIDTH + (75 * button_col) + 50, 75 * button_row + 50, img_list[i], 1)
-	button_list.append(tile_button)
-	button_col += 1
-	if button_col == 3:
-		button_row += 1
-		button_col = 0
-
-
-run = True
-while run:
-
-	clock.tick(FPS)
-
-	draw_bg()
-	draw_grid()
-	draw_world()
-
-	draw_text(f'Level: {level}', font, WHITE, 10, SCREEN_HEIGHT + LOWER_MARGIN - 90)
-	draw_text('Press UP or DOWN to change level', font, WHITE, 10, SCREEN_HEIGHT + LOWER_MARGIN - 60)
-
-	#save and load data
-	if save_button.draw(screen):
-		#save level data to JSON file
-		save_file_path = f'level{level}_data.json'
-		with open(SAVE_FILE_PATH, 'w', newline='') as jsonfile:
-			json.dump(world_data, json_file)
-
-	if load_button.draw(screen):
-		#Load level data from JSON file
-		#reset scroll back to the start of the level
-		scroll = 0
-		save_file_path = f'level{level}_data.json'
-		with open(SAVE_FILE_PATH, 'r') as json_file:
-			world_data = json.load(json_file)
-		#alternative pickle method
-		#world_data = []
-		#pickle_in = open(f'level{level}_data', 'rb')
-		#world_data = pickle.load(pickle_in)
-				
-
-	#draw tile panel and tiles
-	pygame.draw.rect(screen, GREEN, (SCREEN_WIDTH, 0, SIDE_MARGIN, SCREEN_HEIGHT))
-
-	#choose a tile
-	button_count = 0
-	for button_count, i in enumerate(button_list):
-		if i.draw(screen):
-			current_tile = button_count
-
-	#highlight the selected tile
-	pygame.draw.rect(screen, RED, button_list[current_tile].rect, 3)
-
-	#scroll the map
-	if scroll_left == True and scroll > 0:
-		scroll -= 5 * scroll_speed
-	if scroll_right == True and scroll < (MAX_COLS * TILE_SIZE) - SCREEN_WIDTH:
-		scroll += 5 * scroll_speed
-
-	#add new tiles to the screen
-	#get mouse position
-	pos = pygame.mouse.get_pos()
-	x = (pos[0] + scroll) // TILE_SIZE
-	y = pos[1] // TILE_SIZE
-
-	#check that the coordinates are within the tile area
-	if pos[0] < SCREEN_WIDTH and pos[1] < SCREEN_HEIGHT:
-		#update tile value
-		if pygame.mouse.get_pressed()[0] == 1:
-			if world_data[y][x] != current_tile:
-				world_data[y][x] = current_tile
-		if pygame.mouse.get_pressed()[2] == 1:
-			world_data[y][x] = -1
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            pygame.display.update()
+            self.clock.tick(60)
 
 
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			run = False
-		#keyboard presses
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_UP:
-				level += 1
-			if event.key == pygame.K_DOWN and level > 0:
-				level -= 1
-			if event.key == pygame.K_LEFT:
-				scroll_left = True
-			if event.key == pygame.K_RIGHT:
-				scroll_right = True
-			if event.key == pygame.K_RSHIFT:
-				scroll_speed = 5
-
-
-		if event.type == pygame.KEYUP:
-			if event.key == pygame.K_LEFT:
-				scroll_left = False
-			if event.key == pygame.K_RIGHT:
-				scroll_right = False
-			if event.key == pygame.K_RSHIFT:
-				scroll_speed = 1
-
-
-	pygame.display.update()
-
-pygame.quit()
+Editor().run()
