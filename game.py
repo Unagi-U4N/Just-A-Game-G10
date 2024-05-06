@@ -22,7 +22,6 @@ class Game:
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
-
         self.assets= {
             "player": load_image("entities/player.png"),
             "decor": scale_images(load_images("tiles/decor")),
@@ -65,7 +64,6 @@ class Game:
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
-        self.newgame = playerprofile.NewGame(self.display)
         
         self.state = "start"
 
