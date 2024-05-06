@@ -53,6 +53,8 @@ class Game:
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
             "arrow": scale_images(load_image("arrow.png"), scale= 2),
+            "pause": scale_images(load_image("pause.png"), scale=0.15),
+            "info": scale_images(load_image("info.png"), scale=0.15),
         }
 
         self.sfx = {
@@ -73,7 +75,7 @@ class Game:
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
-        self.state = "cutscene"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
