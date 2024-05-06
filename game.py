@@ -8,6 +8,7 @@ import pygame, sys
 from utils import *
 from startscreen import StartScreen
 import play
+import playerprofile
 
 class Game:
     def __init__(self):
@@ -64,6 +65,7 @@ class Game:
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
+        self.newgame = playerprofile.NewGame(self.display)
         
         self.state = "start"
 
@@ -87,7 +89,8 @@ class Game:
                     sys.exit()
 
             if self.state == "game":
-                self.game.run()
+                # self.game.run()
+                self.newgame.run()
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
