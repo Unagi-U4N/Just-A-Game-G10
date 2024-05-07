@@ -328,22 +328,25 @@ class Play():
             img.fill((0,0,0))
             img.set_alpha(150)
             self.display.blit(img, (0,0))
-            render_img(self.assets["pause"], 0, 0, self.display, centered=False)
-            quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
-            resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+            if self.choice == "pause":
+                render_img(self.assets["pause"], 0, 0, self.display, centered=False)
+                quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
+                resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+
+                if resume:
+                    self.pause = not self.pause
+                if quit:
+                    pygame.quit()
+                    sys.exit()
+
+            elif self.choice == "info":
+                render_img(self.assets["controls"], 0, 0, self.display, centered=False)
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.pause = not self.pause
-
-            if resume:
-                self.pause = not self.pause
-
-            if quit:
-                pygame.quit()
-                sys.exit()
-
+                        
         # This part will check the controls of the player
         if not self.dead and not self.pause:
             for event in pygame.event.get():
@@ -352,6 +355,7 @@ class Play():
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        self.choice = "pause"
                         self.pause = not self.pause
                     if event.key == pygame.K_a:
                         self.movements[0] = True
