@@ -26,6 +26,7 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+            "Outro": load_script("Outro"),
         }
         
         self.assets= {
@@ -101,11 +102,11 @@ class Game:
             if self.state == "game":
                 self.game.run()
 
-            # if self.state == "cutscene":
-            #     if self.cutscene == "Intro":
-            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-            #         cutscenes.run(cutscene, True)
-            #         self.state = "game"
+            if self.state == "cutscene":
+                if self.cutscene == "Intro":
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.run(cutscene, True)
+                    self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

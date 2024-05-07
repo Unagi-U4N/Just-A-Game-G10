@@ -3,13 +3,17 @@ from utils import *
 
 def get_cutscene(game, type, cutscenes, screen):
     
-    Cutscenes = {}
+    Cutscenes = {"Intro": {}, "Outro": {}}
     
+    # Cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
 
-    for scene in cutscenes[type]:
-        Cutscenes[scene] = Cutscene(game, cutscenes[type][scene][0], (50, 50), 20, 50, screen, cutscenes[type][scene][1])
+    if type == "Intro":
+        Cutscenes["Intro"] = Cutscene(game, cutscenes[type]["0"][0], (50, 50), 20, 50, screen, cutscenes[type]["0"][1])
 
-    return Cutscenes
+    elif type == "Outro":
+        Cutscenes["Outro"] = Cutscene(game, cutscenes[type]["1"][0], (50, 50), 20, 50, screen, cutscenes[type]["1"][1])
+
+    return Cutscenes[type]
 
 def run(scenes, fade=False):
     num = 0
