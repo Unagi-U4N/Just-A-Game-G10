@@ -5,14 +5,14 @@ import random
 class PlayerProfile:
     def __init__(self, game):
         # self.img = game.assets["newgame"]
+        self.timer = 0
         self.game = game
         self.display = game.display
         self.name = ""
-        self.names = []
         self.data = []
         self.saveprofile = False
-        self.font = pygame.font.Font('freesansbold.ttf', 40)
-        self.bg = game.assets["newgame"]
+        self.font = pygame.font.Font(self.game.font, 60)
+        self.bg = game.assets["newgamebg"]
         self.exist = False
             
     # read profile
@@ -26,18 +26,20 @@ class PlayerProfile:
                         pass
                     for j, col in enumerate(row):
                         if j == 0:
-                            # render_text(col, self.font, "black", 160, 400 + i * 40, self.display, centered=True)
+                            render_text(col, self.font, "black", 160, 400 + i * 40, self.display, centered=True)
 
         # Create profile
     def create_profile(self):
         with open("profile.csv", "r") as file:
             for row in csv.reader(file):
-                if self.name == row[0]:
+                if self.name == row[0] and not self.saveprofile:
                     render_text("Profile already exists", self.font, "red", 600, 400, self.display, centered=True)
                     self.exist = True
-                    print(self.exist)
-                if len(self.name) > 10:
-                    render_text("Profile name exceeds word limit", self.font, "red", 600, 400, self.display, centered=True)
+                if len(self.name) >= 10:
+                    render_text("Profile name too long", self.font, "red", 600, 400, self.display, centered=True)
+                    self.exist = True
+                else:
+                    self.exist = False
 
             # Get player keyboard alphabet input
             for event in pygame.event.get():
@@ -48,22 +50,23 @@ class PlayerProfile:
                             with open("profile.csv", "a", newline="") as file:
                                 self.saveprofile = True
                                 writer = csv.writer(file)
-                                writer.writerow([self.name, 1, 0, 1.5, 3 ])
+                                writer.writerow([self.name, 0, 0, 1.5, 3 ])
                                 file.close()
                             
                     elif event.key == pygame.K_BACKSPACE:
                         self.name = self.name[:-1]
                     else:
                         # only get alphabets
-                        if event.unicode.isalpha():
+                        if event.unicode.isalpha() and len(self.name) < 10:
                             self.name += event.unicode
 
             if self.saveprofile:
-                self.data = [self.name, 1, 0, 1.5, 3]
-                self.name = ""
+                self.data = [self.name, 0, 0, 1.5, 3]
                 render_text("Profile created", self.font, "black", 600, 400, self.display, centered=True)
                 pygame.display.update()
-                return self.data
+                self.timer += 1
+                if self.timer >= 60:
+                    return self.data
 
             render_text(self.name, self.font, "black", 600, 340, self.display, centered=True)
             
@@ -71,7 +74,7 @@ class PlayerProfile:
     def run(self, choice):
         self.display.blit(self.bg, (0,0))
         if choice == "new":
-            self.create_profile()
+            return self.create_profile()
         if choice == "load":
             self.read_profile()
         pygame.display.update()

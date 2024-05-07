@@ -7,8 +7,9 @@
 import pygame, sys
 from utils import *
 from startscreen import StartScreen
-import play
+from play import *
 from playerprofile import *
+import cutscenes
 
 class Game:
     def __init__(self):
@@ -18,11 +19,14 @@ class Game:
         self.screen = pygame.display.set_mode((1200, 675))
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
+        self.loaded = False
         self.particles = []
+        self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
         self.intro = {}
+        self.font = "data/monogram.ttf"
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
@@ -72,10 +76,10 @@ class Game:
         self.sfx['jump'].set_volume(0.7)
         self.sfx['wasted'].set_volume(1.5)
         
-        self.game = play.Play(self)
         self.startscreen = StartScreen(self)
+        self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "loadgame"
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
@@ -91,9 +95,6 @@ class Game:
                 newloadexit = self.startscreen.run()
                 if newloadexit == "New Game":
                     self.state = "newgame"
-                    # self.state = "cutscene"
-                    # self.cutscene = "Intro"
-                    # self.state = "game"
                 elif newloadexit == "Load Game":
                     self.state = "game"
                 elif newloadexit == "Exit Game":
@@ -101,21 +102,26 @@ class Game:
                     sys.exit()
 
             if self.state == "game":
+                if not self.loaded:
+                    self.game.load(self.data)
+                    self.loaded = True
                 self.game.run()
 
             if self.state == "newgame":
                 self.data = self.profile.run("new")
-                # print(self.data)
+                if self.data is not None:
+                    self.state = "cutscene"
+                    self.cutscene = "Intro"
 
             if self.state == "loadgame":
                 self.profile.run("load")
                 # self.state = "game"
 
-            # if self.state == "cutscene":
-            #     if self.cutscene == "Intro":
-            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-            #         cutscenes.run(cutscene, True)
-            #         self.state = "game"
+            if self.state == "cutscene":
+                if self.cutscene == "Intro":
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.run(cutscene, True)
+                    self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

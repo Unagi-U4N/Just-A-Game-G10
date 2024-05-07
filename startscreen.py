@@ -16,7 +16,7 @@ class StartScreen:
         self.height = 675
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
-        self.player = Player(game, (100, 50), (16, 30), 1.5)
+        self.player = Player(game, (100, 50))
         self.tilemap = Tilemap(game, tile_Size=32)
         self.bg = scale_images(self.assets["day"],(1200, 675))
         self.cooldown = 60
@@ -87,8 +87,8 @@ class StartScreen:
             if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 300), int(self.player.pos[0] + self.display.get_width() / 2 + 300)):
                 enemy.render(self.display, offset=render_scroll)
                 if enemy.name != "":
-                    font1 = pygame.font.Font('freesansbold.ttf', 32)
-                    font2 = pygame.font.Font('freesansbold.ttf', 24)
+                    font1 = pygame.font.Font(self.game.font, 45)
+                    font2 = pygame.font.Font(self.game.font, 40)
                     render_text(enemy.name, font1, (0, 0, 0), enemy.pos[0] - self.scroll[0], enemy.pos[1] - self.scroll[1] - 50, self.display, False)
                     if self.player.rect().colliderect(enemy.interact):
                         render_text("Press SPACE to dash", font2, (0, 0, 0), 600, 550, self.display)
