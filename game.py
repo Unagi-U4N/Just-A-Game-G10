@@ -70,8 +70,8 @@ class Game:
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
-            "profileup": scale_images(load_image("button/profileup.png"), scale= 1),
-            "profiledown": scale_images(load_image("button/profiledown.png"), scale= 1),
+            "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
+            "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
         }
 
         self.sfx = {
@@ -122,22 +122,28 @@ class Game:
                 self.game.run()
 
             if self.state == "newgame":
-                self.data = self.profile.run("new")
-                if self.data is not None:
+                self.data = self.profile.create_profile()
+                if type(self.data) is list:
                     self.state = "cutscene"
                     self.cutscene = "Intro"
+                if self.data == "start":
+                    self.startscreen = StartScreen(self)
+                    self.state = "start"
 
             if self.state == "loadgame":
-                self.data = self.profile.run("load")
-                if self.data is not None:
+                self.data = self.profile.read_profile()
+                if type(self.data) is list:
                     self.state = "game"
+                elif self.data == "start":
+                    self.startscreen = StartScreen(self)
+                    self.state = "start"
 
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.run(cutscene, True)
                     self.state = "game"
-
+            
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
             self.clock.tick(60)
