@@ -16,6 +16,13 @@ class Play():
 
         # data = [playername, level, gold, speed, HP]
         pygame.init()
+        self.mousepos = (0, 0)
+        self.pausetimer = 50
+        self.clickpause = False
+        self.enemykill = True
+        self.leafkill = True
+        self.choice = ""
+        self.pause = False
         self.game = game
         self.screen = game.screen
         self.display = game.display
@@ -23,6 +30,7 @@ class Play():
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
         self.playerrespawn = (0, 0)
+        self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = self.assets["day"]
         self.reasonofdeath = None
@@ -47,6 +55,27 @@ class Play():
         self.lives = self.player.HP
         self.load_level(self.level)
 
+    def check_button(self):
+        # Check if the pause or info button is clicked
+        pause = render_img(self.assets["pausebuttonround"], 70, 70, self.display, True, True)
+        info = render_img(self.assets["info"], 140, 70, self.display, True, True)
+
+        self.clickpause = True
+        if pause:
+            if self.pausetimer > 50:
+                self.pause = not self.pause
+                self.choice = "pause"
+                self.pausetimer = 0
+        elif info:
+            if self.pausetimer > 50:
+                self.pause = not self.pause
+                self.choice = "info"
+                self.pausetimer = 0
+
+        # Limit the button to be clicked once every 50 frames
+        if self.clickpause:
+            self.pausetimer += 1
+
     def load_level(self, map_id):
 
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
@@ -61,7 +90,7 @@ class Play():
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
             else:
-                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=1)) # Scaled
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=3)) # Scaled
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -88,11 +117,87 @@ class Play():
             self.game.exclamation.clear()
         self.exclamation = self.game.exclamation
 
+    def update(self):
+        self.clouds.update()
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.render(self.display, offset=self.render_scroll)
+
+        for enemy in self.enemies.copy():
+            self.enemykill = enemy.update(self.tilemap, (0, 0))
+            if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+                enemy.render(self.display, offset=self.render_scroll)
+
+            if self.enemykill:
+                self.enemies.remove(enemy)
+
+        # [[x, y], direction, timer]
+        for projectile in self.projectiles.copy():
+            projectile[0][0] += projectile[1]
+            projectile[2] += 1
+            img = self.assets['projectile']
+            self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - self.render_scroll[0], projectile[0][1] - img.get_height() / 2 - self.render_scroll[1]))
+            
+            # Check if the projectile hits a solid tile
+            if self.tilemap.solid_check(projectile[0]):
+                self.projectiles.remove(projectile)
+                for i in range(4):
+                    self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random(), (255,0,0)))
+            
+            # Check if the projectile is out of bounds
+            elif projectile[2] > 360:
+                self.projectiles.remove(projectile)
+
+            # Check if the projectile hits the player, when the player is not dashing
+            elif abs(self.player.dashing) < 50:
+                if self.player.rect().collidepoint(projectile[0]):
+                    if self.lives > 1 and not self.dead:
+                        self.lives -= 1
+
+                    elif not self.firsthit and self.lives == 1:
+                        self.dead += 1
+                        if self.reasonofdeath is None:
+                            self.reasonofdeath = "enemy"
+                            self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
+                        self.firsthit = True
+                    self.projectiles.remove(projectile)
+                    for i in range(30):
+                        angle = random.random() * math.pi * 2
+                        speed = random.random() * 5
+                        self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random(), (255,0,0)))
+                        self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+        
+        # exclamation mark above enemy heads
+        for exclamation in self.exclamation.copy():
+            img = self.assets['!']
+            if int(exclamation[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+                self.display.blit(img, (exclamation[0] - img.get_width() / 2 - self.render_scroll[0], exclamation[1] - img.get_height() - self.render_scroll[1] - 20))
+                self.exclamation.remove(exclamation)
+
+        for rect in self.leaf_spawners:
+            if random.random() * 49999 < rect.width * rect.height:
+                pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
+                self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+
+        for particle in self.particles.copy():
+            kill = particle.update()
+            particle.render(self.display, offset=self.render_scroll)
+            if particle.type == 'leaf':
+                particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3
+            if kill:
+                self.particles.remove(particle)
+
+        for spark in self.sparks.copy():
+            kill = spark.update()
+            spark.render(self.display, offset=self.render_scroll)
+            if kill:
+                self.sparks.remove(spark)
+        
     def run(self):
 
         print(self.player.HP, self.player.speed)
         
         self.display.blit(self.daybg, (0, 0))
+        self.mousepos = pygame.mouse.get_pos()
 
         if self.transition < 0:
             self.transition += 1
@@ -119,88 +224,17 @@ class Play():
         # Make sure that the player is always in the middle of the screen
         self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
         self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5) / 20
-        render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+        self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
-        
-        for rect in self.leaf_spawners:
-            if random.random() * 49999 < rect.width * rect.height:
-                pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
-                self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
-        
+        self.clouds.render(self.display, offset=self.render_scroll)
+        self.tilemap.render(self.display, offset=self.render_scroll)
 
-        self.clouds.update()
-        self.clouds.render(self.display, offset=render_scroll)
+        for enemy in self.enemies:
+            enemy.render(self.display, offset=self.render_scroll)
 
-        self.tilemap.render(self.display, offset=render_scroll)
-        
-        for enemy in self.enemies.copy():
-            kill = enemy.update(self.tilemap, (0, 0))
-            if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
-                enemy.render(self.display, offset=render_scroll)
-
-            if kill:
-                self.enemies.remove(enemy)
-        
-        
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
-        self.player.render(self.display, offset=render_scroll)
-
-        # exclamation mark above enemy heads
-        for exclamation in self.exclamation.copy():
-            img = self.assets['!']
-            if int(exclamation[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
-                self.display.blit(img, (exclamation[0] - img.get_width() / 2 - render_scroll[0], exclamation[1] - img.get_height() - render_scroll[1] - 20))
-                self.exclamation.remove(exclamation)
-        
-        # [[x, y], direction, timer]
-        for projectile in self.projectiles.copy():
-            projectile[0][0] += projectile[1]
-            projectile[2] += 1
-            img = self.assets['projectile']
-            self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1]))
-            
-            # Check if the projectile hits a solid tile
-            if self.tilemap.solid_check(projectile[0]):
-                self.projectiles.remove(projectile)
-                for i in range(4):
-                    self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random(), (255,0,0)))
-            
-            # Check if the projectile is out of bounds
-            elif projectile[2] > 360:
-                self.projectiles.remove(projectile)
-            
-            # Check if the projectile hits the player, when the player is not dashing
-            elif abs(self.player.dashing) < 50:
-                if self.player.rect().collidepoint(projectile[0]):
-                    if self.lives > 1 and not self.dead:
-                        self.lives -= 1
-
-                    elif not self.firsthit and self.lives == 1:
-                        self.dead += 1
-                        if self.reasonofdeath is None:
-                            self.reasonofdeath = "enemy"
-                            self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
-                        self.firsthit = True
-                    self.projectiles.remove(projectile)
-                    for i in range(30):
-                        angle = random.random() * math.pi * 2
-                        speed = random.random() * 5
-                        self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random(), (255,0,0)))
-                        self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-             
-        for spark in self.sparks.copy():
-            kill = spark.update()
-            spark.render(self.display, offset=render_scroll)
-            if kill:
-                self.sparks.remove(spark)
-
-        for particle in self.particles.copy():
-            kill = particle.update()
-            particle.render(self.display, offset=render_scroll)
-            if particle.type == 'leaf':
-                particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3
-            if kill:
-                self.particles.remove(particle)
+        self.check_button()
+        if not self.pause:
+            self.update()
         
         # Load respawn screen
         if self.respawn:
@@ -254,14 +288,83 @@ class Play():
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
 
+        if self.pause:
 
-        # This part will check the movements of the player
-        if not self.dead:
+            self.player.render(self.display, offset=self.render_scroll)
+
+            # [[x, y], direction, timer]
+            for projectile in self.projectiles.copy():
+                img = self.assets['projectile']
+                self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - self.render_scroll[0], projectile[0][1] - img.get_height() / 2 - self.render_scroll[1]))
+                
+                # Check if the projectile hits a solid tile
+                if self.tilemap.solid_check(projectile[0]):
+                    self.projectiles.remove(projectile)
+                    for i in range(4):
+                        self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random(), (255,0,0)))
+                
+                # Check if the projectile is out of bounds
+                elif projectile[2] > 360:
+                    self.projectiles.remove(projectile)
+                
+                # Check if the projectile hits the player, when the player is not dashing
+                elif abs(self.player.dashing) < 50:
+                    if self.player.rect().collidepoint(projectile[0]):
+                        if self.lives > 1 and not self.dead:
+                            self.lives -= 1
+
+                        elif not self.firsthit and self.lives == 1:
+                            self.dead += 1
+                            if self.reasonofdeath is None:
+                                self.reasonofdeath = "enemy"
+                                self.deadmsg = random.choice(self.death_msg[self.reasonofdeath])
+                            self.firsthit = True
+                        self.projectiles.remove(projectile)
+                        for i in range(30):
+                            angle = random.random() * math.pi * 2
+                            speed = random.random() * 5
+                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random(), (255,0,0)))
+                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+
+            for particle in self.particles.copy():
+                particle.render(self.display, offset=self.render_scroll)
+
+            for spark in self.sparks.copy():
+                spark.render(self.display, offset=self.render_scroll)
+            
+            img=pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(150)
+            self.display.blit(img, (0,0))
+            if self.choice == "pause":
+                render_img(self.assets["pause"], 0, 0, self.display, centered=False)
+                quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
+                resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+
+                if resume:
+                    self.pause = not self.pause
+                if quit:
+                    pygame.quit()
+                    sys.exit()
+
+            elif self.choice == "info":
+                render_img(self.assets["controls"], 0, 0, self.display, centered=False)
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause = not self.pause
+                        
+        # This part will check the controls of the player
+        if not self.dead and not self.pause:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.choice = "pause"
+                        self.pause = not self.pause
                     if event.key == pygame.K_a:
                         self.movements[0] = True
                     if event.key == pygame.K_d:
@@ -277,6 +380,7 @@ class Play():
                         self.movements[1] = False
         else:
             pygame.event.clear()
+            self.movements = [False, False]
         
         # Dim the screen and slowly light up evertime the map refreshes
         if self.transition != 0:

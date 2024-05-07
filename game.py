@@ -30,6 +30,7 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+            "Ending": load_script("Ending"),
         }
         
         self.assets= {
@@ -58,6 +59,14 @@ class Game:
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
             "arrow": scale_images(load_image("arrow.png"), scale= 2),
+            "quit": scale_images(load_image("button/quit.png"), scale=0.5),
+            "resume": scale_images(load_image("button/resume.png"), scale=0.5),
+            "quit2": scale_images(load_image("button/quit2.png"), scale=0.5),
+            "resume2": scale_images(load_image("button/resume2.png"), scale=0.5),
+            "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
+            "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
+            "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
+            "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
