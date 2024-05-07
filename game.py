@@ -58,6 +58,11 @@ class Game:
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
             "arrow": scale_images(load_image("arrow.png"), scale= 2),
+            "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
+            "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
+            "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
+            "profileup": scale_images(load_image("button/profileup.png"), scale= 1),
+            "profiledown": scale_images(load_image("button/profiledown.png"), scale= 1),
         }
 
         self.sfx = {
@@ -79,7 +84,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "loadgame"
         self.cutscene = "Intro"
 
     def run(self):
@@ -96,7 +101,7 @@ class Game:
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
-                    self.state = "game"
+                    self.state = "loadgame"
                 elif newloadexit == "Exit Game":
                     pygame.quit()
                     sys.exit()
@@ -114,8 +119,9 @@ class Game:
                     self.cutscene = "Intro"
 
             if self.state == "loadgame":
-                self.profile.run("load")
-                # self.state = "game"
+                self.data = self.profile.run("load")
+                if self.data is not None:
+                    self.state = "game"
 
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
