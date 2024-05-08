@@ -1,6 +1,24 @@
 import pygame
 from utils import *
 
+def get_dialogues(game, npc, dialogues, screen):
+
+    # Get the top right coordinates of the dialogue box and return a tuple
+    dialoguebox_pos = (350, 500)
+
+
+    Dialogues = {
+        "James": {"0": None},
+        "Ken": {"0": None, "1": None, "2": None},
+    }
+
+    # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
+    print(dialogues)
+    if npc == "James":
+        Dialogues["James"]["0"] = Dialogue(game, npc, dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+    
+    return Dialogues[npc]
+
 def get_cutscene(game, type, cutscenes, screen):
     
     Cutscenes = {"Intro": {"0": None, "1": None, "2": None, "3": None, "4": None, "5": None, "6": None, "7": None, "8": None, "9": None},
@@ -51,8 +69,9 @@ def run(scenes, fade=False):
     
     return True
 
-class Cutscene:
+class Logic:
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
+        self.fadescreenbool = False
         self.fadescreen = 255
         self.game = game
         self.msgs = msgs
@@ -74,23 +93,10 @@ class Cutscene:
     def draw(self, fade=False):
 
         if fade and self.fadescreen > 0:
-            self.fadescreen = max(0, self.fadescreen - 2)
-            self.screen.blit(self.img, (0, 0))
-            img = pygame.Surface((1200, 675))
-            img.fill((0, 0, 0))
-            img.set_alpha(self.fadescreen)
-            self.screen.blit(img, (0, 0))
-            pygame.display.flip()
+            self.fadescreenbool = True
         
-        else:
-            
-            self.screen.blit(self.img, (0, 0))
+        if not self.fadescreenbool:
 
-            if self.alldone:
-                self.status = {msg: True for msg in self.msgs}
-                self.done = True
-                render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
-            
             # If the first line of message is done, and there is still message beneath, move to the next line
             if self.done and self.lines < len(self.msgs) - 1:
                 self.status[self.msg] = True
@@ -123,3 +129,49 @@ class Cutscene:
             
             pygame.display.flip()
         
+class Cutscene(Logic):
+    def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
+        super().__init__(game, msgs, pos, size, speed, screen, img, color)
+
+    def draw(self, fade=True):
+        super().draw(fade)
+        if self.fadescreenbool:
+            self.fadescreen = max(0, self.fadescreen - 2)
+            self.screen.blit(self.img, (0, 0))
+            img = pygame.Surface((1200, 675))
+            img.fill((0, 0, 0))
+            img.set_alpha(self.fadescreen)
+            self.screen.blit(img, (0, 0))
+            pygame.display.flip()
+            self.fadescreenbool = False
+
+        if not self.fadescreenbool:
+
+            if self.img != None:
+                self.screen.blit(self.img, (0, 0))
+
+            if self.alldone:
+                self.status = {msg: True for msg in self.msgs}
+                self.done = True
+                render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
+        
+
+class Dialogue(Logic):
+    def __init__(self, game, npc, msgs, pos, size, speed, screen, img=None, color="white"):
+        super().__init__(game, msgs, pos, size, speed, screen, img, color)
+        self.img = self.game.assets["dialoguebox"]
+        self.npc = img
+        self.name = npc
+
+    def draw(self, fade=False):
+        super().draw(fade)
+        render_img(self.game.assets["day"], 0, 0, self.screen, centered=False)
+        render_img(self.img, 655, 550, self.screen)
+        render_img(scale_images(self.img, scale=0.2), 160, 610, self.screen)
+        render_text(self.name, self.font, "black", 160, 610, self.screen, centered=True)
+        render_img(self.npc, 155, 530, self.screen)
+
+        if self.alldone:
+            self.status = {msg: True for msg in self.msgs}
+            self.done = True
+            render_img(self.game.assets["arrow"], 1000, 550, self.screen,centered=True)

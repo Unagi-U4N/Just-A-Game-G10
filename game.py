@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = []
+        self.data = ["Ivan", 0, 0, 1, 10]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -31,6 +31,10 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+        }
+
+        self.dialogues = {
+            "James": load_dialogue("James"),
         }
         
         self.assets= {
@@ -72,6 +76,7 @@ class Game:
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
+            "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
         }
 
         self.sfx = {
@@ -93,7 +98,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "cutscene"
         self.cutscene = "Intro"
 
     def run(self):
@@ -140,8 +145,10 @@ class Game:
 
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.run(cutscene, True)
+                    # cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    # cutscenes.run(cutscene, True)
+                    dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
+                    cutscenes.run(dialogue, False)
                     self.state = "game"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
