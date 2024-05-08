@@ -56,7 +56,7 @@ class Cutscene:
         self.done = False
         self.alldone = False
         self.size = size
-        self.font = pygame.font.Font("freesansbold.ttf", self.size)
+        self.font = pygame.font.Font(self.game.font, self.size)
         self.snip = self.font.render("", True, self.color)
         self.status = {msg: False for msg in self.msgs}
 

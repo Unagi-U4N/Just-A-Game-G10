@@ -313,15 +313,22 @@ class Enemy(PhysicsEntity):
             surf.blit(self.game.assets["gun"], (self.rect().centerx + 6 - offset[0], self.rect().centery - offset[1]))
 
 class Player(PhysicsEntity):
-    def __init__(self, game, pos, size, speed, name=""):
-        super().__init__(game, 'player', pos, size, speed, name)
+    def __init__(self, game, pos):
+        super().__init__(game, 'player', pos, size=(16, 30))
+        self.gold = 0
+        self.name = ""
         self.air_time = 0
-        self.lives = 3
+        self.HP = 1
         self.jumps = 1
-        self.name = name
         self.wall_slide = False
         self.dashing = 0
-        self.speed = speed # default
+        self.speed = 1.5 # default
+
+    def updateprofile(self, data):
+        self.name = data[0]
+        self.gold = data[2]
+        self.speed = data[3]
+        self.HP = data[4]
 
     def airtime(self):
         if self.air_time > 120:
