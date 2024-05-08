@@ -10,7 +10,7 @@ def get_cutscene(game, type, cutscenes, screen):
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
     
     if type == "Intro":
-        Cutscenes["Intro"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (515, 480), 45, 40, screen, cutscenes[type]["0"][1])
+        Cutscenes["Intro"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (518, 480), 45, 40, screen, cutscenes[type]["0"][1])
         Cutscenes["Intro"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (75, 180), 40, 20, screen, cutscenes[type]["1"][1])
         Cutscenes["Intro"]["2"] = Cutscene(game, cutscenes[type]["2"][0], (100, 420), 40, 20, screen, cutscenes[type]["2"][1])       
         Cutscenes["Intro"]["3"] = Cutscene(game, cutscenes[type]["3"][0], (130, 230), 40, 20, screen, cutscenes[type]["3"][1])     
