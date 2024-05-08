@@ -13,6 +13,8 @@ from cutscenes import *
 
 class Play():
     def __init__(self, game):
+
+        # data = [playername, level, gold, speed, HP]
         pygame.init()
         self.mousepos = (0, 0)
         self.pausetimer = 50
@@ -26,13 +28,11 @@ class Play():
         self.display = game.display
         self.assets = game.assets
         self.clouds = Clouds(self.assets["clouds"], 16)
-        self.player = Player(game, (0, 0), (16, 30), 1.5)
-        self.lives = self.player.lives
+        self.player = Player(game, (0, 0))
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.daybg = self.assets["day"]
-        self.level = 0
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -43,10 +43,16 @@ class Play():
         self.respawn = False
         self.deadmsg = ""
         self.death_msg = {
-            "fall" : [f"Apparently {self.player.lives} lives isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
+            "fall" : [f"Apparently {self.player.HP} lives isn't enough for you", "You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
+        # self.load_level(self.level)
+    
+    def load(self, data):
+        self.player.updateprofile(data)
+        self.level = data[1]
+        self.lives = self.player.HP
         self.load_level(self.level)
 
     def check_button(self):
@@ -249,9 +255,9 @@ class Play():
             self.display.blit(img, (0,0))
 
             if self.dead > 135 and not self.respawn:
-                render_text("Wasted", pygame.font.Font('freesansbold.ttf', 72), (255, 0, 0), 600, 250, self.display)
-                render_text(self.deadmsg, pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 300, self.display)
-                render_text("Press SPACE to restart", pygame.font.Font('freesansbold.ttf', 32), (255, 255, 255), 600, 600, self.display)
+                render_text("Wasted", pygame.font.Font(self.game.font, 110), (255, 0, 0), 600, 250, self.display)
+                render_text(self.deadmsg, pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 300, self.display)
+                render_text("Press SPACE to restart", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 600, self.display)
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -266,7 +272,7 @@ class Play():
             if self.restart:
                 self.transition += 1
                 if self.transition > 75:
-                    self.lives = self.player.lives
+                    self.lives = self.player.HP
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -407,5 +413,3 @@ class Play():
             pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (60 - abs(self.felltransition)) * 30)
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
-
-        # print(self.lives, self.player.lives)
