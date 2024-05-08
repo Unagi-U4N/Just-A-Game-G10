@@ -116,7 +116,10 @@ class PlayerProfile:
                 if self.name == row[0] and not self.saveprofile:
                     render_text("Profile already exists", self.font, "red", 600, 400, self.display, centered=True)
                     self.exist = True
-                if len(self.name) >= 7:
+                elif self.name == "":
+                    render_text("Profile name cannot be empty", self.font, "red", 600, 400, self.display, centered=True)
+                    self.exist = True
+                elif len(self.name) >= 7:
                     render_text("Profile name too long", self.font, "red", 600, 400, self.display, centered=True)
                     self.exist = True
                 else:
