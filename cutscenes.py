@@ -8,7 +8,20 @@ def get_cutscene(game, type, cutscenes, screen):
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
     
     if type == "Intro":
+<<<<<<< HEAD
         Cutscenes["Intro"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (50, 50), 20, 50, screen, cutscenes[type]["0"][1])
+=======
+        Cutscenes["Intro"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (515, 480), 45, 40, screen, cutscenes[type]["0"][1])
+        Cutscenes["Intro"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (75, 180), 40, 20, screen, cutscenes[type]["1"][1])
+        Cutscenes["Intro"]["2"] = Cutscene(game, cutscenes[type]["2"][0], (100, 420), 40, 20, screen, cutscenes[type]["2"][1])       
+        Cutscenes["Intro"]["3"] = Cutscene(game, cutscenes[type]["3"][0], (130, 230), 40, 20, screen, cutscenes[type]["3"][1])     
+        Cutscenes["Intro"]["4"] = Cutscene(game, cutscenes[type]["4"][0], (50, 190), 40, 20, screen, cutscenes[type]["4"][1])  
+        Cutscenes["Intro"]["5"] = Cutscene(game, cutscenes[type]["5"][0], (50, 250), 40, 20, screen, cutscenes[type]["5"][1]) 
+        Cutscenes["Intro"]["6"] = Cutscene(game, cutscenes[type]["6"][0], (110, 270), 40, 20, screen, cutscenes[type]["6"][1])             
+        Cutscenes["Intro"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (110, 250), 40, 20, screen, cutscenes[type]["7"][1])
+        Cutscenes["Intro"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (110, 210), 40, 20, screen, cutscenes[type]["8"][1]) 
+        Cutscenes["Intro"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (350, 300), 40, 40, screen, cutscenes[type]["9"][1])   
+>>>>>>> 7f5772b9f67519ee10d7f0acf9399d67178dd43e
     
     elif type == "Ending":
         Cutscenes["Ending"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (50, 50), 20, 50, screen, cutscenes[type]["1"][1])
@@ -56,7 +69,11 @@ class Cutscene:
         self.done = False
         self.alldone = False
         self.size = size
+<<<<<<< HEAD
         self.font = pygame.font.Font(self.game.font, self.size)
+=======
+        self.font = pygame.font.Font(game.font, self.size)
+>>>>>>> 7f5772b9f67519ee10d7f0acf9399d67178dd43e
         self.snip = self.font.render("", True, self.color)
         self.status = {msg: False for msg in self.msgs}
 
