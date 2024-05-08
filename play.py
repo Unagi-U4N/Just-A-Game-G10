@@ -193,8 +193,6 @@ class Play():
                 self.sparks.remove(spark)
         
     def run(self):
-
-        print(self.player.HP, self.player.speed)
         
         self.display.blit(self.daybg, (0, 0))
         self.mousepos = pygame.mouse.get_pos()
@@ -415,5 +413,3 @@ class Play():
             pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (60 - abs(self.felltransition)) * 30)
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
-
-        # print(self.lives, self.player.lives)
