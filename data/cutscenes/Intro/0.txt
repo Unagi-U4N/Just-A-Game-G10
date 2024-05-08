@@ -1,7 +1,1 @@
-<<<<<<< HEAD
-This is the first line
-This is the second line
-                      This is line 3
-=======
 Year 2050
->>>>>>> 7f5772b9f67519ee10d7f0acf9399d67178dd43e
