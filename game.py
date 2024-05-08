@@ -19,6 +19,7 @@ class Game:
         self.screen = pygame.display.set_mode((1200, 675))
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
+        self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
         self.data = []
