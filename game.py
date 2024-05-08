@@ -38,6 +38,7 @@ class Game:
         }
         
         self.assets= {
+            # "Name of the asset": scale_images(load_image("path to the asset"), scale= 1.5 OR set_scale=(1200, 675),
             "player": load_image("entities/player.png"),
             "decor": scale_images(load_images("tiles/decor")),
             "grass": scale_images(load_images("tiles/grass")),
@@ -145,10 +146,10 @@ class Game:
 
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
-                    # cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    # cutscenes.run(cutscene, True)
-                    dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
-                    cutscenes.run(dialogue, False)
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.runscenes(cutscene, True)
+                    # dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
+                    # cutscenes.run(dialogue, False)
                     self.state = "game"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))

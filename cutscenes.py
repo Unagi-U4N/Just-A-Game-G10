@@ -12,10 +12,11 @@ def get_dialogues(game, npc, dialogues, screen):
         "Ken": {"0": None, "1": None, "2": None},
     }
 
-    # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
+    # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
     print(dialogues)
     if npc == "James":
-        Dialogues["James"]["0"] = Dialogue(game, npc, dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["James"]["0"] = Dialogue(game, npc, dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black", False)
+        Dialogues["James"]["1"] = Dialogue(game, npc, dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black", False)
     
     return Dialogues[npc]
 
@@ -44,9 +45,16 @@ def get_cutscene(game, type, cutscenes, screen):
 
     return Cutscenes[type]
 
-def run(scenes, fade=False):
+def runscenes(scenes, fade=False):
+    # returns True if the cutscene is done
+    # if choice is valid, returns choices made by the player
     num = 0
     while num <= len(scenes) - 1:
+        # Skip the draw if the line is a choice
+        if num == len(scenes) - 1:
+            if scenes[str(num)].done:
+                return True
+                
         scene = str(num)
         skip = False
         next = False
@@ -68,6 +76,54 @@ def run(scenes, fade=False):
             num += 1
     
     return True
+
+def rundialogue(scenes, fade=False):
+    # returns True if the cutscene is done
+    # if choice is valid, returns choices made by the player
+    num = 0
+    while num <= len(scenes) - 1:
+        # Skip the draw if the line is a choice
+        if num == len(scenes) - 1:
+            if scenes[str(num)].done:
+                return True
+                
+        choice = scenes.get(str(num)).choice
+        scene = str(num)
+        skip = False
+        next = False
+        scene = scenes[scene]
+        scene.draw(fade)
+        if not choice:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        skip = True
+                        if skip and scene.done:
+                            next = True
+
+            if skip:
+                scene.alldone = True
+
+            if next and scene.done and skip:
+                num += 1
+    
+    
+            return True
+
+        if choice:
+            # render the last message in the scene as choices, divided by "/"
+            choices = [choice for choice in scene.msgs[-1].split("/")]
+            decision = {choice: False for choice in choices}
+            for i, choice in enumerate(choices):
+                decision[choice] = render_text(choice, scene.font, "black", 600, 550 + 50 * i, scene.screen, centered=True, click=False, hovercolor="red")
+            print(decision)
+            for choice in decision:
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if choice.collidepoint(pygame.mouse.get_pos()):
+                            next = True
 
 class Logic:
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
@@ -157,11 +213,12 @@ class Cutscene(Logic):
         
 
 class Dialogue(Logic):
-    def __init__(self, game, npc, msgs, pos, size, speed, screen, img=None, color="white"):
+    def __init__(self, game, npc, msgs, pos, size, speed, screen, img=None, color="white", choice=False):
         super().__init__(game, msgs, pos, size, speed, screen, img, color)
         self.img = self.game.assets["dialoguebox"]
         self.npc = img
         self.name = npc
+        self.choice = choice
 
     def draw(self, fade=False):
         super().draw(fade)
@@ -171,7 +228,7 @@ class Dialogue(Logic):
         render_text(self.name, self.font, "black", 160, 610, self.screen, centered=True)
         render_img(self.npc, 155, 530, self.screen)
 
-        if self.alldone:
+        if self.alldone and not self.choice:
             self.status = {msg: True for msg in self.msgs}
             self.done = True
             render_img(self.game.assets["arrow"], 1000, 550, self.screen,centered=True)
