@@ -31,7 +31,6 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
-            "Ending": load_script("Ending"),
         }
         
         self.assets= {
