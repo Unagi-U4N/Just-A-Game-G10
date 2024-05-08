@@ -8,7 +8,7 @@ import pygame, sys
 from utils import *
 from startscreen import StartScreen
 import play
-import cutscenes
+from playerprofile import *
 
 class Game:
     def __init__(self):
@@ -41,6 +41,7 @@ class Game:
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
+            "newgamebg": scale_images(load_image("background/newgame.png"), set_scale=(1200, 675)),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
             "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=2, loop=False),
@@ -82,7 +83,8 @@ class Game:
         
         self.game = play.Play(self)
         self.startscreen = StartScreen(self)
-        self.state = "game"
+        self.profile = PlayerProfile(self)
+        self.state = "loadgame"
         self.cutscene = "Intro"
 
     def run(self):
@@ -97,10 +99,10 @@ class Game:
             if self.state == "start":
                 newloadexit = self.startscreen.run()
                 if newloadexit == "New Game":
-                    # self.state = "newgame"
+                    self.state = "newgame"
                     # self.state = "cutscene"
                     # self.cutscene = "Intro"
-                    self.state = "game"
+                    # self.state = "game"
                 elif newloadexit == "Load Game":
                     self.state = "game"
                 elif newloadexit == "Exit Game":
@@ -110,11 +112,19 @@ class Game:
             if self.state == "game":
                 self.game.run()
 
-            if self.state == "cutscene":
-                if self.cutscene == "Intro":
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.run(cutscene, True)
-                    self.state = "game"
+            if self.state == "newgame":
+                self.data = self.profile.run("new")
+                # print(self.data)
+
+            if self.state == "loadgame":
+                self.profile.run("load")
+                # self.state = "game"
+
+            # if self.state == "cutscene":
+            #     if self.cutscene == "Intro":
+            #         cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+            #         cutscenes.run(cutscene, True)
+            #         self.state = "game"
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
