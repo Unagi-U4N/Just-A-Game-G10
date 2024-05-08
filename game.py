@@ -93,7 +93,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "newgame"
         self.cutscene = "Intro"
 
     def run(self):
