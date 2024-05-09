@@ -149,8 +149,12 @@ class Game:
                     # cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     # cutscenes.runscenes(cutscene)
                     dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
-                    cutscenes.rundialogue(dialogue)
-                    # self.state = "game"
+                    cutscenes.rundialogues(dialogue)
+                    choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you want to play?", ["Yes", "No", "Maybe"], self.screen)
+                    if choice == "Yes":
+                        self.state = "game"
+                    elif choice == "No":
+                        self.state = "start"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

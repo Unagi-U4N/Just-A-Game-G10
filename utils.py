@@ -13,25 +13,15 @@ BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
 BASE_DIALOGUE_PATH = get_path() + "data/dialogues/"
 
-def render_text(text, font, color, x, y, display, centered=True, click=False, hovercolor=None):
+def render_text(text, font, color, x, y, display, centered=True):
     # render text on the display, make sure the text is centered
-    text = font.render(text, True, color)
+    texts = font.render(text, True, color)
     if centered:
-        text_rect = text.get_rect(center=(x, y))
+        text_rect = texts.get_rect(center=(x, y))
     else:
         text_rect = (x, y)
-    display.blit(text, text_rect)
-
-    if hovercolor is not None:
-        if text_rect.collidepoint(pygame.mouse.get_pos()):
-            display.blit(font.render(text, True, hovercolor), text_rect)
-    if click:
-        if text_rect.collidepoint(pygame.mouse.get_pos()):
-            if pygame.mouse.get_pressed()[0]:
-                return True
-            
-    else:
-        return text_rect
+    display.blit(texts, text_rect)
+    return text_rect
 
 def render_img(img, x, y, display, centered=True, click=False, hover=None):
     # render image on the display, make sure the image is centered, clickable
