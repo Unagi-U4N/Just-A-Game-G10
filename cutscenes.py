@@ -13,7 +13,6 @@ def get_dialogues(game, npc, dialogues, screen):
     }
 
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
-    print(dialogues)
     if npc == "James":
         Dialogues["James"]["0"] = Dialogue(game, npc, dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black", False)
         Dialogues["James"]["1"] = Dialogue(game, npc, dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black", False)
@@ -45,27 +44,21 @@ def get_cutscene(game, type, cutscenes, screen):
 
     return Cutscenes[type]
 
-def runscenes(scenes, fade=False):
+def runscenes(scenes):
     # returns True if the cutscene is done
     # if choice is valid, returns choices made by the player
     num = 0
-    while num <= len(scenes) - 1:
-        # Skip the draw if the line is a choice
-        if num == len(scenes) - 1:
-            if scenes[str(num)].done:
-                return True
-                
+    while num <= len(scenes) - 1:     
         scene = str(num)
         skip = False
         next = False
         scene = scenes[scene]
-        scene.draw(fade)
+        scene.draw()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     skip = True
+                    scene.fadescreen = 0
                     if skip and scene.done:
                         next = True
 
@@ -77,22 +70,22 @@ def runscenes(scenes, fade=False):
     
     return True
 
-def rundialogue(scenes, fade=False):
+def rundialogue(dialogues):
     # returns True if the cutscene is done
     # if choice is valid, returns choices made by the player
     num = 0
-    while num <= len(scenes) - 1:
+    while num <= len(dialogues) - 1:
         # Skip the draw if the line is a choice
-        if num == len(scenes) - 1:
-            if scenes[str(num)].done:
+        if num == len(dialogues) - 1:
+            if dialogues[str(num)].done:
                 return True
                 
-        choice = scenes.get(str(num)).choice
-        scene = str(num)
+        choice = dialogues.get(str(num)).choice
+        dialogue = str(num)
         skip = False
         next = False
-        scene = scenes[scene]
-        scene.draw(fade)
+        dialogue = dialogues[dialogue]
+        dialogue.draw()
         if not choice:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -100,30 +93,29 @@ def rundialogue(scenes, fade=False):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         skip = True
-                        if skip and scene.done:
+                        if skip and dialogue.done:
                             next = True
 
             if skip:
-                scene.alldone = True
+                dialogue.alldone = True
 
-            if next and scene.done and skip:
+            if next and dialogue.done and skip:
                 num += 1
     
-    
-            return True
+    return True
 
-        if choice:
-            # render the last message in the scene as choices, divided by "/"
-            choices = [choice for choice in scene.msgs[-1].split("/")]
-            decision = {choice: False for choice in choices}
-            for i, choice in enumerate(choices):
-                decision[choice] = render_text(choice, scene.font, "black", 600, 550 + 50 * i, scene.screen, centered=True, click=False, hovercolor="red")
-            print(decision)
-            for choice in decision:
-                for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if choice.collidepoint(pygame.mouse.get_pos()):
-                            next = True
+        # if choice:
+        #     # render the last message in the scene as choices, divided by "/"
+        #     choices = [choice for choice in scene.msgs[-1].split("/")]
+        #     decision = {choice: False for choice in choices}
+        #     for i, choice in enumerate(choices):
+        #         decision[choice] = render_text(choice, scene.font, "black", 600, 550 + 50 * i, scene.screen, centered=True, click=False, hovercolor="red")
+        #     print(decision)
+        #     for choice in decision:
+        #         for event in pygame.event.get():
+        #             if event.type == pygame.MOUSEBUTTONDOWN:
+        #                 if choice.collidepoint(pygame.mouse.get_pos()):
+        #                     next = True
 
 class Logic:
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
@@ -146,11 +138,13 @@ class Logic:
         self.snip = self.font.render("", True, self.color)
         self.status = {msg: False for msg in self.msgs}
 
-    def draw(self, fade=False):
+    def draw(self):
 
-        if fade and self.fadescreen > 0:
+        print(self.fadescreenbool)
+        if  self.fadescreen > 0:
             self.fadescreenbool = True
         
+        # check if the screen is fading
         if not self.fadescreenbool:
 
             # If the first line of message is done, and there is still message beneath, move to the next line
@@ -189,8 +183,8 @@ class Cutscene(Logic):
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
         super().__init__(game, msgs, pos, size, speed, screen, img, color)
 
-    def draw(self, fade=True):
-        super().draw(fade)
+    def draw(self):
+        super().draw()
         if self.fadescreenbool:
             self.fadescreen = max(0, self.fadescreen - 2)
             self.screen.blit(self.img, (0, 0))
@@ -216,12 +210,14 @@ class Dialogue(Logic):
     def __init__(self, game, npc, msgs, pos, size, speed, screen, img=None, color="white", choice=False):
         super().__init__(game, msgs, pos, size, speed, screen, img, color)
         self.img = self.game.assets["dialoguebox"]
+        self.fadescreenbool = False
+        self.fadescreen = 0
         self.npc = img
         self.name = npc
         self.choice = choice
 
-    def draw(self, fade=False):
-        super().draw(fade)
+    def draw(self):
+        super().draw()
         render_img(self.game.assets["day"], 0, 0, self.screen, centered=False)
         render_img(self.img, 655, 550, self.screen)
         render_img(scale_images(self.img, scale=0.2), 160, 610, self.screen)
