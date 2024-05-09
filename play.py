@@ -9,7 +9,7 @@ from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
 from spark import Spark
-from cutscenes import *
+import cutscenes
 
 class Play():
     def __init__(self, game):

@@ -110,11 +110,11 @@ def dialoguequestions(img, question, choices, screen):
             render_text(choices[i], pygame.font.Font("data/monogram.ttf", 30), "black", dialoguebox_pos[0] + 50, dialoguebox_pos[1] + 35 + i * 25, screen, centered=False)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     num = (num + 1) % len(choices)
-                if event.key == pygame.K_UP:
-                    num = (num + 1) % len(choices)
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    num = (num - 1) % len(choices)
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     answer[choices[num]] = True
                     choice = choices[num]
         render_text(">", pygame.font.Font("data/monogram.ttf", 30), "black", dialoguebox_pos[0], dialoguebox_pos[1] + 35 + num * 25, screen, centered=False)
