@@ -6,14 +6,19 @@ dialoguebox_pos = (350, 500)
 
 def get_dialogues(game, npc, dialogues, screen):
 
+    # All the possible dialogues
     Dialogues = {
-        "James": {"0": None},
-        "Ken": {"0": None},
+        "Jamesfirstmeet": {"0": None},
+        "Jamessad": {"0": None},
     }
 
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
-    if npc == "James":
-        Dialogues["James"]["0"] = Dialogue(game, npc, dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+    # Reason to this is to customize every single dialogue
+    if npc == "Jamesfirstmeet":
+        Dialogues["Jamesfirstmeet"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+
+    elif npc == "Jamessad":
+        Dialogues["Jamessad"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
     
     return Dialogues[npc]
 
@@ -223,10 +228,11 @@ class Dialogue(Logic):
         self.fadescreen = 0
         self.npc = img
         self.name = npc
+        self.display = pygame.Surface((1200, 675))
 
     def draw(self):
         super().draw()
-        render_img(self.game.assets["day"], 0, 0, self.screen, centered=False)
+        # render_img(self.game.assets["day"], 0, 0, self.screen, centered=False)
         render_img(self.img, 655, 550, self.screen)
         render_img(scale_images(self.img, scale=0.2), 160, 610, self.screen)
         render_text(self.name, self.font, "black", 160, 610, self.screen, centered=True)

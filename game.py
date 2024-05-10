@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", 0, 0, 1, 10]
+        self.data = ["Ivan", 0, 0, 3, 10]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -33,8 +33,10 @@ class Game:
             "Intro": load_script("Intro"),
         }
 
+        # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
         self.dialogues = {
-            "James": load_dialogue("James"),
+            "Jamesfirstmeet": load_dialogue("Jamesfirstmeet"),
+            "Jamessad": load_dialogue("Jamessad"),
         }
         
         self.assets= {
@@ -58,6 +60,7 @@ class Game:
             "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=2, loop=False),
             "enemy/idle": Animation(scale_images(load_images("entities/enemy/idle")), img_dur=2),
             "enemy/run": Animation(scale_images(load_images("entities/enemy/run")), img_dur=2),
+            "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
             "gun": scale_images(load_image("gun.png")),
@@ -100,7 +103,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "cutscene"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
@@ -157,15 +160,10 @@ class Game:
     
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
-                    # cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    # cutscenes.runscenes(cutscene)
-                    dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
-                    cutscenes.rundialogues(dialogue)
-                    choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you want to play?", ["Yes", "No", "Maybe"], self.screen)
-                    if choice == "Yes":
-                        self.state = "game"
-                    elif choice == "No":
-                        self.state = "start"
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.runscenes(cutscene)
+                    # dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
+                    # cutscenes.rundialogues(dialogue)
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
