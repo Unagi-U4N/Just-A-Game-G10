@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = []
+        self.data = ["a", 0, 0, 3, 3]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -72,6 +72,10 @@ class Game:
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
+            "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
+            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
+
         }
 
         self.sfx = {
@@ -93,7 +97,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
