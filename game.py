@@ -36,7 +36,8 @@ class Game:
         # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
         self.dialogues = {
             "Jamesfirstmeet": load_dialogue("Jamesfirstmeet"),
-            "Jamessad": load_dialogue("Jamessad"),
+            "Jamesfirstmeet2": load_dialogue("Jamesfirstmeet2"),
+            # "TicTacToe": load_dialogue("TicTacToe"),
         }
         
         self.assets= {

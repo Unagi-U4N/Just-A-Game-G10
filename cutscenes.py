@@ -2,24 +2,30 @@ import pygame
 from utils import *
 
 # Get the top right coordinates of the dialogue box and return a tuple
-dialoguebox_pos = (350, 500)
+dialoguebox_pos = (350, 490)
 
 def get_dialogues(game, npc, dialogues, screen):
 
     # All the possible dialogues
     Dialogues = {
-        "Jamesfirstmeet": {"0": None},
-        "Jamessad": {"0": None},
+        "Jamesfirstmeet": {"0": None, "1": None},
+        "Jamesfirstmeet2": {"0": None},
+        "TicTacToe": {"0": None},
     }
 
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
     # Reason to this is to customize every single dialogue
     if npc == "Jamesfirstmeet":
         Dialogues["Jamesfirstmeet"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["Jamesfirstmeet"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
 
-    elif npc == "Jamessad":
-        Dialogues["Jamessad"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
-    
+    elif npc == "Jamesfirstmeet2":
+        Dialogues["Jamesfirstmeet2"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["Jamesfirstmeet2"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
+
+    elif npc == "TicTacToe":
+        Dialogues["TicTacToe"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+
     return Dialogues[npc]
 
 def get_cutscene(game, type, cutscenes, screen):

@@ -36,6 +36,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
         self.daybg = self.assets["day"]
+        self.level = "map"
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -53,10 +54,24 @@ class Play():
         # self.load_level(self.level)
 
     def interact(self):
-        if self.player.rect().colliderect(self.npc.interact):                
-            render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
-            if self.e:
-                return True
+        for npc in self.npc:
+            if self.player.rect().colliderect(npc.interact):                
+                render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                if self.e:
+                    return npc.name
+            
+    def dialogue(self, state):
+        if state == "Intro":
+            dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
+            cutscenes.rundialogues(dialogue)
+            choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "What brings you here traveller?", ["IDK", "Where am I...", "..."], self.screen)
+            dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet2", self.dialogues, self.screen)
+            cutscenes.rundialogues(dialogue)
+        
+        elif state == "TicTacToe":
+            dialogue = cutscenes.get_dialogues(self, "TicTacToe", self.dialogues, self.screen)
+            cutscenes.rundialogues(dialogue)
+            choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
     
     def load(self, data):
         self.player.updateprofile(data)
@@ -93,7 +108,8 @@ class Play():
             self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 20 + tree["pos"][1], 23, 13))
         
         self.enemies = []
-        self.npc = None
+        
+        self.npc = []
         for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1), ("spawners", 2), ("spawners", 3), ("spawners", 4)]):
             if spawner["variant"] == 0:
                 self.playerrespawn = spawner["pos"]
@@ -106,7 +122,17 @@ class Play():
             elif spawner["variant"] == 3:
                 self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=3))
             elif spawner["variant"] == 4:
-                self.npc = NPC(self, spawner["pos"], (16, 30), "James")
+                self.npc.append(NPC(self, spawner["pos"], (16, 30), ""))
+
+        # Assign names to the npcs
+        self.npc.sort(key=lambda x: x.pos[0])
+        for i, npc in enumerate(self.npc):
+            if i == 0 and map_id == "map":
+                npc.name = "Intro"
+            elif i == 1 and map_id == "map":
+                npc.name = "TicTacToe"
+            elif i == 2 and map_id == "map":
+                npc.name = "End"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -138,7 +164,8 @@ class Play():
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=self.render_scroll)
 
-        self.npc.update(self.tilemap, (0, 0))
+        for npc in self.npc:
+            npc.update(self.tilemap, (0, 0))
 
         for enemy in self.enemies.copy():
             self.enemykill = enemy.update(self.tilemap, (0, 0))
@@ -248,19 +275,22 @@ class Play():
         for enemy in self.enemies:
             enemy.render(self.display, offset=self.render_scroll)
         
-        self.npc.render(self.display, offset=self.render_scroll)
+        for npc in self.npc:
+            npc.render(self.display, offset=self.render_scroll)
 
         # Example of implementation of code for dialogue
-        if self.interact():
-            dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
-            cutscenes.rundialogues(dialogue)
-            choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you think I am cool?", ["Yes", "No", "Maybe"], self.screen)
-            if choice == "Yes":
-                self.player.speed += 2
-            elif choice == "No":
-                dialogue = cutscenes.get_dialogues(self, "Jamessad", self.dialogues, self.screen)
-                cutscenes.rundialogues(dialogue)
-                self.player.speed -= 2
+        name = self.interact()
+        if name is not None:
+            self.dialogue(name)
+            # dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
+            # cutscenes.rundialogues(dialogue)
+            # choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you think I am cool?", ["Yes", "No", "Maybe"], self.screen)
+            # if choice == "Yes":
+            #     self.player.speed += 2
+            # elif choice == "No":
+            #     dialogue = cutscenes.get_dialogues(self, "Jamessad", self.dialogues, self.screen)
+            #     cutscenes.rundialogues(dialogue)
+            #     self.player.speed -= 2
             self.e = False
 
         self.check_button()
