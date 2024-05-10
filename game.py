@@ -143,7 +143,6 @@ class Game:
 
             if self.state == "deleteprofile":
                 state = self.profile.read_profile(delete=True)
-                print(state)
                 if type(state) is str:
                     self.startscreen = StartScreen(self)
                     self.state = "start"

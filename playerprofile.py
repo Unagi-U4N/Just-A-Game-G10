@@ -48,47 +48,47 @@ class PlayerProfile:
             render_text(str(j+1+len(self.profiles))+"   ---", self.font, "black", 350 if j+1+len(self.profiles) <= 4 else 650, (225 + (j + len(self.profiles)) * 50) if j+1+len(self.profiles) <= 4 else (225 + (j + len(self.profiles)) * 50 - 200), self.display, centered=False)
 
         # Get player keyboard input (1-8)
-        profile = None
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:    
                 if event.key == pygame.K_1:
                     if len(self.profiles) > 0:
-                        profile = 0
+                        self.data = self.profiles[0]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_2:
                     if len(self.profiles) > 1:
-                        profile = 1
+                        self.data = self.profiles[1]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_3:
                     if len(self.profiles) > 2:
-                        profile = 2
+                        self.data = self.profiles[2]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_4:
                     if len(self.profiles) > 3:
-                        profile = 3
+                        self.data = self.profiles[3]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_5:
                     if len(self.profiles) > 4:
-                        profile = 4
+                        self.data = self.profiles[4]                    
                     else:
                         self.warning = True
                 elif event.key == pygame.K_6:
                     if len(self.profiles) > 5:
-                        profile = 5
+                        self.data = self.profiles[5]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_7:
                     if len(self.profiles) > 6:
-                        profile = 6
+                        self.data = self.profiles[6]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_8:
                     if len(self.profiles) > 7:
-                        profile = 7
+                        self.data = self.profiles[7]
                     else:
                         self.warning = True
                 elif event.key == pygame.K_ESCAPE:
@@ -101,8 +101,6 @@ class PlayerProfile:
                 self.warning = False
                 self.warningtimer = 0
         
-        self.data = self.profiles[profile] if profile is not None else []
-
         if not delete:
             if self.data != []:
                 self.data[1] = int(self.data[1])
