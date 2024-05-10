@@ -70,6 +70,7 @@ class Game:
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
+            "delloadgamebg": scale_images(load_image("background/delloadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
         }
@@ -129,6 +130,8 @@ class Game:
                 if self.data == "start":
                     self.startscreen = StartScreen(self)
                     self.state = "start"
+                if self.data == "deleteprofile":
+                    self.state = "deleteprofile"
 
             if self.state == "loadgame":
                 self.data = self.profile.read_profile()
@@ -138,6 +141,15 @@ class Game:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
 
+            if self.state == "deleteprofile":
+                state = self.profile.read_profile(delete=True)
+                print(state)
+                if type(state) is str:
+                    self.startscreen = StartScreen(self)
+                    self.state = "start"
+                elif state:
+                    self.state = "newgame"
+    
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
