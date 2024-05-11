@@ -163,8 +163,6 @@ class Game:
                 if self.cutscene == "Intro":
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
-                    # dialogue = cutscenes.get_dialogues(self, "James", self.dialogues, self.screen)
-                    # cutscenes.rundialogues(dialogue)
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

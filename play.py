@@ -10,6 +10,7 @@ from clouds import Clouds
 from particle import Particle
 from spark import Spark
 import cutscenes
+import dialogue
 
 class Play():
     def __init__(self, game):
@@ -29,6 +30,7 @@ class Play():
         self.display = game.display
         self.assets = game.assets
         self.dialogues = game.dialogues
+        self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
         self.playerrespawn = (0, 0)
@@ -59,19 +61,6 @@ class Play():
                 render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                 if self.e:
                     return npc.name
-            
-    def dialogue(self, state):
-        if state == "Intro":
-            dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
-            cutscenes.rundialogues(dialogue)
-            choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "What brings you here traveller?", ["IDK", "Where am I...", "..."], self.screen)
-            dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet2", self.dialogues, self.screen)
-            cutscenes.rundialogues(dialogue)
-        
-        elif state == "TicTacToe":
-            dialogue = cutscenes.get_dialogues(self, "TicTacToe", self.dialogues, self.screen)
-            cutscenes.rundialogues(dialogue)
-            choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
     
     def load(self, data):
         self.player.updateprofile(data)
@@ -281,16 +270,7 @@ class Play():
         # Example of implementation of code for dialogue
         name = self.interact()
         if name is not None:
-            self.dialogue(name)
-            # dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
-            # cutscenes.rundialogues(dialogue)
-            # choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you think I am cool?", ["Yes", "No", "Maybe"], self.screen)
-            # if choice == "Yes":
-            #     self.player.speed += 2
-            # elif choice == "No":
-            #     dialogue = cutscenes.get_dialogues(self, "Jamessad", self.dialogues, self.screen)
-            #     cutscenes.rundialogues(dialogue)
-            #     self.player.speed -= 2
+            dialogue.dialogue(self, name)
             self.e = False
 
         self.check_button()
