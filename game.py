@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["a", 0, 0, 3, 3]
+        self.data = ["a", 0, 100, 3, 3]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []

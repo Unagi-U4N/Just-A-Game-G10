@@ -197,8 +197,6 @@ class Play():
                 self.sparks.remove(spark)
         
     def run(self):
-
-        print(self.lives, self.player.gold, self.player.speed)
         
         self.display.blit(self.daybg, (0, 0))
         self.mousepos = pygame.mouse.get_pos()
@@ -244,7 +242,7 @@ class Play():
             num//= 10
             count += 1
         render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-        render_text(str(self.player.gold), self.font, "black", 1030 - count * 1, 145, self.display, False) 
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False) 
 
         for enemy in self.enemies:
             enemy.render(self.display, offset=self.render_scroll)
@@ -292,6 +290,7 @@ class Play():
                 self.transition += 1
                 if self.transition > 75:
                     self.lives = self.player.HP
+                    self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
