@@ -83,6 +83,10 @@ class Game:
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
             "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
+            "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
+            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
+
         }
 
         self.sfx = {
