@@ -41,6 +41,7 @@ class Play():
         self.restart = False
         self.shut = False
         self.respawn = False
+        self.font = pygame.font.Font(self.game.font, 36)
         self.deadmsg = ""
         self.death_msg = {
             "fall" : ["You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
@@ -64,6 +65,7 @@ class Play():
         if pause:
             if self.pausetimer > 50:
                 self.pause = not self.pause
+
                 self.choice = "pause"
                 self.pausetimer = 0
         elif info:
@@ -129,6 +131,8 @@ class Play():
 
             if self.enemykill:
                 self.enemies.remove(enemy)
+                self.lives = min(self.player.HP, self.lives + 1)
+                self.player.gold += 100
 
         # [[x, y], direction, timer]
         for projectile in self.projectiles.copy():
@@ -227,6 +231,19 @@ class Play():
         self.clouds.render(self.display, offset=self.render_scroll)
         self.tilemap.render(self.display, offset=self.render_scroll)
 
+        for x in range(self.lives):
+            render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+        render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
+        render_text(str(self.player.speed), self.font, "black", 1030, 100, self.display, False)
+        num= self.player.gold
+        count= 0
+
+        while num !=0:
+            num//= 10
+            count += 1
+        render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False) 
+
         for enemy in self.enemies:
             enemy.render(self.display, offset=self.render_scroll)
 
@@ -273,6 +290,7 @@ class Play():
                 self.transition += 1
                 if self.transition > 75:
                     self.lives = self.player.HP
+                    self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -392,7 +410,7 @@ class Play():
             img.fill((0,0,0))
             img.set_alpha(min(200, abs(self.felltransition) * 4))
             self.display.blit(img, (0,0))
-
+  
         # Secondary screen, used for transition when dead
         if self.transition:
             transition_surf = pygame.Surface((1200, 675))
