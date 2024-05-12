@@ -11,15 +11,16 @@ def get_path():
     
 BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
+BASE_DIALOGUE_PATH = get_path() + "data/dialogues/"
 
 def render_text(text, font, color, x, y, display, centered=True):
     # render text on the display, make sure the text is centered
-    text = font.render(text, True, color)
+    texts = font.render(text, True, color)
     if centered:
-        text_rect = text.get_rect(center=(x, y))
+        text_rect = texts.get_rect(center=(x, y))
     else:
         text_rect = (x, y)
-    display.blit(text, text_rect)
+    display.blit(texts, text_rect)
     return text_rect
 
 def render_img(img, x, y, display, centered=True, click=False, hover=None):
@@ -41,6 +42,20 @@ def render_img(img, x, y, display, centered=True, click=False, hover=None):
     else:
         return img_rect
 
+def load_dialogue(path):
+    dialogues = {}
+    for dialogue in os.listdir(BASE_DIALOGUE_PATH + path):
+        try:
+            int(dialogue.split(".")[0])
+        except:
+            continue
+        if dialogue.split(".")[1] != "txt":
+            continue
+        else:
+            with open(BASE_DIALOGUE_PATH + path + "/" + dialogue, "r") as f:
+            # gets the dialogue from the cutscenes folder, return it as a list of strings
+                dialogues[dialogue.split(".")[0]] = [line for line in f.read().split("\n") if line != ""], scale_images(load_image((BASE_DIALOGUE_PATH + path + "/" + dialogue.split(".")[0]+".png"), False), (48, 90))
+    return dialogues
 
 def load_script(path):
     # path = INTRO, OUTRO, etc.
