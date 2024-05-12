@@ -8,9 +8,9 @@ def get_dialogues(game, npc, dialogues, screen):
 
     # All the possible dialogues
     Dialogues = {
-        "Jamesfirstmeet": {"0": None, "1": None},
-        "Jamesfirstmeet2": {"0": None},
-        "TicTacToe": {"0": None},
+        "Jamesfirstmeet": {},
+        "Jamesfirstmeet2": {},
+        "TicTacToe": {},
     }
 
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
@@ -25,6 +25,7 @@ def get_dialogues(game, npc, dialogues, screen):
 
     elif npc == "TicTacToe":
         Dialogues["TicTacToe"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["TicTacToe"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
 
     return Dialogues[npc]
 
@@ -156,7 +157,7 @@ class Logic:
         self.done = False
         self.alldone = False
         self.size = size
-        self.font = pygame.font.Font(self.game.font, self.size)
+        self.font = pygame.font.Font("data/monogram.ttf", self.size)
         self.snip = self.font.render("", True, self.color)
         self.status = {msg: False for msg in self.msgs}
 

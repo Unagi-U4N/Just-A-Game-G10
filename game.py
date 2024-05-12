@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", 0, 0, 3, 10]
+        self.data = ["Ivan", 0, 0, 3, 2]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -37,7 +37,7 @@ class Game:
         self.dialogues = {
             "Jamesfirstmeet": load_dialogue("Jamesfirstmeet"),
             "Jamesfirstmeet2": load_dialogue("Jamesfirstmeet2"),
-            # "TicTacToe": load_dialogue("TicTacToe"),
+            "TicTacToe": load_dialogue("TicTacToe"),
         }
         
         self.assets= {
@@ -95,7 +95,11 @@ class Game:
             'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
-            'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
+            'wasted': pygame.mixer.Sound('data/music/wasted.wav'),
+        }
+
+        self.music = {
+            
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -108,7 +112,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "game"
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):

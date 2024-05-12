@@ -38,7 +38,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
         self.daybg = self.assets["day"]
-        self.level = "map"
+        self.level = 0
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -67,7 +67,7 @@ class Play():
         self.player.updateprofile(data)
         self.level = data[1]
         self.lives = self.player.HP
-        self.load_level("map")
+        self.load_level(self.level)
 
     def check_button(self):
         # Check if the pause or info button is clicked
@@ -168,6 +168,7 @@ class Play():
                 self.lives = min(self.player.HP, self.lives + 1)
                 self.player.gold += 100
 
+
         # [[x, y], direction, timer]
         for projectile in self.projectiles.copy():
             projectile[0][0] += projectile[1]
@@ -263,7 +264,13 @@ class Play():
         self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
         self.clouds.render(self.display, offset=self.render_scroll)
-        self.tilemap.render(self.display, offset=self.render_scroll)
+        self.tilemap.render(self.display, offset=self.render_scroll) 
+
+        for enemy in self.enemies:
+            enemy.render(self.display, offset=self.render_scroll)
+        
+        for npc in self.npc:
+            npc.render(self.display, offset=self.render_scroll)
 
         for x in range(self.lives):
             render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
@@ -276,13 +283,7 @@ class Play():
             num//= 10
             count += 1
         render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False) 
-
-        for enemy in self.enemies:
-            enemy.render(self.display, offset=self.render_scroll)
-        
-        for npc in self.npc:
-            npc.render(self.display, offset=self.render_scroll)
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False)
 
         # Example of implementation of code for dialogue
         name = self.interact()
