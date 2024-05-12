@@ -22,14 +22,25 @@ def render_text(text, font, color, x, y, display, centered=True):
     display.blit(text, text_rect)
     return text_rect
 
-def render_img(img, x, y, display, centered=True):
-    # render image on the display, make sure the image is centered
+def render_img(img, x, y, display, centered=True, click=False, hover=None):
+    # render image on the display, make sure the image is centered, clickable
     if centered:
         img_rect = img.get_rect(center=(x, y))
     else:
         img_rect = (x, y)
+    
     display.blit(img, img_rect)
-    return img_rect
+
+    if hover is not None:
+        if img_rect.collidepoint(pygame.mouse.get_pos()):
+            display.blit(hover, img_rect)
+    if click:
+        if img_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                return True
+    else:
+        return img_rect
+
 
 def load_script(path):
     # path = INTRO, OUTRO, etc.
