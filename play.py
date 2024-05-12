@@ -4,12 +4,13 @@
 
 import pygame, sys, random, math, time
 from utils import *
-from entities import PhysicsEntity, Player, Enemy
+from entities import PhysicsEntity, Player, Enemy, NPC
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
 from spark import Spark
-from cutscenes import *
+import cutscenes
+import dialogue
 
 class Play():
     def __init__(self, game):
@@ -18,6 +19,7 @@ class Play():
         pygame.init()
         self.mousepos = (0, 0)
         self.pausetimer = 50
+        self.e = False
         self.clickpause = False
         self.enemykill = True
         self.leafkill = True
@@ -27,12 +29,16 @@ class Play():
         self.screen = game.screen
         self.display = game.display
         self.assets = game.assets
+        self.dialogues = game.dialogues
+        self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
+        self.font = game.font
         self.daybg = self.assets["day"]
+        self.level = "map"
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -41,6 +47,7 @@ class Play():
         self.restart = False
         self.shut = False
         self.respawn = False
+        self.font = pygame.font.Font(self.game.font, 36)
         self.deadmsg = ""
         self.death_msg = {
             "fall" : ["You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
@@ -48,12 +55,19 @@ class Play():
         }
 
         # self.load_level(self.level)
+
+    def interact(self):
+        for npc in self.npc:
+            if self.player.rect().colliderect(npc.interact):                
+                render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                if self.e:
+                    return npc.name
     
     def load(self, data):
         self.player.updateprofile(data)
         self.level = data[1]
         self.lives = self.player.HP
-        self.load_level(self.level)
+        self.load_level("map")
 
     def check_button(self):
         # Check if the pause or info button is clicked
@@ -64,6 +78,7 @@ class Play():
         if pause:
             if self.pausetimer > 50:
                 self.pause = not self.pause
+
                 self.choice = "pause"
                 self.pausetimer = 0
         elif info:
@@ -84,13 +99,31 @@ class Play():
             self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 20 + tree["pos"][1], 23, 13))
         
         self.enemies = []
-        for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1)]):
+        
+        self.npc = []
+        for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1), ("spawners", 2), ("spawners", 3), ("spawners", 4)]):
             if spawner["variant"] == 0:
                 self.playerrespawn = spawner["pos"]
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
-            else:
-                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=3)) # Scaled
+            elif spawner["variant"] == 1:
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=1)) # Scaled
+            elif spawner["variant"] == 2:
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=2))
+            elif spawner["variant"] == 3:
+                self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=3))
+            elif spawner["variant"] == 4:
+                self.npc.append(NPC(self, spawner["pos"], (16, 30), ""))
+
+        # Assign names to the npcs
+        self.npc.sort(key=lambda x: x.pos[0])
+        for i, npc in enumerate(self.npc):
+            if i == 0 and map_id == "map":
+                npc.name = "Intro"
+            elif i == 1 and map_id == "map":
+                npc.name = "TicTacToe"
+            elif i == 2 and map_id == "map":
+                npc.name = "End"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -122,6 +155,9 @@ class Play():
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=self.render_scroll)
 
+        for npc in self.npc:
+            npc.update(self.tilemap, (0, 0))
+
         for enemy in self.enemies.copy():
             self.enemykill = enemy.update(self.tilemap, (0, 0))
             if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
@@ -129,6 +165,9 @@ class Play():
 
             if self.enemykill:
                 self.enemies.remove(enemy)
+                self.lives = min(self.player.HP, self.lives + 1)
+                self.player.gold += 100
+
 
         # [[x, y], direction, timer]
         for projectile in self.projectiles.copy():
@@ -225,10 +264,32 @@ class Play():
         self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
         self.clouds.render(self.display, offset=self.render_scroll)
-        self.tilemap.render(self.display, offset=self.render_scroll)
+        self.tilemap.render(self.display, offset=self.render_scroll) 
 
         for enemy in self.enemies:
             enemy.render(self.display, offset=self.render_scroll)
+        
+        for npc in self.npc:
+            npc.render(self.display, offset=self.render_scroll)
+
+        for x in range(self.lives):
+            render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+        render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
+        render_text(str(self.player.speed), self.font, "black", 1030, 100, self.display, False)
+        num= self.player.gold
+        count= 0
+
+        while num !=0:
+            num//= 10
+            count += 1
+        render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False)
+
+        # Example of implementation of code for dialogue
+        name = self.interact()
+        if name is not None:
+            dialogue.dialogue(self, name)
+            self.e = False
 
         self.check_button()
         if not self.pause:
@@ -273,6 +334,7 @@ class Play():
                 self.transition += 1
                 if self.transition > 75:
                     self.lives = self.player.HP
+                    self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
@@ -371,11 +433,16 @@ class Play():
                         self.player.jump()
                     if event.key == pygame.K_SPACE:
                         self.player.dash()
+                    if event.key == pygame.K_e:
+                        self.e = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
                         self.movements[0] = False
                     if event.key == pygame.K_d:
                         self.movements[1] = False
+                    if event.key == pygame.K_e:
+                        self.e = False
+
         else:
             pygame.event.clear()
             self.movements = [False, False]
@@ -392,7 +459,7 @@ class Play():
             img.fill((0,0,0))
             img.set_alpha(min(200, abs(self.felltransition) * 4))
             self.display.blit(img, (0,0))
-
+  
         # Secondary screen, used for transition when dead
         if self.transition:
             transition_surf = pygame.Surface((1200, 675))

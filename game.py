@@ -22,7 +22,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = []
+        self.data = ["Ivan", 0, 0, 3, 2]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -32,8 +32,16 @@ class Game:
         self.cutscenes = {
             "Intro": load_script("Intro"),
         }
+
+        # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
+        self.dialogues = {
+            "Jamesfirstmeet": load_dialogue("Jamesfirstmeet"),
+            "Jamesfirstmeet2": load_dialogue("Jamesfirstmeet2"),
+            "TicTacToe": load_dialogue("TicTacToe"),
+        }
         
         self.assets= {
+            # "Name of the asset": scale_images(load_image("path to the asset"), scale= 1.5 OR set_scale=(1200, 675),
             "player": load_image("entities/player.png"),
             "decor": scale_images(load_images("tiles/decor")),
             "grass": scale_images(load_images("tiles/grass")),
@@ -53,6 +61,7 @@ class Game:
             "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=2, loop=False),
             "enemy/idle": Animation(scale_images(load_images("entities/enemy/idle")), img_dur=2),
             "enemy/run": Animation(scale_images(load_images("entities/enemy/run")), img_dur=2),
+            "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
             "gun": scale_images(load_image("gun.png")),
@@ -70,8 +79,14 @@ class Game:
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
             "loadgamebg": scale_images(load_image("background/loadgame.png"), set_scale=(1200, 675)),
+            "delloadgamebg": scale_images(load_image("background/delloadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
+            "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
+            "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
+            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
+
         }
 
         self.sfx = {
@@ -81,6 +96,10 @@ class Game:
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
             'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
+        }
+
+        self.music = {
+
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -93,7 +112,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
@@ -129,6 +148,8 @@ class Game:
                 if self.data == "start":
                     self.startscreen = StartScreen(self)
                     self.state = "start"
+                if self.data == "deleteprofile":
+                    self.state = "deleteprofile"
 
             if self.state == "loadgame":
                 self.data = self.profile.read_profile()
@@ -138,11 +159,18 @@ class Game:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
 
+            if self.state == "deleteprofile":
+                state = self.profile.read_profile(delete=True)
+                if type(state) is str:
+                    self.startscreen = StartScreen(self)
+                    self.state = "start"
+                elif state:
+                    self.state = "newgame"
+    
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.run(cutscene, True)
-                    self.state = "game"
+                    cutscenes.runscenes(cutscene)
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

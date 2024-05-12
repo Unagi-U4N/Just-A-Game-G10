@@ -4,6 +4,7 @@ import random
 import pygame
 from particle import Particle
 from spark import Spark
+import cutscenes
 
 
 class PhysicsEntity:
@@ -427,3 +428,24 @@ class Player(PhysicsEntity):
                 self.dashing = -60
             else:
                 self.dashing = 60
+
+class NPC(PhysicsEntity):
+    def __init__(self, game, pos, size, name=""):
+        super().__init__(game, 'npc', pos, size, name)
+
+        self.name = name
+        self.assets = game.assets
+        self.font = "data/monogram.ttf"
+        self.speed = 2
+        self.interact = self.inetractablerect()
+
+    def update(self, tilemap, movement=(0, 0)):
+        super().update(tilemap, movement=movement)
+
+        if movement[0] != 0:
+            self.set_action('run')
+        else:
+            self.set_action('idle')
+
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
