@@ -95,11 +95,11 @@ class Game:
             'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
-            'wasted': pygame.mixer.Sound('data/music/wasted.wav'),
+            'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
         }
 
         self.music = {
-            
+
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -112,7 +112,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):

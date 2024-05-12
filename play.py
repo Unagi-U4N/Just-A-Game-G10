@@ -38,7 +38,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
         self.daybg = self.assets["day"]
-        self.level = 0
+        self.level = "map"
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -67,7 +67,7 @@ class Play():
         self.player.updateprofile(data)
         self.level = data[1]
         self.lives = self.player.HP
-        self.load_level(self.level)
+        self.load_level("map")
 
     def check_button(self):
         # Check if the pause or info button is clicked
