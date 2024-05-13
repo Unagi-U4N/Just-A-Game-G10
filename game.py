@@ -46,6 +46,7 @@ class Game:
             "decor": scale_images(load_images("tiles/decor")),
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
+            "metal": scale_images(load_images("tiles/metal")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
             "background": load_image("background/background.png"),
