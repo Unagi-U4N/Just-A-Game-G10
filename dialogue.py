@@ -45,6 +45,7 @@ Example:
 
 """
 def dialogue(self, state):
+        self.movements = [False, False]
         if state == "Intro":
             dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet", self.dialogues, self.screen)
             cutscenes.rundialogues(dialogue)
@@ -52,7 +53,13 @@ def dialogue(self, state):
             if choice == "IDK":
                 dialogue = cutscenes.get_dialogues(self, "Jamesfirstmeet2", self.dialogues, self.screen)
                 cutscenes.rundialogues(dialogue)
-                self.lives += 1
+                self.maxHP += 1
+                self.lives = self.maxHP
+            elif choice == "Where am I...":
+                if self.speed >= 3:
+                     pass
+                else:
+                    self.speed += 1
         
         elif state == "TicTacToe":
             dialogue = cutscenes.get_dialogues(self, "TicTacToe", self.dialogues, self.screen)
