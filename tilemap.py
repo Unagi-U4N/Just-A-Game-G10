@@ -1,13 +1,14 @@
 import pygame, json
 
 NEIGHBOURS_OFFSETS = [(-1, -1), (-1, 0), (-1,1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
-PHYSICS_TILES = {"stone", "grass","metal"}
+PHYSICS_TILES = {"stone", "grass", "metal"}
 
 class Tilemap:
     # Create a tilemap with a grid of tiles size 16x16 (default)
     def __init__(self, game, tile_Size=32):
         self.game = game
         self.tile_size = tile_Size
+        self.latest_block = None
         self.tilemap = {}
         self.offgrid_tiles = []
 

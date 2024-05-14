@@ -11,6 +11,7 @@ class PhysicsEntity:
     def __init__(self, game, e_type, pos, size, speed=2, name=""):
         self.speed = speed
         self.game = game
+        self.latest_block = None
         self.type = e_type
         self.pos = list(pos)
         self.size = size
@@ -62,6 +63,7 @@ class PhysicsEntity:
                 if frame_movement[1] > 0:
                     entity_rect.bottom = rect.top
                     self.collisions['down'] = True
+                    self.latest_block = rect
                 if frame_movement[1] < 0:
                     entity_rect.top = rect.bottom
                     self.collisions['up'] = True
@@ -344,6 +346,8 @@ class Player(PhysicsEntity):
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
+
+        # print(self.latest_block)
 
         self.air_time += 1
 
