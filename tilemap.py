@@ -1,7 +1,7 @@
 import pygame, json
 
 NEIGHBOURS_OFFSETS = [(-1, -1), (-1, 0), (-1,1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
-PHYSICS_TILES = {"stone", "grass"}
+PHYSICS_TILES = {"stone", "grass","metal"}
 
 class Tilemap:
     # Create a tilemap with a grid of tiles size 16x16 (default)
@@ -78,10 +78,13 @@ class Tilemap:
         self.count = 0
         self.xcount = 0
         for tile in self.offgrid_tiles:
-            display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
-            
+            self.xcount += 1
+            if tile["pos"][0] in range( offset[0] - 200, offset[0] + 1400):
+                display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
+                self.count += 1
 
-        # print("Offgrid tiles: " + str(self.count))
+        # print("Offgrid tiles: " + str(self.xcount))
+        # print("Offgrid tiles rendered: " + str(self.count))
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable

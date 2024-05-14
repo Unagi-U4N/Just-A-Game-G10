@@ -21,14 +21,17 @@ class Editor:
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         self.display = pygame.Surface(SCREEN_SIZE)
         self.clock = pygame.time.Clock()
+        self.paused =True
+        self.paused_img = scale_images(load_image("editor_pause.png"), (1200, 675))
 
         self.assets = {
             "decor": scale_images(load_images("tiles/decor")),
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
+            "metal": scale_images(load_images("tiles/metal")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "spawners": scale_images(load_images("tiles/spawners")),
-            "spawners": scale_images(load_images("tiles/spawners")),
+            "tile_background": scale_images(load_images("tiles/background")),
         }
 
         self.tilemap = Tilemap(self, tile_Size=TILE_SIZE)
@@ -124,6 +127,8 @@ class Editor:
                     self.count = (self.count + 1) % len(self.bgs)
                 elif event.key == pygame.K_o:
                     self.tilemap.save("map.json")
+                elif event.key == pygame.K_ESCAPE:
+                    self.paused = not self.paused
                 elif event.key == pygame.K_a:
                     self.movements[0] = True
                 elif event.key == pygame.K_d:
@@ -196,6 +201,18 @@ class Editor:
             self.handle_events()
             self.update_scroll()
             self.render()
+
+            if self.paused:
+                img=pygame.Surface((1200, 675))
+                img.fill((0,0,0))
+                img.set_alpha(150)
+                self.display.blit(img, (0,0))
+                render_img(self.paused_img, 0, 0, self.display, centered=False)
+
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            self.paused = not self.paused
 
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
