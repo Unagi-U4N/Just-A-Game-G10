@@ -21,8 +21,8 @@ class Editor:
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         self.display = pygame.Surface(SCREEN_SIZE)
         self.clock = pygame.time.Clock()
-        self.paused = False
-        self.paused_img = scale_images(load_image("pause.png"), (1200, 675))
+        self.paused =True
+        self.paused_img = scale_images(load_image("editor_pause.png"), (1200, 675))
 
         self.assets = {
             "decor": scale_images(load_images("tiles/decor")),
