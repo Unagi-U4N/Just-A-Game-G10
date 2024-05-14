@@ -11,6 +11,7 @@ from particle import Particle
 from spark import Spark
 import cutscenes
 import dialogue
+from music import Music
 
 class Play():
     def __init__(self, game):
@@ -38,6 +39,7 @@ class Play():
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
         self.daybg = self.assets["day"]
+        self.sfx = game.sfx
         self.level = "map"
         self.reasonofdeath = None
         self.transition = 0
@@ -189,6 +191,7 @@ class Play():
             # Check if the projectile hits the player, when the player is not dashing
             elif abs(self.player.dashing) < 50:
                 if self.player.rect().collidepoint(projectile[0]):
+                    self.sfx['shoot'].play()
                     if self.lives > 1 and not self.dead:
                         self.lives -= 1
 
@@ -309,7 +312,7 @@ class Play():
             self.movements = [False, False]
             if not self.playedwaste and not self.respawn:
                 self.playedwaste = True   
-                self.game.sfx['wasted'].play()
+                self.sfx['wasted'].play()
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(self.deadscreentrans)
@@ -343,7 +346,7 @@ class Play():
                     self.load_level(self.level)
                     self.playedwaste = False
                     self.restart = False
-                    self.game.sfx['wasted'].stop()
+                    self.sfx['wasted'].stop()
                     self.transition = -75
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
@@ -430,7 +433,8 @@ class Play():
                     if event.key == pygame.K_d:
                         self.movements[1] = True
                     if event.key == pygame.K_w:
-                        self.player.jump()
+                        if self.player.jump():
+                            self.sfx['jump'].play()
                     if event.key == pygame.K_SPACE:
                         self.player.dash()
                     if event.key == pygame.K_e:

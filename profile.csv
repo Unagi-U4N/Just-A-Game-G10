@@ -1,13 +1,8 @@
 Name,Level,Gold,Speed,HP
 Ivan,0,0,1.5,3
 Vasya,0,0,5,4
-John,0,0,1.5,3
-<<<<<<< HEAD
-kote,0,0,1.5,3
-=======
-John,0,0,1.5,3
-John,0,0,1.5,3
-John,0,0,1.5,3
+Alam,0,0,1.5,3
+L,0,0,1.5,3
+Kay,0,0,1.5,3
 Vasya,0,0,5,4
 Kim,0,0,1.5,3
->>>>>>> fe433e2a431cb4adf1770cc85c39770c28a97d65

@@ -10,6 +10,7 @@ from startscreen import StartScreen
 from play import *
 from playerprofile import *
 import cutscenes
+from music import Music
 
 class Game:
     def __init__(self):
@@ -22,7 +23,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", 0, 0, 3, 2]
+        self.data = ["Ivan", "map", 0, 3, 10]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -77,6 +78,7 @@ class Game:
             "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
             "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
             "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
+            "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
@@ -98,36 +100,33 @@ class Game:
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
             'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
-        }
-
-        self.music = {
-
+            "bullet": pygame.mixer.Sound('data/sfx/bullet.wav'),
+            "click": pygame.mixer.Sound('data/sfx/click.wav'),
         }
         
-        self.sfx['ambience'].set_volume(0.2)
-        self.sfx['shoot'].set_volume(0.4)
-        self.sfx['hit'].set_volume(0.8)
-        self.sfx['dash'].set_volume(0.3)
-        self.sfx['jump'].set_volume(0.7)
-        self.sfx['wasted'].set_volume(1.5)
+        self.sfx['ambience'].set_volume(0.05)
+        self.sfx['shoot'].set_volume(0.3)
+        self.sfx['hit'].set_volume(0.4)
+        self.sfx['dash'].set_volume(1)
+        self.sfx['jump'].set_volume(0.5)
+        self.sfx['wasted'].set_volume(1)
+        self.sfx['bullet'].set_volume(0.3)
+        self.sfx['click'].set_volume(1)
         
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.state = "game"
+        # self.music = Music(self)
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
-        while True:
         
-            # pygame.mixer.music.load('data/music.wav')
-            # pygame.mixer.music.set_volume(0.5)
-            # pygame.mixer.music.play(-1)
+        while True:
 
-            # self.sfx['ambience'].play(-1)
-            
             if self.state == "start":
                 newloadexit = self.startscreen.run()
+                # self.music.play_music("music","music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -141,6 +140,7 @@ class Game:
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
+                # self.music.play_music("music","music")
 
             if self.state == "newgame":
                 self.data = self.profile.create_profile()
@@ -171,8 +171,10 @@ class Game:
     
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
+                    # self.music.play_music("intense", "intense3")
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
+                    self.state = "game"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

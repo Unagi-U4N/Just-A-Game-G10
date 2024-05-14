@@ -128,10 +128,12 @@ class Enemy(PhysicsEntity):
                         # get gunshot sparks and bullets
                         if (abs(dis[1]) < 32):
                             if (self.flip and dis[0] < 0):
+                                self.game.sfx['bullet'].play()
                                 self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
                                 for i in range(4):
                                     self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
                             if (not self.flip and dis[0] > 0):
+                                self.game.sfx['bullet'].play()
                                 self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
                                 for i in range(4):
                                     self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
@@ -195,10 +197,12 @@ class Enemy(PhysicsEntity):
                         # get gunshot sparks and bullets
                         if (abs(dis[1]) < 32):
                             if (self.flip and dis[0] < 0):
+                                self.game.sfx['bullet'].play()
                                 self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
                                 for i in range(4):
                                     self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
                             if (not self.flip and dis[0] > 0):
+                                self.game.sfx['bullet'].play()
                                 self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
                                 for i in range(4):
                                     self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
@@ -225,10 +229,12 @@ class Enemy(PhysicsEntity):
                     # If cooldown is 0, shoot
                     if self.walking % 20 == 0:
                         if (self.flip and dis[0] < 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
+                            self.game.sfx['bullet'].play()
                             self.game.projectiles.append([[self.rect().centerx - 14, self.rect().centery], -1 * self.speed, 0])
                             for i in range(4):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random(), (255, 0, 0)))
                         if (not self.flip and dis[0] > 0) and abs(dis[0]) < 300 and abs(dis[1]) < 300:
+                            self.game.sfx['bullet'].play()
                             self.game.projectiles.append([[self.rect().centerx + 14, self.rect().centery], self.speed, 0])
                             for i in range(4):
                                 self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random(), (255, 0, 0)))
@@ -296,6 +302,7 @@ class Enemy(PhysicsEntity):
         # If the player is dashing, and the enemy collides with the player, kill the enemy
         if abs(self.game.player.dashing) >= 50:
             if self.rect().colliderect(self.game.player.rect()):
+                self.game.sfx['hit'].play()
                 for i in range(30):
                     angle = random.random() * math.pi * 2
                     speed = random.random() * 5
@@ -423,7 +430,7 @@ class Player(PhysicsEntity):
 
         # Cooldown = 60
         if not self.dashing:
-            # self.game.sfx['dash'].play()
+            self.game.sfx['dash'].play()
             if self.flip:
                 self.dashing = -60
             else:
