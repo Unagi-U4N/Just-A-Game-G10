@@ -1,3 +1,2 @@
 Hi there, do you want to play TicTacToe?
-If you win the game, you get 3 extra lives,
-if you lose the game, you will have to pay 300 golds
+If you're lucky enough, you can win rewards!

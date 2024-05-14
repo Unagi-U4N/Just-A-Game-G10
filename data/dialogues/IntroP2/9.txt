@@ -1,0 +1,3 @@
+Also everytime you kill an enemy, your HP regenerates
+and everytme you die, your gold decreases by a certain 
+amount.
