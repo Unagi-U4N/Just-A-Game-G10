@@ -106,6 +106,7 @@ class StartScreen:
 
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
+        render_img(self.assets["startcontrols"], 1000, 600, self.display)
         
         for spark in self.sparks.copy():
             kill = spark.update()

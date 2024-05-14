@@ -76,6 +76,7 @@ class Game:
             "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
             "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
             "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
+            "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
@@ -104,17 +105,17 @@ class Game:
         self.sfx['ambience'].set_volume(0.05)
         self.sfx['shoot'].set_volume(0.3)
         self.sfx['hit'].set_volume(0.4)
-        self.sfx['dash'].set_volume(0.3)
-        self.sfx['jump'].set_volume(0.1)
-        self.sfx['wasted'].set_volume(0.5)
-        self.sfx['bullet'].set_volume(0.1)
-        self.sfx['click'].set_volume(0.7)
+        self.sfx['dash'].set_volume(1)
+        self.sfx['jump'].set_volume(0.5)
+        self.sfx['wasted'].set_volume(1)
+        self.sfx['bullet'].set_volume(0.3)
+        self.sfx['click'].set_volume(1)
         
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "game"
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
