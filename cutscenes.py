@@ -8,25 +8,41 @@ def get_dialogues(game, npc, dialogues, screen):
 
     # All the possible dialogues
     Dialogues = {
-        "Jamesfirstmeet": {},
-        "Jamesfirstmeet2": {},
+        "IntroP1": {},
+        "IntroP2": {},
         "TicTacToe": {},
+        "TicTacToeP2": {},
     }
 
     # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
     # Reason to this is to customize every single dialogue
-    if npc == "Jamesfirstmeet":
-        Dialogues["Jamesfirstmeet"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
-        Dialogues["Jamesfirstmeet"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
+    if npc == "IntroP1":
+        Dialogues["IntroP1"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["IntroP1"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
+        Dialogues["IntroP1"]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
 
-    elif npc == "Jamesfirstmeet2":
-        Dialogues["Jamesfirstmeet2"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
-        Dialogues["Jamesfirstmeet2"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
-
+    elif npc == "IntroP2":
+        Dialogues["IntroP2"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["IntroP2"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
+        Dialogues["IntroP2"]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
+        Dialogues["IntroP2"]["3"] = Dialogue(game, "James", dialogues[npc]["3"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["3"][1], "black")
+        Dialogues["IntroP2"]["4"] = Dialogue(game, "James", dialogues[npc]["4"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["4"][1], "black")
+        Dialogues["IntroP2"]["5"] = Dialogue(game, "James", dialogues[npc]["5"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["5"][1], "black")
+        Dialogues["IntroP2"]["6"] = Dialogue(game, "James", dialogues[npc]["6"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["6"][1], "black")
+        Dialogues["IntroP2"]["7"] = Dialogue(game, "James", dialogues[npc]["7"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["7"][1], "black")
+        Dialogues["IntroP2"]["8"] = Dialogue(game, "James", dialogues[npc]["8"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["8"][1], "black")
+        Dialogues["IntroP2"]["9"] = Dialogue(game, "James", dialogues[npc]["9"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["9"][1], "black")
+        Dialogues["IntroP2"]["10"] = Dialogue(game, "James", dialogues[npc]["10"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["10"][1], "black")
+    
     elif npc == "TicTacToe":
-        Dialogues["TicTacToe"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["0"][1], "black")
-        Dialogues["TicTacToe"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 15, screen, dialogues[npc]["1"][1], "black")
-
+        Dialogues["TicTacToe"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+        Dialogues["TicTacToe"]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
+        Dialogues["TicTacToe"]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
+        Dialogues["TicTacToe"]["3"] = Dialogue(game, "James", dialogues[npc]["3"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["3"][1], "black")
+    
+    elif npc == "TicTacToeP2":
+        Dialogues["TicTacToeP2"]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+    
     return Dialogues[npc]
 
 def get_cutscene(game, type, cutscenes, screen):
@@ -138,7 +154,6 @@ def dialoguequestions(img, question, choices, screen):
             break
 
     return choice
-
 
 class Logic:
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
