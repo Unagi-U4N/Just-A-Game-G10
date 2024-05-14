@@ -47,31 +47,35 @@ Example:
 def dialogue(self, state):
         self.movements = [False, False]
         if state == "Intro":
-            dialogue = cutscenes.get_dialogues(self, "IntroP1", self.dialogues, self.screen)
+            dialogue = cutscenes.get_dialogues(self, "IntroP1(1)", self.dialogues, self.screen)
             cutscenes.rundialogues(dialogue)
             choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Anyways, what brings you here traveller?",["I have no idea, where am I?", "I was tasked to replace the core"], self.screen)
             if choice == "I have no idea, where am I?":
-                dialogue = cutscenes.get_dialogues(self, "IntroP2", self.dialogues, self.screen)
+                dialogue = cutscenes.get_dialogues(self, "IntroP2(1)", self.dialogues, self.screen)
                 cutscenes.rundialogues(dialogue)
             elif choice == "I was tasked to replace the core":
-                dialogue = cutscenes.get_dialogues(self, "IntroP2", self.dialogues, self.screen)
+                dialogue = cutscenes.get_dialogues(self, "IntroP2(1)", self.dialogues, self.screen)
                 cutscenes.rundialogues(dialogue)
 
         elif state == "TicTacToe":
-            dialogue = cutscenes.get_dialogues(self, "TicTacToe", self.dialogues, self.screen)
+            dialogue = cutscenes.get_dialogues(self, "TicTacToeP1(1)", self.dialogues, self.screen)
             cutscenes.rundialogues(dialogue)
             choice = cutscenes.dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
             if choice == "Yes":
                 if self.player.gold >= 300:
+                    self.player.gold -= 300
+                    dialogue = cutscenes.get_dialogues(self, "TicTacToeP1(1)Extra", self.dialogues, self.screen)
+                    cutscenes.rundialogues(dialogue)
                     # Add the Tic Tac Toe game here
                     pass
                 else:
                     pass
             elif choice == "No":
-                dialogue = cutscenes.get_dialogues(self, "TicTacToeP2", self.dialogues, self.screen)
+                dialogue = cutscenes.get_dialogues(self, "TicTacToeP2(1)", self.dialogues, self.screen)
                 cutscenes.rundialogues(dialogue)
                 # self.load_level("0")
 
         elif state == "Ending":
-            dialogue = cutscenes.get_dialogues(self, "Ending", self.dialogues, self.screen)
+            dialogue = cutscenes.get_dialogues(self, "EndingP1(1)", self.dialogues, self.screen)
             cutscenes.rundialogues(dialogue)
+            self.player.safehouse()
