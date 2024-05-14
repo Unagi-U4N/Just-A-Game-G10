@@ -127,7 +127,7 @@ class Play():
             elif i == 1 and map_id == "map":
                 npc.name = "TicTacToe"
             elif i == 2 and map_id == "map":
-                npc.name = "End"
+                npc.name = "Ending"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
