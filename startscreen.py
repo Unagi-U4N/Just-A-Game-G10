@@ -9,6 +9,7 @@ from spark import Spark
 class StartScreen:
     def __init__(self, game):
         self.game = game
+        self.sfx = game.sfx
         self.screen = game.screen
         self.display = game.display
         self.clock = game.clock

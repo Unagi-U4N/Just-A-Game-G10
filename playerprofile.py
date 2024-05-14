@@ -123,6 +123,7 @@ class PlayerProfile:
                         deleted = True
                     writer.writerow(row)
                 file.close()
+                self.data = []
 
             return deleted
         
@@ -159,6 +160,7 @@ class PlayerProfile:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
+                        self.game.sfx['click'].play()
                         
                         if not self.exist:
                             with open("profile.csv", "a", newline="") as file:
@@ -168,6 +170,7 @@ class PlayerProfile:
                                 file.close()
                             
                     elif event.key == pygame.K_BACKSPACE:
+                        self.game.sfx['click'].play()
                         self.name = self.name[:-1]
 
                     elif event.key == pygame.K_ESCAPE:
@@ -177,6 +180,7 @@ class PlayerProfile:
                     else:
                         # only get alphabets
                         if event.unicode.isalpha() and len(self.name) < 7:
+                            self.game.sfx['click'].play()
                             self.name += event.unicode
 
             if self.saveprofile:
