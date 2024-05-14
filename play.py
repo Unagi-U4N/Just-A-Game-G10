@@ -40,7 +40,7 @@ class Play():
         self.font = game.font
         self.daybg = self.assets["day"]
         self.sfx = game.sfx
-        self.level = "map"
+        self.level = 0
         self.reasonofdeath = None
         self.transition = 0
         self.felltransition = 0
@@ -69,7 +69,7 @@ class Play():
         self.player.updateprofile(data)
         self.level = data[1]
         self.lives = self.player.HP
-        self.load_level("map")
+        self.load_level(self.level)
 
     def check_button(self):
         # Check if the pause or info button is clicked
@@ -105,7 +105,6 @@ class Play():
         self.npc = []
         for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1), ("spawners", 2), ("spawners", 3), ("spawners", 4)]):
             if spawner["variant"] == 0:
-                self.playerrespawn = spawner["pos"]
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
             elif spawner["variant"] == 1:
@@ -170,6 +169,9 @@ class Play():
                 self.lives = min(self.player.HP, self.lives + 1)
                 self.player.gold += 100
 
+        # Get the latest solid tiles the player is stepping on as the latest respawn point
+        if self.player.latest_block is not None:
+            self.playerrespawn = (self.player.latest_block.x + 8, self.player.latest_block.y)
 
         # [[x, y], direction, timer]
         for projectile in self.projectiles.copy():
