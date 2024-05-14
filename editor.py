@@ -154,8 +154,8 @@ class Editor:
                     self.shift = False
 
     def update_scroll(self):
-        self.scroll[0] += (self.movements[1] - self.movements[0])
-        self.scroll[1] += (self.movements[3] - self.movements[2])
+        self.scroll[0] += (self.movements[1] - self.movements[0]) * 3
+        self.scroll[1] += (self.movements[3] - self.movements[2]) * 3
 
     def render(self):
         self.display.fill((255, 255, 255))
@@ -183,10 +183,11 @@ class Editor:
             self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])] = {'type': self.tile_list[self.tile_group],
                                                                                 'variant': self.tile_variant,
                                                                                 'pos': tile_pos}
-        if self.right_clicking:
+        if self.right_clicking and self.ongrid:
             if str(tile_pos[0]) + ';' + str(tile_pos[1]) in self.tilemap.tilemap:
                 del self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])]
 
+        if self.right_clicking and not self.ongrid:
             for tile in self.tilemap.offgrid_tiles.copy():
                 tile_img = self.assets[tile['type']][tile['variant']]
                 tile_r = pygame.Rect(tile['pos'][0] - self.scroll[0], tile['pos'][1] - self.scroll[1],

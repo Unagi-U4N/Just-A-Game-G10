@@ -88,11 +88,11 @@ class StartScreen:
             if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 300), int(self.player.pos[0] + self.display.get_width() / 2 + 300)):
                 enemy.render(self.display, offset=render_scroll)
                 if enemy.name != "":
-                    font1 = pygame.font.Font(self.game.font, 45)
+                    font1 = pygame.font.Font(self.game.font, 30)
                     font2 = pygame.font.Font(self.game.font, 40)
-                    render_text(enemy.name, font1, (0, 0, 0), enemy.pos[0] - self.scroll[0], enemy.pos[1] - self.scroll[1] - 50, self.display, False)
+                    render_text(enemy.name, font1, (255, 255, 255), enemy.pos[0] - self.scroll[0], enemy.pos[1] - self.scroll[1] - 50, self.display, False)
                     if self.player.rect().colliderect(enemy.interact):
-                        render_text("Press SPACE to dash", font2, (0, 0, 0), 600, 550, self.display)
+                        render_text("Press SPACE to dash", font2, (255, 255, 255), 600, 550, self.display)
 
             if kill:
                 self.startcountdown = True
@@ -106,7 +106,7 @@ class StartScreen:
 
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
-        render_img(self.assets["startcontrols"], 1000, 600, self.display)
+        render_img(self.assets["startcontrols"], 200, 600, self.display)
         
         for spark in self.sparks.copy():
             kill = spark.update()
@@ -132,6 +132,9 @@ class StartScreen:
                     self.movements[0] = True
                 if event.key == pygame.K_d:
                     self.movements[1] = True
+                if event.key == pygame.K_w:
+                    if self.player.jump():
+                        self.sfx['jump'].play()
                 if event.key == pygame.K_SPACE:
                     self.player.dash()
             if event.type == pygame.KEYUP:

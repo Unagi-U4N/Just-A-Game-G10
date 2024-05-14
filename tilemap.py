@@ -78,14 +78,6 @@ class Tilemap:
         """
         self.count = 0
         self.xcount = 0
-        for tile in self.offgrid_tiles:
-            self.xcount += 1
-            if tile["pos"][0] in range( offset[0] - 200, offset[0] + 1400):
-                display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
-                self.count += 1
-
-        # print("Offgrid tiles: " + str(self.xcount))
-        # print("Offgrid tiles rendered: " + str(self.count))
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
@@ -93,6 +85,14 @@ class Tilemap:
             for y in range(offset[1] // self.tile_size, (offset[1] + display.get_height()) // self.tile_size + 1):
                 loc = str(x) + ';' + str(y)
                 if loc in self.tilemap:
+                    self.xcount += 1
                     tile = self.tilemap[loc]
                     display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size - offset[0], tile['pos'][1] * self.tile_size - offset[1]))
         # print("Ongrid tiles: " + str(self.tilecount))
+
+        for tile in self.offgrid_tiles:
+            if tile["pos"][0] in range( offset[0] - 200, offset[0] + 1400):
+                display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
+                self.count += 1
+
+        print("Ongrid tiles rendered: " + str(self.xcount), "Offgrid tiles rendered: " + str(self.count))
