@@ -81,4 +81,5 @@ def dialogue(self, state):
         elif state == "Ending":
             dialogue = cutscenes.get_dialogues(self, "EndingP1(1)", self.dialogues, self.screen)
             cutscenes.rundialogues(dialogue)
-            self.player.safehouse()
+            # self.player.safehouse()
+            pass

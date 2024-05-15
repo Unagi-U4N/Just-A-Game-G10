@@ -190,6 +190,7 @@ class Logic:
         self.status = {msg: False for msg in self.msgs}
 
     def draw(self):
+        print(self.status)
         if  self.fadescreen > 0:
             self.fadescreenbool = True
         

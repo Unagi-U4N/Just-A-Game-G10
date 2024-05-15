@@ -40,7 +40,7 @@ class Game:
             "IntroP2(1)": load_dialogue("IntroP2(1)"),
             "TicTacToeP1(1)": load_dialogue("TicTacToeP1(1)"),
             "TicTacToeP1(1)Extra": load_dialogue("TicTacToeP1(1)Extra"),
-            "TicTacToeP2(1)Extra": load_dialogue("TicTacToeP2ed (1)Extra"),
+            "TicTacToeP2(1)Extra": load_dialogue("TicTacToeP2(1)Extra"),
             "TicTacToeP2(1)": load_dialogue("TicTacToeP2(1)"),
             "EndingP1(1)": load_dialogue("EndingP1(1)"),
         }
@@ -121,7 +121,7 @@ class Game:
         self.game = Play(self)
         self.profile = PlayerProfile(self)
         self.music = Music(self)
-        self.state = "cutscene"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
