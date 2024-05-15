@@ -23,7 +23,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test", 400, 3, 5]
+        self.data = ["Ivan", "test", 400, 3, 3]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -120,7 +120,7 @@ class Game:
         self.game = Play(self)
         self.profile = PlayerProfile(self)
         self.music = Music(self)
-        self.state = "game"
+        self.state = "cutscene"
         self.cutscene = "Intro"
 
     def run(self):
