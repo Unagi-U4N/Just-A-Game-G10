@@ -120,7 +120,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.music = Music(self)
+        # self.music = Music(self)
         self.state = "game"
         self.cutscene = "Intro"
 
@@ -130,7 +130,7 @@ class Game:
 
             if self.state == "start":
                 newloadexit = self.startscreen.run()
-                self.music.play_music("music","music")
+                # self.music.play_music("music","music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -144,7 +144,7 @@ class Game:
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
-                self.music.play_music("music","music")
+                # self.music.play_music("music","music")
 
             if self.state == "newgame":
                 self.data = self.profile.create_profile()
@@ -175,7 +175,7 @@ class Game:
     
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
-                    self.music.play_music("intense", "intense3")
+                    # self.music.play_music("intense", "intense3")
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
                     self.state = "game"
