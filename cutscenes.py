@@ -12,6 +12,7 @@ def get_dialogues(game, npc, dialogues, screen):
         "IntroP2(1)": {},
         "TicTacToeP1(1)": {},
         "TicTacToeP1(1)Extra": {},
+        "TicTacToeP2(1)Extra": {},
         "TicTacToeP2(1)": {},
         "EndingP1(1)": {},
     }
@@ -42,8 +43,11 @@ def get_dialogues(game, npc, dialogues, screen):
         Dialogues[npc]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
     
     elif npc == "TicTacToeP1(1)Extra":
-         Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
     
+    elif npc == "TicTacToeP2(1)Extra":
+        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
+   
     elif npc == "TicTacToeP2(1)":
         Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
     
