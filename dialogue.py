@@ -67,6 +67,9 @@ def dialogue(self, state):
                     dialogue = cutscenes.get_dialogues(self, "TicTacToeP1(1)Extra", self.dialogues, self.screen)
                     cutscenes.rundialogues(dialogue)
                     # Add the Tic Tac Toe game here
+                elif self.player.gold <300:
+                    dialogue = cutscenes.get_dialogues(self, "TicTacToeP2(1)Extra", self.dialogues, self.screen)
+                    cutscenes.rundialogues(dialogue)
                     pass
                 else:
                     pass
