@@ -108,10 +108,10 @@ class Game:
         }
         
         self.sfx['ambience'].set_volume(0.05)
-        self.sfx['shoot'].set_volume(0.3)
-        self.sfx['hit'].set_volume(0.4)
+        self.sfx['shoot'].set_volume(0.6)
+        self.sfx['hit'].set_volume(0.6)
         self.sfx['dash'].set_volume(1)
-        self.sfx['jump'].set_volume(0.5)
+        self.sfx['jump'].set_volume(1)
         self.sfx['wasted'].set_volume(1)
         self.sfx['bullet'].set_volume(0.3)
         self.sfx['click'].set_volume(1)
@@ -119,7 +119,7 @@ class Game:
         self.startscreen = StartScreen(self)
         self.game = Play(self)
         self.profile = PlayerProfile(self)
-        # self.music = Music(self)
+        self.music = Music(self)
         self.state = "game"
         self.cutscene = "Intro"
 
@@ -129,7 +129,7 @@ class Game:
 
             if self.state == "start":
                 newloadexit = self.startscreen.run()
-                # self.music.play_music("music","music")
+                self.music.play_music("music","music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -143,7 +143,7 @@ class Game:
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
-                # self.music.play_music("music","music")
+                self.music.play_music("music","music")
 
             if self.state == "newgame":
                 self.data = self.profile.create_profile()
@@ -174,7 +174,7 @@ class Game:
     
             if self.state == "cutscene":
                 if self.cutscene == "Intro":
-                    # self.music.play_music("intense", "intense3")
+                    self.music.play_music("intense", "intense3")
                     cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
                     self.state = "game"

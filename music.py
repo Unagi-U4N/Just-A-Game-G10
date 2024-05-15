@@ -50,5 +50,5 @@ class Music:
                     pygame.mixer.music.unload()
                 self.music_playing = self.current_music
                 pygame.mixer.music.load(self.current_music)
-                pygame.mixer.music.set_volume(0.3)
+                pygame.mixer.music.set_volume(0.8)
                 pygame.mixer.music.play(-1)
