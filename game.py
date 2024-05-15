@@ -23,7 +23,7 @@ class Game:
         self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "map", 0, 3, 3]
+        self.data = ["Ivan", "map", 400, 3, 10]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -36,9 +36,12 @@ class Game:
 
         # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
         self.dialogues = {
-            "Jamesfirstmeet": load_dialogue("Jamesfirstmeet"),
-            "Jamesfirstmeet2": load_dialogue("Jamesfirstmeet2"),
-            "TicTacToe": load_dialogue("TicTacToe"),
+            "IntroP1(1)": load_dialogue("IntroP1(1)"),
+            "IntroP2(1)": load_dialogue("IntroP2(1)"),
+            "TicTacToeP1(1)": load_dialogue("TicTacToeP1(1)"),
+            "TicTacToeP1(1)Extra": load_dialogue("TicTacToeP1(1)Extra"),
+            "TicTacToeP2(1)": load_dialogue("TicTacToeP2(1)"),
+            "EndingP1(1)": load_dialogue("EndingP1(1)"),
         }
         
         self.assets= {
@@ -117,7 +120,7 @@ class Game:
         self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):

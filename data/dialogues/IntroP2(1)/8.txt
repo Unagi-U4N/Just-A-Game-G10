@@ -1,0 +1,4 @@
+1. "A" to move to your left 
+2. "D" to move to your right
+3. Dash with the "spacebar" to dodge bullets and kill enemies
+
