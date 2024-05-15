@@ -43,6 +43,7 @@ class Play():
         self.level = 0
         self.reasonofdeath = None
         self.transition = 0
+        self.speed = self.player.speed
         self.felltransition = 0
         self.deductlife = True
         self.playedwaste = False
@@ -68,6 +69,7 @@ class Play():
     def load(self, data):
         self.player.updateprofile(data)
         self.level = data[1]
+        self.maxHP = self.player.HP
         self.lives = self.player.HP
         self.load_level(self.level)
 
@@ -124,7 +126,7 @@ class Play():
             elif i == 1 and map_id == "map":
                 npc.name = "TicTacToe"
             elif i == 2 and map_id == "map":
-                npc.name = "End"
+                npc.name = "Ending"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -152,8 +154,9 @@ class Play():
         self.exclamation = self.game.exclamation
 
     def update(self):
+
         self.clouds.update()
-        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 1.5, 0)) # update(self, tilemap, movement=(0,0))
+        self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.speed, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=self.render_scroll)
 
         for npc in self.npc:
@@ -166,7 +169,7 @@ class Play():
 
             if self.enemykill:
                 self.enemies.remove(enemy)
-                self.lives = min(self.player.HP, self.lives + 1)
+                self.lives = min(self.maxHP, self.lives + 1)
                 self.player.gold += 100
 
         # Get the latest solid tiles the player is stepping on as the latest respawn point
@@ -279,8 +282,9 @@ class Play():
 
         for x in range(self.lives):
             render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+        render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
         render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
-        render_text(str(self.player.speed), self.font, "black", 1030, 100, self.display, False)
+        render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
         num= self.player.gold
         count= 0
 
@@ -338,14 +342,14 @@ class Play():
             if self.restart:
                 self.transition += 1
                 if self.transition > 75:
-                    self.lives = self.player.HP
+                    self.lives = self.maxHP
                     self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
                     self.firsthit = False
                     self.deadscreen = False
                     self.deadmsg = ""
                     self.reasonofdeath = None
-                    self.load_level(self.level)
+                    self.load_level("map")
                     self.playedwaste = False
                     self.restart = False
                     self.sfx['wasted'].stop()
