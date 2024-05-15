@@ -95,4 +95,4 @@ class Tilemap:
                 display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
                 self.count += 1
 
-        print("Ongrid tiles rendered: " + str(self.xcount), "Offgrid tiles rendered: " + str(self.count))
+        # print("Ongrid tiles rendered: " + str(self.xcount), "Offgrid tiles rendered: " + str(self.count))
