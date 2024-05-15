@@ -91,7 +91,7 @@ class Tilemap:
         # print("Ongrid tiles: " + str(self.tilecount))
 
         for tile in self.offgrid_tiles:
-            if tile["pos"][0] in range( offset[0] - 200, offset[0] + 1400):
+            if tile["pos"][0] in range(offset[0] - 200, offset[0] + 1400) and tile["pos"][1] in range(offset[1] - 200, offset[1] + 800):
                 display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
                 self.count += 1
 
