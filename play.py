@@ -12,6 +12,7 @@ from spark import Spark
 import cutscenes
 import dialogue
 from music import Music
+from safehouse import Safehouse
 
 class Play():
     def __init__(self, game):
@@ -34,6 +35,7 @@ class Play():
         self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
+        self.safehouse = Safehouse(self)
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
@@ -240,7 +242,7 @@ class Play():
                 self.sparks.remove(spark)
         
     def run(self):
-        
+                
         self.display.blit(self.daybg, (0, 0))
         self.mousepos = pygame.mouse.get_pos()
 
