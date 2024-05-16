@@ -33,17 +33,6 @@ class Game:
         self.cutscenes = {
             "Intro": load_script("Intro"),
         }
-
-        # # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
-        # self.dialogues = {
-        #     "IntroP1(1)": load_dialogue("IntroP1(1)"),
-        #     "IntroP2(1)": load_dialogue("IntroP2(1)"),
-        #     "TicTacToeP1(1)": load_dialogue("TicTacToeP1(1)"),
-        #     "TicTacToeP1(1)Extra": load_dialogue("TicTacToeP1(1)Extra"),
-        #     "TicTacToeP2(1)Extra": load_dialogue("TicTacToeP2(1)Extra"),
-        #     "TicTacToeP2(1)": load_dialogue("TicTacToeP2(1)"),
-        #     "EndingP1(1)": load_dialogue("EndingP1(1)"),
-        # }
         
         self.assets= {
             # "Name of the asset": scale_images(load_image("path to the asset"), scale= 1.5 OR set_scale=(1200, 675),
