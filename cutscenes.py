@@ -4,85 +4,6 @@ from utils import *
 # Get the top right coordinates of the dialogue box and return a tuple
 dialoguebox_pos = (350, 490)
 
-def get_dialogues(game, npc, dialogues, screen):
-
-    # All the possible dialogues
-    Dialogues = {
-        "IntroP1(1)": {},
-        "IntroP2(1)": {},
-        "TicTacToeP1(1)": {},
-        "TicTacToeP1(1)Extra": {},
-        "TicTacToeP2(1)Extra": {},
-        "TicTacToeP2(1)": {},
-        "EndingP1(1)": {},
-    }
-
-    # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white", choice)
-    # Reason to this is to customize every single dialogue
-    if npc == "IntroP1(1)":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-        Dialogues[npc]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
-        Dialogues[npc]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
-
-    elif npc == "IntroP2(1)":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-        Dialogues[npc]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
-        Dialogues[npc]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
-        Dialogues[npc]["3"] = Dialogue(game, "James", dialogues[npc]["3"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["3"][1], "black")
-        Dialogues[npc]["4"] = Dialogue(game, "James", dialogues[npc]["4"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["4"][1], "black")
-        Dialogues[npc]["5"] = Dialogue(game, "James", dialogues[npc]["5"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["5"][1], "black")
-        Dialogues[npc]["6"] = Dialogue(game, "James", dialogues[npc]["6"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["6"][1], "black")
-        Dialogues[npc]["7"] = Dialogue(game, "James", dialogues[npc]["7"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["7"][1], "black")
-        Dialogues[npc]["8"] = Dialogue(game, "James", dialogues[npc]["8"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["8"][1], "black")
-        Dialogues[npc]["9"] = Dialogue(game, "James", dialogues[npc]["9"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["9"][1], "black")
-        Dialogues[npc]["10"] = Dialogue(game, "James", dialogues[npc]["10"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["10"][1], "black")
-    
-    elif npc == "TicTacToeP1(1)":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-        Dialogues[npc]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
-        Dialogues[npc]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
-    
-    elif npc == "TicTacToeP1(1)Extra":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-    
-    elif npc == "TicTacToeP2(1)Extra":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-   
-    elif npc == "TicTacToeP2(1)":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-    
-    elif npc == "EndingP1(1)":
-        Dialogues[npc]["0"] = Dialogue(game, "James", dialogues[npc]["0"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["0"][1], "black")
-        Dialogues[npc]["1"] = Dialogue(game, "James", dialogues[npc]["1"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["1"][1], "black")
-        Dialogues[npc]["2"] = Dialogue(game, "James", dialogues[npc]["2"][0], (dialoguebox_pos), 30, 10, screen, dialogues[npc]["2"][1], "black")
-
-    return Dialogues[npc]
-
-def get_cutscene(game, type, cutscenes, screen):
-    
-    Cutscenes = {"Intro": {"0": None, "1": None, "2": None, "3": None, "4": None, "5": None, "6": None, "7": None, "8": None, "9": None},
-                "Ending": {"0": None}
-                }
-
-    # cutscene(game, msgs, pos, size, speed, screen, img=None, color="white")
-    
-    if type == "Intro":
-        Cutscenes["Intro"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (518, 480), 45, 40, screen, cutscenes[type]["0"][1])
-        Cutscenes["Intro"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (75, 180), 40, 20, screen, cutscenes[type]["1"][1])
-        Cutscenes["Intro"]["2"] = Cutscene(game, cutscenes[type]["2"][0], (100, 420), 40, 20, screen, cutscenes[type]["2"][1])       
-        Cutscenes["Intro"]["3"] = Cutscene(game, cutscenes[type]["3"][0], (130, 230), 40, 20, screen, cutscenes[type]["3"][1])     
-        Cutscenes["Intro"]["4"] = Cutscene(game, cutscenes[type]["4"][0], (50, 190), 40, 20, screen, cutscenes[type]["4"][1])  
-        Cutscenes["Intro"]["5"] = Cutscene(game, cutscenes[type]["5"][0], (50, 250), 40, 20, screen, cutscenes[type]["5"][1]) 
-        Cutscenes["Intro"]["6"] = Cutscene(game, cutscenes[type]["6"][0], (110, 270), 40, 20, screen, cutscenes[type]["6"][1])             
-        Cutscenes["Intro"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (110, 250), 40, 20, screen, cutscenes[type]["7"][1])
-        Cutscenes["Intro"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (110, 210), 40, 20, screen, cutscenes[type]["8"][1]) 
-        Cutscenes["Intro"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (350, 300), 40, 40, screen, cutscenes[type]["9"][1])   
-    
-    elif type == "Ending":
-        Cutscenes["Ending"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (50, 50), 20, 50, screen, cutscenes[type]["0"][1])
-
-    return Cutscenes[type]
-
 def rundialogues(dialogues):
     num = 0
     repeat = False
@@ -190,7 +111,6 @@ class Logic:
         self.status = {msg: False for msg in self.msgs}
 
     def draw(self):
-        print(self.status)
         if  self.fadescreen > 0:
             self.fadescreenbool = True
         
@@ -257,12 +177,12 @@ class Cutscene(Logic):
         
 
 class Dialogue(Logic):
-    def __init__(self, game, npc, msgs, pos, size, speed, screen, img=None, color="white"):
+    def __init__(self, game, screen, msgs, npc="James", pos=(dialoguebox_pos), size=30, speed=10, img=None, color="black"):
         super().__init__(game, msgs, pos, size, speed, screen, img, color)
+        self.npc = self.game.assets["npc"]
         self.img = self.game.assets["dialoguebox"]
         self.fadescreenbool = False
         self.fadescreen = 0
-        self.npc = img
         self.name = npc
         self.display = pygame.Surface((1200, 675))
 
