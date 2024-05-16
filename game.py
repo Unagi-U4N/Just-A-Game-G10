@@ -48,7 +48,7 @@ class Game:
         self.assets= {
             # "Name of the asset": scale_images(load_image("path to the asset"), scale= 1.5 OR set_scale=(1200, 675),
             "player": load_image("entities/player.png"),
-            "npc": load_image("entities/npc.png"),
+            "npc": scale_images(load_image("entities/npc.png"), scale= 5),
             "decor": scale_images(load_images("tiles/decor")),
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
