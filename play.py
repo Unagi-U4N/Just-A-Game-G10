@@ -30,7 +30,7 @@ class Play():
         self.screen = game.screen
         self.display = game.display
         self.assets = game.assets
-        self.dialogues = game.dialogues
+        self.dialogues = dialogue.init_dialogue(self)
         self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
