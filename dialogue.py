@@ -6,6 +6,7 @@ from clouds import Clouds
 from particle import Particle
 from spark import Spark
 from cutscenes import *
+from ttt import *
 
 # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
 dialogues = load_dialogue()
@@ -27,12 +28,11 @@ def dialogue(self, state):
         rundialogues(self.dialogues["TicTacToeP1(1)"])
         choice = dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
         if choice == "Yes":
-            if self.player.gold >= 300:
-                self.player.gold -= 300
-                rundialogues(self.dialogues["TicTacToeP1(1)"])
-                # Add the Tic Tac Toe game here
-            elif self.player.gold <300:
-                rundialogues(self.dialogues["TicTacToeP2(1)"])
+            if self.player.gold >= 500:
+                rundialogues(self.dialogues["TicTacToeP1(1)Extra"])
+                self.play = True
+            elif self.player.gold <500:
+                rundialogues(self.dialogues["TicTacToeP2(1)Extra"])
                 pass
             else:
                 pass

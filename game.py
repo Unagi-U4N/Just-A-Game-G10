@@ -82,6 +82,8 @@ class Game:
             "resume2": scale_images(load_image("button/resume2.png"), scale=0.5),
             "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
             "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
+            "ttt1": scale_images(load_image("ttt1.png"), set_scale=(1200, 675)),
+            "ttt2": scale_images(load_image("ttt2.png"), set_scale=(1200, 675)),
             "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
             "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),

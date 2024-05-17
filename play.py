@@ -12,6 +12,7 @@ from spark import Spark
 import cutscenes
 import dialogue
 from music import Music
+from ttt import *
 
 class Play():
     def __init__(self, game):
@@ -34,6 +35,7 @@ class Play():
         self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
+        self.ttt = TicTacToe(self)
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
@@ -45,6 +47,7 @@ class Play():
         self.transition = 0
         self.speed = self.player.speed
         self.felltransition = 0
+        self.play = False
         self.deductlife = True
         self.playedwaste = False
         self.restart = False
@@ -301,7 +304,7 @@ class Play():
             self.e = False
 
         self.check_button()
-        if not self.pause:
+        if not self.pause and not self.play:
             self.update()
         
         # Load respawn screen
@@ -356,6 +359,9 @@ class Play():
                     self.transition = -75
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
+        
+        if self.play:
+            self.ttt.run()
 
         if self.pause:
 
