@@ -26,25 +26,34 @@ def dialogue(self, state):
         rundialogues(self.dialogues["IntroP2(1)"])
 
     elif state == "TicTacToe":
-        rundialogues(self.dialogues["TicTacToeP1(1)"])
-        choice = dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
-        if choice == "Yes":
-            if self.player.gold >= 500:
-                rundialogues(self.dialogues["TicTacToeP1(1)Extra"])
-                self.play = True
-            elif self.player.gold <500:
-                rundialogues(self.dialogues["TicTacToeP2(1)Extra"])
-                pass
-            else:
-                pass
-        elif choice == "No":
-            rundialogues(self.dialogues["TicTacToeP2(1)"])
-            # self.load_level("0")
+        if self.canplay:
+            rundialogues(self.dialogues["TicTacToeP1(1)"])
+            choice = dialoguequestions(self.assets["dialoguebox"], "Do you want to play Tic Tac Toe?", ["Yes", "No"], self.screen)
+            if choice == "Yes":
+                if self.player.gold >= 500:
+                    rundialogues(self.dialogues["TicTacToeP1(1)Extra"])
+                    self.play = True
+                elif self.player.gold <500:
+                    rundialogues(self.dialogues["TicTacToeP2(1)Extra"])
+                    pass
+            elif choice == "No":
+                rundialogues(self.dialogues["TicTacToeP2(1)"])
+                # self.load_level("0")
+        else:
+            rundialogues(self.dialogues["NoTicTacToe"])
 
     elif state == "TicTacToeWin":
         rundialogues(self.dialogues["TicTacToeWin"])
         self.maxHP += 3
         self.lives += 3
+    
+    elif state == "TicTacToeLose":
+        rundialogues(self.dialogues["TicTacToeLose"])
+        self.player.gold -= 500
+
+    elif state == "TicTacToeDraw":
+        rundialogues(self.dialogues["TicTacToeDraw"])
+        self.player.gold += 100
 
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])

@@ -276,11 +276,14 @@ class TicTacToe:
                     self.title = f"{self.winner} wins!"
             elif self.timer >= 200:
                 if self.winner == self.user and self.winner is not None:
-                    return "Win"
+                    results = "Win"
                 elif self.winner != self.user and self.winner is not None:
-                    return "Lose"
+                    results = "Lose"
                 else:
-                    return "Draw"
+                    results = "Draw"
+                
+                self.reset()
+                return results
                 
         elif self.user == player_:
             self.title = f"{self.user}'s turn"
@@ -303,6 +306,17 @@ class TicTacToe:
             render_text(self.user, self.font1, "black", self.tile[x][y][0], self.tile[x][y][1], self.display, True, transparency=150)
             if self.board[x][y] != EMPTY:
                 render_text("Choose another tile", self.game.font, "red", 600, 230, self.display, True)
+
+    def reset(self):
+        self.board = initial_state()
+        self.state = "1"
+        self.timer = 0
+        self.place = [1, 1]
+        self.choice = 0
+        self.user = None
+        self.ai_turn = False
+        self.winner = None
+        self.title = ""
 
     def run(self):
         img=pygame.Surface((1200, 675))

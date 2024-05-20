@@ -46,9 +46,11 @@ class Play():
         self.level = 0
         self.reasonofdeath = None
         self.transition = 0
+        self.results = ""
         self.speed = self.player.speed
         self.felltransition = 0
         self.play = False
+        self.canplay = True
         self.deductlife = True
         self.playedwaste = False
         self.restart = False
@@ -296,7 +298,7 @@ class Play():
             num//= 10
             count += 1
         render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False)
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
 
         # Example of implementation of code for dialogue
         name = self.interact()
@@ -362,19 +364,19 @@ class Play():
                     # self.game.sfx['ambience'].play(-1)
         
         # Play minigame
-        if self.play:
-            results = self.ttt.run()
-            if results == "Win":
+        if self.play and self.canplay:
+            self.results = self.ttt.run()
+            if self.results == "Win":
+                self.canplay = False
                 self.play = False
                 dialogue.dialogue(self, "TicTacToeWin")
-            elif results == "Lose":
+            elif self.results == "Lose":
                 self.play = False
                 dialogue.dialogue(self, "TicTacToeLose")
-            elif results == "Draw":
+            elif self.results == "Draw":
                 self.play = False
                 dialogue.dialogue(self, "TicTacToeDraw")
-                       
-
+                    
         if self.pause:
 
             self.player.render(self.display, offset=self.render_scroll)
