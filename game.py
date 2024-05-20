@@ -20,7 +20,6 @@ class Game:
         self.screen = pygame.display.set_mode((1200, 675))
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
-        self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
         self.data = ["Ivan", "test", 500, 3, 3]
@@ -73,6 +72,7 @@ class Game:
             "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
             "ttt1": scale_images(load_image("ttt/ttt1.png"), set_scale=(1200, 675)),
             "ttt2": scale_images(load_image("ttt/ttt2.png"), set_scale=(1200, 675)),
+            "ttt3": scale_images(load_image("ttt/ttt3.png"), set_scale=(1200, 675)),
             "X": scale_images(load_image("ttt/X.png"), scale= 0.5),
             "O": scale_images(load_image("ttt/O.png"), scale= 0.5),
             "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),

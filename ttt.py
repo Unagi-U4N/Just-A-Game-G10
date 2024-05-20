@@ -213,55 +213,123 @@ def minimax(board):
 
 class TicTacToe:
     def __init__(self, game):
+        self.font1 = pygame.font.Font("data/monogram.ttf", 70)
+        self.font2 = pygame.font.Font("data/monogram.ttf", 40)
         self.playername = game.player.name
+        self.board = initial_state()
         self.state = "1"
+        self.timer = 0
+        self.place = [1, 1]
         self.choice = 0
         self.game = game
         self.user = None
         self.display = game.display
-        self.board = initial_state()
         self.ai_turn = False
         self.winner = None
+        self.tile = [[(521, 282),(602, 282),(678, 282)],
+                     [(521, 355),(602, 355),(678, 355)],
+                     [(521, 438),(602, 438),(678, 438)]]
+        self.title = ""
 
     def getplayer(self):
+
+        if self.user is None:
+            if self.state == "1":
+                self.display.blit(self.game.assets["ttt1"], (0, 0))
+            
+            elif self.state == "2":
+                self.display.blit(self.game.assets["ttt2"], (0, 0))
+                if self.choice == 0:
+                    render_img(self.game.assets["X"], 500, 350, self.display, True)
+                    render_img(self.game.assets["O"], 700, 350, self.display, True, transparency=150)
+                elif self.choice == 1:
+                    render_img(self.game.assets["O"], 700, 350, self.display, True)
+                    render_img(self.game.assets["X"], 500, 350, self.display, True, transparency=150)
+
+        if self.user is not None and self.timer < 100 and self.state != "3":
+            self.display.blit(self.game.assets["ttt2"], (0, 0))
+            render_img(self.game.assets[self.user], 600, 350, self.display, True)
+            render_text(self.user + " chosen", self.game.font, "black", 600, 450, self.display, True)
+            self.timer += 1
+        elif self.user is not None:
+            self.state = "3"
+            self.timer = 0
+            self.play()
+
+                
+    def play(self):
+        self.display.blit(self.game.assets["ttt3"], (0, 0))
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] != EMPTY:
+                    render_text(self.board[i][j], self.font1, "black", self.tile[i][j][0], self.tile[i][j][1], self.display, True)
+        
+        game_over = terminal(self.board)
+        player_ = player(self.board)
+
+        # If game over
+        if game_over:
+            self.winner = winner(self.board)
+            if self.winner is None:
+                self.title = "It's a tie!"
+            else:
+                self.title = f"{self.winner} wins!"
+        elif self.user == player_:
+            self.title = f"{self.user}'s turn"
+        else:
+            self.title = "Computer thinking..."
+        render_text(self.title, self.game.font, "black", 600, 500, self.display, True)
+
+        # Check for AI move
+        if self.user != player_ and not game_over:
+            if self.ai_turn:
+                self.board = result(self.board, minimax(self.board))
+                self.ai_turn = False
+            else:
+                self.ai_turn = True
+
+        # Check for user move, allow player to navigate using arrow keys and press space to choose
+        x = self.place[0]
+        y = self.place[1]
+        if self.user == player_ and not game_over:
+            render_text(self.user, self.font1, "black", self.tile[x][y][0], self.tile[x][y][1], self.display, True, transparency=150)
+            if self.board[x][y] != EMPTY:
+                render_text("Choose another tile", self.game.font, "red", 600, 230, self.display, True)
+
+    def run(self):
         img=pygame.Surface((1200, 675))
         img.fill((0,0,0))
         img.set_alpha(150)
         self.display.blit(img, (0,0))
 
-        if self.state == "1":
-            self.display.blit(self.game.assets["ttt1"], (0, 0))
-        
-        elif self.state == "2":
-            self.display.blit(self.game.assets["ttt2"], (0, 0))
-            if self.choice == 0:
-                render_img(self.game.assets["X"], 500, 350, self.display, True)
-                render_img(self.game.assets["O"], 700, 350, self.display, True, transparency=150)
-            elif self.choice == 1:
-                render_img(self.game.assets["O"], 700, 350, self.display, True)
-                render_img(self.game.assets["X"], 500, 350, self.display, True, transparency=150)
-
-        print(self.user)
-        if self.user is not None:
-            render_text(self.user + " chosen", self.game.font, "black", 600, 400, self.display, True)
-
-    def run(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    if self.state == "2":
+                    if self.state == "1":
+                        self.state = "2"
+                    elif self.state == "2":
                         if self.choice == 0:
                             self.user = X
                         elif self.choice == 1:
                             self.user = O
-                    self.state = "2"
+                    elif self.state == "3":
+                        if self.board[self.place[0]][self.place[1]] == EMPTY:
+                            self.board = result(self.board, (self.place[0], self.place[1]))
+                            self.place = [1, 1]
                 if event.key == pygame.K_LEFT and self.state == "2":
                     self.choice = (self.choice + 1) % 2
                 if event.key == pygame.K_RIGHT and self.state == "2":
-                    self.choice = (self.choice + 1) % 2
+                    self.choice = (self.choice - 1) % 2
+                if event.key == pygame.K_UP or event.key == pygame.K_w and self.state == "3":
+                    self.place[0] = (self.place[0] - 1) % 3
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s and self.state == "3":
+                    self.place[0] = (self.place[0] + 1) % 3
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a and self.state == "3":
+                    self.place[1] = (self.place[1] - 1) % 3
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d and self.state == "3":
+                    self.place[1] = (self.place[1] + 1) % 3
 
-        self.getplayer()
-        
+        self.getplayer()        
