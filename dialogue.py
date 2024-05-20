@@ -18,6 +18,7 @@ def init_dialogue(self):
     return Dialogues
 
 def dialogue(self, state):
+    choice = None
     self.movements = [False, False]
     if state == "Intro":
         rundialogues(self.dialogues["IntroP1(1)"])
@@ -39,6 +40,11 @@ def dialogue(self, state):
         elif choice == "No":
             rundialogues(self.dialogues["TicTacToeP2(1)"])
             # self.load_level("0")
+
+    elif state == "TicTacToeWin":
+        rundialogues(self.dialogues["TicTacToeWin"])
+        self.maxHP += 3
+        self.lives += 3
 
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])

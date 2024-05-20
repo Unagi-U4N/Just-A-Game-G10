@@ -205,7 +205,7 @@ def minimax(board):
                 action.append(act)
             choice.append(action[val.index(min(val))])
         global operations
-        print("Total operations: ", operations)
+        # print("Total operations: ", operations)
         operations = 0
         return choice[0]
     
@@ -253,10 +253,8 @@ class TicTacToe:
             self.timer += 1
         elif self.user is not None:
             self.state = "3"
-            self.timer = 0
-            self.play()
+            return self.play()
 
-                
     def play(self):
         self.display.blit(self.game.assets["ttt3"], (0, 0))
         for i in range(3):
@@ -269,11 +267,21 @@ class TicTacToe:
 
         # If game over
         if game_over:
-            self.winner = winner(self.board)
-            if self.winner is None:
-                self.title = "It's a tie!"
-            else:
-                self.title = f"{self.winner} wins!"
+            self.timer += 1
+            if self.timer < 200:
+                self.winner = winner(self.board)
+                if self.winner is None:
+                    self.title = "It's a tie!"
+                else:
+                    self.title = f"{self.winner} wins!"
+            elif self.timer >= 200:
+                if self.winner == self.user and self.winner is not None:
+                    return "Win"
+                elif self.winner != self.user and self.winner is not None:
+                    return "Lose"
+                else:
+                    return "Draw"
+                
         elif self.user == player_:
             self.title = f"{self.user}'s turn"
         else:
@@ -332,4 +340,4 @@ class TicTacToe:
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d and self.state == "3":
                     self.place[1] = (self.place[1] + 1) % 3
 
-        self.getplayer()        
+        return self.getplayer()        

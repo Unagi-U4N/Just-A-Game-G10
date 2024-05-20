@@ -28,6 +28,7 @@ class Play():
         self.choice = ""
         self.pause = False
         self.game = game
+        self.winner = None
         self.screen = game.screen
         self.display = game.display
         self.assets = game.assets
@@ -360,8 +361,19 @@ class Play():
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
         
+        # Play minigame
         if self.play:
-            self.ttt.run()
+            results = self.ttt.run()
+            if results == "Win":
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeWin")
+            elif results == "Lose":
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeLose")
+            elif results == "Draw":
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeDraw")
+                       
 
         if self.pause:
 
