@@ -215,6 +215,7 @@ class TicTacToe:
     def __init__(self, game):
         self.playername = game.player.name
         self.state = "1"
+        self.choice = 0
         self.game = game
         self.user = None
         self.display = game.display
@@ -233,22 +234,34 @@ class TicTacToe:
         
         elif self.state == "2":
             self.display.blit(self.game.assets["ttt2"], (0, 0))
+            if self.choice == 0:
+                render_img(self.game.assets["X"], 500, 350, self.display, True)
+                render_img(self.game.assets["O"], 700, 350, self.display, True, transparency=150)
+            elif self.choice == 1:
+                render_img(self.game.assets["O"], 700, 350, self.display, True)
+                render_img(self.game.assets["X"], 500, 350, self.display, True, transparency=150)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.state = "2"
-                    if self.state == "2":
-                        self.choice = 
+        print(self.user)
+        if self.user is not None:
+            render_text(self.user + " chosen", self.game.font, "black", 600, 400, self.display, True)
 
     def run(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if self.state == "2":
+                        if self.choice == 0:
+                            self.user = X
+                        elif self.choice == 1:
+                            self.user = O
+                    self.state = "2"
+                if event.key == pygame.K_LEFT and self.state == "2":
+                    self.choice = (self.choice + 1) % 2
+                if event.key == pygame.K_RIGHT and self.state == "2":
+                    self.choice = (self.choice + 1) % 2
 
         self.getplayer()
         

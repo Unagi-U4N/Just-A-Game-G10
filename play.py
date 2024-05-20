@@ -431,7 +431,7 @@ class Play():
                         self.pause = not self.pause
                         
         # This part will check the controls of the player
-        if not self.dead and not self.pause:
+        if not self.dead and not self.pause and not self.play:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

@@ -23,13 +23,15 @@ def render_text(text, font, color, x, y, display, centered=True):
     display.blit(texts, text_rect)
     return text_rect
 
-def render_img(img, x, y, display, centered=True, click=False, hover=None):
+def render_img(img, x, y, display, centered=True, click=False, hover=None, transparency=255):
     # render image on the display, make sure the image is centered, clickable
     if centered:
         img_rect = img.get_rect(center=(x, y))
     else:
         img_rect = (x, y)
     
+    img.set_alpha(transparency)  # Set transparency effect
+
     display.blit(img, img_rect)
 
     if hover is not None:
