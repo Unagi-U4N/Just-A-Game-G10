@@ -13,23 +13,26 @@ BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
 BASE_DIALOGUE_PATH = get_path() + "data/dialogues/"
 
-def render_text(text, font, color, x, y, display, centered=True):
+def render_text(text, font, color, x, y, display, centered=True, transparency=255):
     # render text on the display, make sure the text is centered
     texts = font.render(text, True, color)
     if centered:
         text_rect = texts.get_rect(center=(x, y))
     else:
         text_rect = (x, y)
+    texts.set_alpha(transparency)  # Set transparency effect
     display.blit(texts, text_rect)
     return text_rect
 
-def render_img(img, x, y, display, centered=True, click=False, hover=None):
+def render_img(img, x, y, display, centered=True, click=False, hover=None, transparency=255):
     # render image on the display, make sure the image is centered, clickable
     if centered:
         img_rect = img.get_rect(center=(x, y))
     else:
         img_rect = (x, y)
     
+    img.set_alpha(transparency)  # Set transparency effect
+
     display.blit(img, img_rect)
 
     if hover is not None:

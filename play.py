@@ -12,6 +12,7 @@ from spark import Spark
 import cutscenes
 import dialogue
 from music import Music
+from ttt import *
 from safehouse import Safehouse
 
 class Play():
@@ -28,6 +29,7 @@ class Play():
         self.choice = ""
         self.pause = False
         self.game = game
+        self.winner = None
         self.screen = game.screen
         self.display = game.display
         self.assets = game.assets
@@ -35,6 +37,7 @@ class Play():
         self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
+        self.ttt = TicTacToe(self)
         self.safehouse = Safehouse(self)
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
@@ -45,8 +48,11 @@ class Play():
         self.level = 0
         self.reasonofdeath = None
         self.transition = 0
+        self.results = ""
         self.speed = self.player.speed
         self.felltransition = 0
+        self.play = False
+        self.canplay = True
         self.deductlife = True
         self.playedwaste = False
         self.restart = False
@@ -294,7 +300,7 @@ class Play():
             num//= 10
             count += 1
         render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-        render_text(str(self.player.gold), self.font, "black", 1030 - count * 5, 145, self.display, False)
+        render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
 
         # Example of implementation of code for dialogue
         name = self.interact()
@@ -303,7 +309,7 @@ class Play():
             self.e = False
 
         self.check_button()
-        if not self.pause:
+        if not self.pause and not self.play:
             self.update()
         
         # Load respawn screen
@@ -358,7 +364,21 @@ class Play():
                     self.transition = -75
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
-
+        
+        # Play minigame
+        if self.play and self.canplay:
+            self.results = self.ttt.run()
+            if self.results == "Win":
+                self.canplay = False
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeWin")
+            elif self.results == "Lose":
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeLose")
+            elif self.results == "Draw":
+                self.play = False
+                dialogue.dialogue(self, "TicTacToeDraw")
+                    
         if self.pause:
 
             self.player.render(self.display, offset=self.render_scroll)
@@ -427,7 +447,7 @@ class Play():
                         self.pause = not self.pause
                         
         # This part will check the controls of the player
-        if not self.dead and not self.pause:
+        if not self.dead and not self.pause and not self.play:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
