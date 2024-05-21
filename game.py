@@ -20,10 +20,9 @@ class Game:
         self.screen = pygame.display.set_mode((1200, 675))
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
-        self.font = "data/monogram.ttf"
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test", 400, 3, 3]
+        self.data = ["Ivan", "test", 1500, 3, 3]
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -34,17 +33,6 @@ class Game:
             "Intro": load_script("Intro"),
         }
 
-        # # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
-        # self.dialogues = {
-        #     "IntroP1(1)": load_dialogue("IntroP1(1)"),
-        #     "IntroP2(1)": load_dialogue("IntroP2(1)"),
-        #     "TicTacToeP1(1)": load_dialogue("TicTacToeP1(1)"),
-        #     "TicTacToeP1(1)Extra": load_dialogue("TicTacToeP1(1)Extra"),
-        #     "TicTacToeP2(1)Extra": load_dialogue("TicTacToeP2(1)Extra"),
-        #     "TicTacToeP2(1)": load_dialogue("TicTacToeP2(1)"),
-        #     "EndingP1(1)": load_dialogue("EndingP1(1)"),
-        # }
-        
         self.assets= {
             # "Name of the asset": scale_images(load_image("path to the asset"), scale= 1.5 OR set_scale=(1200, 675),
             "player": load_image("entities/player.png"),
@@ -82,6 +70,11 @@ class Game:
             "resume2": scale_images(load_image("button/resume2.png"), scale=0.5),
             "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
             "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
+            "ttt1": scale_images(load_image("ttt/ttt1.png"), set_scale=(1200, 675)),
+            "ttt2": scale_images(load_image("ttt/ttt2.png"), set_scale=(1200, 675)),
+            "ttt3": scale_images(load_image("ttt/ttt3.png"), set_scale=(1200, 675)),
+            "X": scale_images(load_image("ttt/X.png"), scale= 0.5),
+            "O": scale_images(load_image("ttt/O.png"), scale= 0.5),
             "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
             "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
