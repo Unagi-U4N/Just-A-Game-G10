@@ -326,6 +326,7 @@ class Player(PhysicsEntity):
     def __init__(self, game, pos):
         super().__init__(game, 'player', pos, size=(16, 30))
         self.gold = 0
+        self.level = 1
         self.name = ""
         self.air_time = 0
         self.HP = 1
@@ -336,6 +337,7 @@ class Player(PhysicsEntity):
 
     def updateprofile(self, data):
         self.name = data[0]
+        self.level = data[1]
         self.gold = data[2]
         self.speed = data[3]
         self.HP = data[4]

@@ -57,5 +57,6 @@ def dialogue(self, state):
 
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])
-        # self.player.safehouse()
+        self.player.gold += 1000
+        self.safehouse.run()
         pass

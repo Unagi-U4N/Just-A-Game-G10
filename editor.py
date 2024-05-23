@@ -29,6 +29,7 @@ class Editor:
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
             "metal": scale_images(load_images("tiles/metal")),
+            "glitch_blocks": scale_images(load_images("tiles/glitch blocks")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "spawners": scale_images(load_images("tiles/spawners")),
             "tile_background": scale_images(load_images("tiles/background")),
