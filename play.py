@@ -43,7 +43,7 @@ class Play():
         self.render_scroll = (0, 0)
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
-        self.daybg = self.assets["day"]
+        self.bg = self.assets["day"]
         self.sfx = game.sfx
         self.level = 0
         self.reasonofdeath = None
@@ -104,6 +104,9 @@ class Play():
             self.pausetimer += 1
 
     def load_level(self, map_id):
+
+        if map_id == "1":
+            self.bg = self.assets["day"]
 
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
         self.leaf_spawners = []
@@ -486,7 +489,7 @@ class Play():
 
     def run(self):
                 
-        self.display.blit(self.daybg, (0, 0))
+        self.display.blit(self.bg, (0, 0))
 
         # Example of implementation of code for dialogue
         name = self.interact()
