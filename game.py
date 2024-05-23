@@ -41,6 +41,7 @@ class Game:
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
             "metal": scale_images(load_images("tiles/metal")),
+            "glitch_blocks": scale_images(load_images("tiles/glitch blocks")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
