@@ -19,7 +19,7 @@ class StartScreen:
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (100, 50))
         self.tilemap = Tilemap(game, tile_Size=32)
-        self.bg = scale_images(self.assets["day"],(1200, 675))
+        self.bg = self.assets["day"]
         self.cooldown = 60
         self.startcountdown = False
         self.name = ""

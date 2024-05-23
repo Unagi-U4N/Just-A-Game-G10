@@ -43,7 +43,7 @@ class Game:
             "metal": scale_images(load_images("tiles/metal")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
-            "background": load_image("background/background.png"),
+            "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
             "loadscreen1": load_image("loadscreen1.png"),
             "loadscreen2": load_image("loadscreen2.png"),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
