@@ -45,6 +45,7 @@ class Play():
         self.bg = self.assets["day"]
         self.sfx = game.sfx
         self.level = 0
+        self.store = False
         self.state = "game"
         self.profile = PlayerProfile(game)
         self.savetimer = 0
@@ -73,7 +74,10 @@ class Play():
             if self.player.rect().colliderect(npc.interact):           
                 render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                 if self.e:
-                    return npc.name
+                    if not npc.not_dialogue:
+                        return npc.name
+                    else:
+                        return "Store"
     
     def load(self, data):
         self.player.updateprofile(data)
@@ -146,6 +150,9 @@ class Play():
                 npc.name = "TicTacToe"
             elif i == 2 and map_id == "test":
                 npc.name = "Ending"
+            elif i == 0 and map_id == "safehouse":
+                npc.not_dialogue = True
+                npc.name = "Store"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -504,7 +511,13 @@ class Play():
                 self.display.fill((0, 0, 0))
                 self.display.blit(self.assets["save"], (0, 0))
 
-            print(self.savetimer)
+            # Put your codes here, remember to save the profile data
+            else:
+                if self.store:
+                    self.player.gold += 1000
+                    print("Put your store codes here")
+                    self.store = False
+
 
     def run(self):
                 
@@ -512,10 +525,14 @@ class Play():
         self.render()
 
         # Example of implementation of code for dialogue
-        name = self.interact()
-        if name is not None:
-            dialogue.dialogue(self, name)
+        self.npc_name = self.interact()
+        if self.npc_name == "Store":
+            self.store = True
             self.e = False
+        elif self.npc_name is not None:
+            dialogue.dialogue(self, self.npc_name)
+            self.e = False
+
 
         # Pause button, if paused don't update the game
         self.check_button()

@@ -452,6 +452,7 @@ class NPC(PhysicsEntity):
         self.assets = game.assets
         self.font = "data/monogram.ttf"
         self.speed = 2
+        self.not_dialogue = False
         self.interact = self.inetractablerect()
 
     def update(self, tilemap, movement=(0, 0)):

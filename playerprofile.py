@@ -105,7 +105,7 @@ class PlayerProfile:
         
         if not delete:
             if self.data != []:
-                self.data[1] = int(self.data[1])
+                self.data[1] = str(self.data[1])
                 self.data[2] = int(self.data[2])
                 self.data[3] = float(self.data[3])
                 self.data[4] = int(self.data[4])
