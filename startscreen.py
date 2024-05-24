@@ -1,10 +1,9 @@
 import pygame, sys, random, math
 from utils import *
-from entities import PhysicsEntity, Player, Enemy
+from entities import Player, Enemy
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
-from spark import Spark
 
 class StartScreen:
     def __init__(self, game):
@@ -106,7 +105,7 @@ class StartScreen:
 
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * 2, 0)) # update(self, tilemap, movement=(0,0))
         self.player.render(self.display, offset=render_scroll)
-        render_img(self.assets["startcontrols"], 200, 600, self.display)
+        # render_img(self.assets["startcontrols"], 200, 600, self.display)
         
         for spark in self.sparks.copy():
             kill = spark.update()

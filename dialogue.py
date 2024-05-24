@@ -1,10 +1,4 @@
-import pygame, sys, random, math, time
 from utils import *
-from entities import PhysicsEntity, Player, Enemy, NPC
-from tilemap import Tilemap
-from clouds import Clouds
-from particle import Particle
-from spark import Spark
 from cutscenes import *
 from ttt import *
 
@@ -38,7 +32,6 @@ def dialogue(self, state):
                     pass
             elif choice == "No":
                 rundialogues(self.dialogues["TicTacToeP2(1)"])
-                # self.load_level("0")
         else:
             rundialogues(self.dialogues["NoTicTacToe"])
 
@@ -58,5 +51,5 @@ def dialogue(self, state):
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])
         self.player.gold += 1000
-        self.safehouse.run()
-        pass
+        self.load_level("safehouse")
+        self.state = "safehouse"

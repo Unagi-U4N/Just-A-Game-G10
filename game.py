@@ -22,7 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "1", 1500, 3, 3]
+        # self.data = ["Ivan", "test", 1500, 1.5, 3]
+        self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -47,6 +48,7 @@ class Game:
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
             "loadscreen1": load_image("loadscreen1.png"),
             "loadscreen2": load_image("loadscreen2.png"),
+            "save": scale_images(load_image("background/savescreen.png"), set_scale=(1200, 675)),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
@@ -116,7 +118,7 @@ class Game:
         self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "game"
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
