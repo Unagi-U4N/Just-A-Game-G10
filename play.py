@@ -2,18 +2,17 @@
 # Undone part used in this file: Tilemap, Clouds
 
 
-import pygame, sys, random, math, time
+import pygame, sys, random, math
 from utils import *
-from entities import PhysicsEntity, Player, Enemy, NPC
+from entities import Player, Enemy, NPC
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
 from spark import Spark
-import cutscenes
 import dialogue
 from music import Music
 from ttt import *
-from safehouse import *
+from playerprofile import *
 
 class Play():
     def __init__(self, game):
@@ -46,10 +45,13 @@ class Play():
         self.bg = self.assets["day"]
         self.sfx = game.sfx
         self.level = 0
+        self.store = False
+        self.state = "game"
+        self.profile = PlayerProfile(game)
+        self.savetimer = 0
         self.reasonofdeath = None
         self.transition = 0
         self.results = ""
-        self.speed = self.player.speed
         self.felltransition = 0
         self.play = False
         self.canplay = True
@@ -69,16 +71,20 @@ class Play():
 
     def interact(self):
         for npc in self.npc:
-            if self.player.rect().colliderect(npc.interact):                
+            if self.player.rect().colliderect(npc.interact):           
                 render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                 if self.e:
-                    return npc.name
+                    if not npc.not_dialogue:
+                        return npc.name
+                    else:
+                        return "Store"
     
     def load(self, data):
         self.player.updateprofile(data)
         self.level = data[1]
         self.maxHP = self.player.HP
         self.lives = self.player.HP
+        self.speed = self.player.speed
         self.load_level(self.level)
 
     def check_button(self):
@@ -108,6 +114,12 @@ class Play():
         if map_id == "1":
             self.bg = self.assets["day"]
 
+        elif map_id == "2":
+            self.bg = self.assets["night"]
+
+        elif map_id == "safehouse":
+            self.bg = self.assets["day"]
+
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
@@ -132,12 +144,15 @@ class Play():
         # Assign names to the npcs
         self.npc.sort(key=lambda x: x.pos[0])
         for i, npc in enumerate(self.npc):
-            if i == 0 and map_id == "1":
+            if i == 0 and map_id == "test":
                 npc.name = "Intro"
-            elif i == 1 and map_id == "1":
+            elif i == 1 and map_id == "test":
                 npc.name = "TicTacToe"
-            elif i == 2 and map_id == "1":
+            elif i == 2 and map_id == "test":
                 npc.name = "Ending"
+            elif i == 0 and map_id == "safehouse":
+                npc.not_dialogue = True
+                npc.name = "Store"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -487,22 +502,42 @@ class Play():
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
 
+    def safehouse(self):
+        if self.state == "safehouse":
+            self.profile.data = self.player.data
+            self.profile.saveprogress()
+            if self.savetimer < 100:
+                self.savetimer += 1
+                self.display.fill((0, 0, 0))
+                self.display.blit(self.assets["save"], (0, 0))
+
+            # Put your codes here, remember to save the profile data
+            else:
+                if self.store:
+                    self.player.gold += 1000
+                    print("Put your store codes here")
+                    self.store = False
+
+
     def run(self):
                 
         self.display.blit(self.bg, (0, 0))
+        self.render()
 
         # Example of implementation of code for dialogue
-        name = self.interact()
-        if name is not None:
-            dialogue.dialogue(self, name)
+        self.npc_name = self.interact()
+        if self.npc_name == "Store":
+            self.store = True
             self.e = False
+        elif self.npc_name is not None:
+            dialogue.dialogue(self, self.npc_name)
+            self.e = False
+
 
         # Pause button, if paused don't update the game
         self.check_button()
         if not self.pause and not self.play:
             self.update()
-
-        self.render()
         
         if self.pause:
             self.paused()
@@ -511,3 +546,4 @@ class Play():
         self.minigame()
         self.userinput()
         self.transitions()
+        self.safehouse()

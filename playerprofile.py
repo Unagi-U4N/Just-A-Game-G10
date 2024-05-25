@@ -1,6 +1,8 @@
 import pygame, csv
 from utils import *
 import random
+import pandas as pd 
+
 
 class PlayerProfile:
     def __init__(self, game):
@@ -103,7 +105,7 @@ class PlayerProfile:
         
         if not delete:
             if self.data != []:
-                self.data[1] = int(self.data[1])
+                self.data[1] = str(self.data[1])
                 self.data[2] = int(self.data[2])
                 self.data[3] = float(self.data[3])
                 self.data[4] = int(self.data[4])
@@ -193,4 +195,33 @@ class PlayerProfile:
 
             render_text(self.name, self.font, "black", 600, 340, self.display, centered=True)
             pygame.display.update()
+
+    def saveprogress(self):
+
+        # Modify the data of the player, then save it to the csv file
+
+        # Read the csv file
+        if not self.loaded:
+            with open("profile.csv", "r") as file:
+                reader = csv.reader(file)
+                for i, row in enumerate(reader):
+                    if i == 0 or i > 8:
+                        pass
+                    else:
+                        # Append the profile to the list
+                        # Name, lvl, gold, speed, HP
+                        self.profiles.append([row[0], row[1], row[2], row[3], row[4]])
+                        self.loaded = True
+        
+        with open("profile.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Name", "Level", "Gold", "Speed", "HP"])
+            for row in self.profiles:
+                if row[0] == self.data[0]:
+                    row[1] = self.data[1]
+                    row[2] = self.data[2]
+                    row[3] = self.data[3]
+                    row[4] = self.data[4]
+                writer.writerow(row)
+            file.close()
             
