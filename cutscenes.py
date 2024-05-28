@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 from utils import *
 
 # Get the top right coordinates of the dialogue box and return a tuple
@@ -38,6 +38,9 @@ def rundialogues(dialogues):
             dialogue = dialogues[dialogue]
             dialogue.draw()
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         skip = True
