@@ -53,3 +53,35 @@ def dialogue(self, state):
         self.player.gold += 1000
         self.load_level("safehouse")
         self.state = "safehouse"
+
+    if state == "Intro2":
+        rundialogues(self.dialogues["IntroP1(2)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready to continue this level?", ["Yes", "No"], self.screen)
+        if choice == "Yes":
+            rundialogues(self.dialogues["IntroP2(2)"])
+        elif choice == "No":
+            rundialogues(self.dialogues["IntroP3(2)"])
+            self.load_level("safehouse")
+            self.state = "safehouse"
+
+    elif state == "Ending2":
+        rundialogues(self.dialogues["EndingP1(2)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready for the next level, soldier?", ["Yes", "No"], self.screen)
+        if choice == "Yes":
+            rundialogues(self.dialogues["EndingP2(2)"])
+            self.load_level("safehouse")
+            self.state = "safehouse"
+        elif choice == "No":
+            rundialogues(self.dialogues["EndingP3(2)"])
+            self.load_level("safehouse")
+            self.state = "safehouse"
+
+    if state == "Intro3":
+        rundialogues(self.dialogues["IntroP1(3)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.screen)
+        if choice == "I'm not suree......I'm scared now.....":
+            rundialogues(self.dialogues["IntroP2(3)"])
+            self.load_level("safehouse")
+            self.state = "safehouse"
+    elif state == "Ending3":
+        rundialogues(self.dialogues["EndingP1(3)"])

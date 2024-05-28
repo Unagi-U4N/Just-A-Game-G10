@@ -158,17 +158,13 @@ class Play():
             elif i == 2 and map_id == "test":
                 npc.name = "Ending"
             elif i == 0 and map_id == "test2":
-                npc.name = "Intro"
-            elif i == 1 and map_id == "test2":
-                npc.name = "TicTacToe"
+                npc.name = "Intro2"
             elif i == 2 and map_id == "test2":
-                npc.name = "Ending"
+                npc.name = "Ending2"
             elif i == 0 and map_id == "test3":
-                npc.name = "Intro"
-            elif i == 1 and map_id == "test3":
-                npc.name = "TicTacToe"
+                npc.name = "Intro3"
             elif i == 2 and map_id == "test3":
-                npc.name = "Ending"
+                npc.name = "Ending3"
             elif i == 0 and map_id == "safehouse":
                 npc.not_dialogue = True
                 npc.name = "Store"
