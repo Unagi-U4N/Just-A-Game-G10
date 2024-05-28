@@ -132,11 +132,23 @@ class Play():
         # Assign names to the npcs
         self.npc.sort(key=lambda x: x.pos[0])
         for i, npc in enumerate(self.npc):
-            if i == 0 and map_id == "1":
+            if i == 0 and map_id == "test":
                 npc.name = "Intro"
-            elif i == 1 and map_id == "1":
+            elif i == 1 and map_id == "test":
                 npc.name = "TicTacToe"
-            elif i == 2 and map_id == "1":
+            elif i == 2 and map_id == "test":
+                npc.name = "Ending"
+            elif i == 0 and map_id == "test2":
+                npc.name = "Intro"
+            elif i == 1 and map_id == "test2":
+                npc.name = "TicTacToe"
+            elif i == 2 and map_id == "test2":
+                npc.name = "Ending"
+            elif i == 0 and map_id == "test3":
+                npc.name = "Intro"
+            elif i == 1 and map_id == "test3":
+                npc.name = "TicTacToe"
+            elif i == 2 and map_id == "test3":
                 npc.name = "Ending"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
