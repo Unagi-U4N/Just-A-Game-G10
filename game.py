@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test", 1500, 1.5, 3]
+        self.data = ["Ivan", "test", 1500, 3, 3]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -90,12 +90,16 @@ class Game:
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
             "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
             "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.07),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
             "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
             "store": scale_images(load_image("store.png"), set_scale=(1200, 675)),
             "store_menu": scale_images(load_image("store_menu.png"), set_scale=(1200, 675)),
             "speed_upgrade": scale_images(load_image("speed_upgrade.png"), set_scale=(1200, 675)),
-            "health_upgrade": scale_images(load_image("health_upgrade.png"), set_scale=(1200, 675)),
+            "store-heart": scale_images(load_image("store-heart.png"), set_scale=(1200, 675)),
+            "speed_potion": scale_images(load_image("indicators/speed_potion.png"), scale=0.25),
+            "+": scale_images(load_image("indicators/+.png"), scale=0.07),
+            "-": scale_images(load_image("indicators/-.png"), scale=0.07),
         }
 
         self.sfx = {
