@@ -46,17 +46,23 @@ class Play():
         self.bg = self.assets["day"]
         self.sfx = game.sfx
         self.level = 0
+        self.current_level = 0
         self.upgrade_choice = 0
         self.store = False
         self.store_state = "store"
+        self.max_heart = 15
+        self.max_speed = 4
         self.store_addsub_heart = 0
+        self.store_addsub_speed = 0
         self.store_clickcooldown = 20
         self.state = "game"
         self.profile = PlayerProfile(game)
         self.savetimer = 0
         self.reasonofdeath = None
+        self.transitioning = True
         self.transition = 0
         self.transition_timer = 0
+        self.transition_ed = True
         self.results = ""
         self.felltransition = 0
         self.play = False
@@ -116,7 +122,7 @@ class Play():
         if self.clickpause:
             self.pausetimer += 1
 
-    def load_level(self, map_id):
+    def load_level(self, map_id):       
 
         if map_id == "1":
             self.bg = self.assets["day"]
@@ -374,7 +380,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play and not self.store:
+        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -413,7 +419,9 @@ class Play():
                             self.store = False
                         elif self.store_state == "store_menu":
                             self.store_state = "store"
-                        elif self.store_state == "store-heart":
+                        elif self.store_state == "store_heart" or self.store_state == "store_speed":
+                            self.store_addsub_speed = 0
+                            self.store_addsub_heart = 0
                             self.store_state = "store_menu"
                                             
                     if event.key == pygame.K_SPACE:
@@ -422,7 +430,25 @@ class Play():
 
                         elif self.store_state == "store_menu":
                             if self.upgrade_choice == 0:
-                                self.store_state = "store-heart"
+                                self.store_state = "store_heart"
+                            elif self.upgrade_choice == 1:
+                                self.store_state = "store_speed"
+
+                        elif self.store_state == "store_heart":
+                            if self.store_addsub_heart > 0 and self.store_addsub_heart <= self.max_heart - self.maxHP and self.player.gold >= self.store_addsub_heart * 750:
+                                self.player.gold -= self.store_addsub_heart * 750
+                                self.maxHP += self.store_addsub_heart
+                                self.lives += self.store_addsub_heart
+                                self.store_state = "store_menu"
+                                self.store_addsub_heart = 0
+
+                        elif self.store_state == "store_speed":
+                            if self.store_addsub_speed > 0 and self.store_addsub_speed <= self.max_speed - self.player.speed and self.player.gold >= self.store_addsub_speed * 500:
+                                self.player.gold -= int(self.store_addsub_speed * 500)
+                                self.player.speed += self.store_addsub_speed
+                                self.speed = self.player.speed
+                                self.store_state = "store_menu"
+                                self.store_addsub_speed = 0
 
                     if event.key == pygame.K_LEFT and self.store_state == "store_menu":
                         self.upgrade_choice = (self.upgrade_choice - 1) % 2
@@ -537,13 +563,25 @@ class Play():
             self.display.blit(transition_surf, (0, 0))
 
     def level_transition(self, timer, text):
-        if self.transition_timer < timer:
-            self.transition_timer += 1
-            img = pygame.Surface((1200, 675))
-            img.fill((0,0,0))
-            img.set_alpha(255-self.transition_timer/timer*255)
-            self.display.blit(img, (0,0))
-            render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
+
+        if self.current_level != self.level:
+            self.current_level = self.level
+            self.transition_ed = False 
+
+        if not self.transition_ed:
+            if self.transition_timer < timer:
+                self.transitioning = True
+                self.transition_timer += 1
+                img = pygame.Surface((1200, 675))
+                img.fill((0,0,0))
+                img.set_alpha(255-self.transition_timer/timer*255)
+                self.display.blit(img, (0,0))
+                render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
+
+            elif self.transition_timer == timer:
+                self.transition_timer = 0
+                self.transition_ed = True
+                self.transitioning = False
                 
     def safehouse(self):
         if self.state == "safehouse":
@@ -551,11 +589,13 @@ class Play():
             self.profile.saveprogress()
             
             if self.savetimer < 100:
+                self.transitioning = True
                 self.savetimer += 1
                 self.display.fill((0, 0, 0))
                 self.display.blit(self.assets["save"], (0, 0))
     
             else:
+                self.transitioning = False
                 self.level_transition(200, "Welcome to the safehouse")
                 if self.store:
                     img = pygame.Surface((1200, 675))
@@ -573,9 +613,9 @@ class Play():
                             render_img(self.assets["big-heart"], 710, 350, self.display, True)
                     
                     # Store menu (Heart)
-                    if self.store_state == "store-heart":
+                    if self.store_state == "store_heart":
                         self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
-                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart < 12:
+                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart < self.max_heart - self.maxHP:
                             self.store_addsub_heart += 1
                             self.store_clickcooldown = 20
                         if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart > 0:
@@ -584,33 +624,44 @@ class Play():
                         render_text(str(self.store_addsub_heart), self.font, "white", 600, 390, self.display, True)
                         
                         # Warn player about min and max hearts
-                        if self.store_addsub_heart >= 12:
-                            self.store_addsub_heart = 12
-                            render_text("Max hearts", self.font, "red", 600, 430, self.display, True)
+                        if self.store_addsub_heart >= self.max_heart - self.maxHP:
+                            self.store_addsub_heart = self.max_heart - self.maxHP
+                            render_text("Max hearts", self.font, "red", 600, 330, self.display, True)
                         elif self.store_addsub_heart <= 0:
                             self.store_addsub_heart = 0
-                            render_text("Min hearts", self.font, "red", 600, 430, self.display, True)
+                            render_text("Min hearts", self.font, "red", 600, 330, self.display, True)
 
-    def open_store(self):
-        # Example prices for upgrades
-        speed_upgrade_cost = 500
-        health_upgrade_cost = 500
+                        if self.player.gold < self.store_addsub_heart * 750:
+                            render_text("Not enough gold", self.font, "red", 600, 440, self.display, True)
 
-        MAX_SPEED = 3
-        MAX_HEALTH = 10
+                        render_text(str(self.store_addsub_heart * 750), self.font, "black", 600, 490, self.display, True)
 
-        if self.player.gold >= speed_upgrade_cost and self.player.wants_speed_upgrade():
-            self.player.gold -= speed_upgrade_cost
-            self.player.speed += 0.2  # Adjust the value as needed
-            print("Speed upgraded!")
-        elif self.player.gold >= health_upgrade_cost and self.player.wants_health_upgrade():
-            self.player.gold -= health_upgrade_cost
-            self.player.health += 10  # Adjust the value as needed
-            print("Health upgraded!")
-        else:
-            print("Not enough gold or no valid upgrade selected")
+                    # Store menu (Speed)
+                    if self.store_state == "store_speed":
 
-        self.store = False  # Close the store after the transaction
+                        # make the speed be 1 decimal point
+                        self.store_addsub_speed = round(self.store_addsub_speed, 1)
+                        self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
+                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_speed < self.max_speed - self.player.speed:
+                            self.store_addsub_speed += 0.1
+                            self.store_clickcooldown = 20
+                        if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_speed > 0:
+                            self.store_addsub_speed -= 0.1
+                            self.store_clickcooldown = 20
+                        render_text(str(self.store_addsub_speed), self.font, "white", 600, 400, self.display, True)
+                        
+                        # Warn player about min and max speed
+                        if self.store_addsub_speed >= self.max_speed - self.player.speed:
+                            self.store_addsub_speed = self.max_speed - self.player.speed
+                            render_text("Max speed", self.font, "red", 600, 330, self.display, True)
+                        elif self.store_addsub_speed <= 0:
+                            self.store_addsub_speed = 0
+                            render_text("Min speed", self.font, "red", 600, 330, self.display, True)
+
+                        if self.player.gold < self.store_addsub_speed * 5000:
+                            render_text("Not enough gold", self.font, "red", 600, 440, self.display, True)
+
+                        render_text(str(int(self.store_addsub_speed * 5000)), self.font, "black", 600, 490, self.display, True)
 
     def run(self):
                 
@@ -641,4 +692,6 @@ class Play():
         self.userinput()
         self.transitions()
         self.safehouse()
+        if self.level != "safehouse":
+            self.level_transition(200, "Level " + self.level)
         
