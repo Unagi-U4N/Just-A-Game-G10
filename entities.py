@@ -328,6 +328,7 @@ class Player(PhysicsEntity):
         self.gold = 0
         self.level = 1
         self.name = ""
+        self.data = []
         self.air_time = 0
         self.HP = 1
         self.jumps = 1
@@ -350,6 +351,7 @@ class Player(PhysicsEntity):
         super().update(tilemap, movement=movement)
 
         # print(self.latest_block)
+        self.data = [self.name, self.level, self.gold, self.speed, self.HP]
 
         self.air_time += 1
 
@@ -450,6 +452,7 @@ class NPC(PhysicsEntity):
         self.assets = game.assets
         self.font = "data/monogram.ttf"
         self.speed = 2
+        self.not_dialogue = False
         self.interact = self.inetractablerect()
 
     def update(self, tilemap, movement=(0, 0)):

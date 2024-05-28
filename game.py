@@ -47,9 +47,11 @@ class Game:
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
             "loadscreen1": load_image("loadscreen1.png"),
             "loadscreen2": load_image("loadscreen2.png"),
+            "save": scale_images(load_image("background/savescreen.png"), set_scale=(1200, 675)),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
+            "safehousebg": scale_images(load_image("background/safehousebg.png"), set_scale=(1200, 675)),
             "newgamebg": scale_images(load_image("background/newgame.png"), set_scale=(1200, 675)),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
@@ -87,9 +89,16 @@ class Game:
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
             "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
             "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.07),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
             "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
-
+            "store": scale_images(load_image("store.png"), set_scale=(1200, 675)),
+            "store_menu": scale_images(load_image("store_menu.png"), set_scale=(1200, 675)),
+            "speed_upgrade": scale_images(load_image("speed_upgrade.png"), set_scale=(1200, 675)),
+            "store-heart": scale_images(load_image("store-heart.png"), set_scale=(1200, 675)),
+            "speed_potion": scale_images(load_image("indicators/speed_potion.png"), scale=0.25),
+            "+": scale_images(load_image("indicators/+.png"), scale=0.07),
+            "-": scale_images(load_image("indicators/-.png"), scale=0.07),
         }
 
         self.sfx = {

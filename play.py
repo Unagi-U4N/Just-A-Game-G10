@@ -2,18 +2,18 @@
 # Undone part used in this file: Tilemap, Clouds
 
 
-import pygame, sys, random, math, time
+from tkinter import font
+import pygame, sys, random, math
 from utils import *
-from entities import PhysicsEntity, Player, Enemy, NPC
+from entities import Player, Enemy, NPC
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
 from spark import Spark
-import cutscenes
 import dialogue
 from music import Music
 from ttt import *
-from safehouse import *
+from playerprofile import *
 
 class Play():
     def __init__(self, game):
@@ -46,10 +46,18 @@ class Play():
         self.bg = self.assets["day"]
         self.sfx = game.sfx
         self.level = 0
+        self.upgrade_choice = 0
+        self.store = False
+        self.store_state = "store"
+        self.store_addsub_heart = 0
+        self.store_clickcooldown = 20
+        self.state = "game"
+        self.profile = PlayerProfile(game)
+        self.savetimer = 0
         self.reasonofdeath = None
         self.transition = 0
+        self.transition_timer = 0
         self.results = ""
-        self.speed = self.player.speed
         self.felltransition = 0
         self.play = False
         self.canplay = True
@@ -59,6 +67,7 @@ class Play():
         self.shut = False
         self.respawn = False
         self.font = pygame.font.Font(self.game.font, 36)
+        self.font2 = pygame.font.Font(self.game.font, 50)
         self.deadmsg = ""
         self.death_msg = {
             "fall" : ["You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
@@ -69,16 +78,20 @@ class Play():
 
     def interact(self):
         for npc in self.npc:
-            if self.player.rect().colliderect(npc.interact):                
+            if self.player.rect().colliderect(npc.interact):           
                 render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                 if self.e:
-                    return npc.name
+                    if not npc.not_dialogue:
+                        return npc.name
+                    else:
+                        return "Store"
     
     def load(self, data):
         self.player.updateprofile(data)
         self.level = data[1]
         self.maxHP = self.player.HP
         self.lives = self.player.HP
+        self.speed = self.player.speed
         self.load_level(self.level)
 
     def check_button(self):
@@ -106,6 +119,12 @@ class Play():
     def load_level(self, map_id):
 
         if map_id == "1":
+            self.bg = self.assets["day"]
+
+        elif map_id == "2":
+            self.bg = self.assets["night"]
+
+        elif map_id == "safehouse":
             self.bg = self.assets["day"]
 
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
@@ -150,6 +169,9 @@ class Play():
                 npc.name = "TicTacToe"
             elif i == 2 and map_id == "test3":
                 npc.name = "Ending"
+            elif i == 0 and map_id == "safehouse":
+                npc.not_dialogue = True
+                npc.name = "Store"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -364,7 +386,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play:
+        if not self.dead and not self.pause and not self.play and not self.store:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -392,6 +414,33 @@ class Play():
                     if event.key == pygame.K_e:
                         self.e = False
 
+        elif self.store:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        if self.store_state == "store":
+                            self.store = False
+                        elif self.store_state == "store_menu":
+                            self.store_state = "store"
+                        elif self.store_state == "store-heart":
+                            self.store_state = "store_menu"
+                                            
+                    if event.key == pygame.K_SPACE:
+                        if self.store_state == "store":
+                            self.store_state = "store_menu"
+
+                        elif self.store_state == "store_menu":
+                            if self.upgrade_choice == 0:
+                                self.store_state = "store-heart"
+
+                    if event.key == pygame.K_LEFT and self.store_state == "store_menu":
+                        self.upgrade_choice = (self.upgrade_choice - 1) % 2
+                            
+                    if event.key == pygame.K_RIGHT and self.store_state == "store_menu":
+                        self.upgrade_choice = (self.upgrade_choice + 1) % 2
         else:
             pygame.event.clear()
             self.movements = [False, False]
@@ -499,22 +548,102 @@ class Play():
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
 
+    def level_transition(self, timer, text):
+        if self.transition_timer < timer:
+            self.transition_timer += 1
+            img = pygame.Surface((1200, 675))
+            img.fill((0,0,0))
+            img.set_alpha(255-self.transition_timer/timer*255)
+            self.display.blit(img, (0,0))
+            render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
+                
+    def safehouse(self):
+        if self.state == "safehouse":
+            self.profile.data = self.player.data
+            self.profile.saveprogress()
+            
+            if self.savetimer < 100:
+                self.savetimer += 1
+                self.display.fill((0, 0, 0))
+                self.display.blit(self.assets["save"], (0, 0))
+    
+            else:
+                self.level_transition(200, "Welcome to the safehouse")
+                if self.store:
+                    img = pygame.Surface((1200, 675))
+                    img.fill((0,0,0))
+                    img.set_alpha(150)
+                    self.display.blit(img, (0,0))
+                    self.display.blit(self.assets[self.store_state], (0, 0))
+                    if self.store_state == "store_menu":
+                        if self.upgrade_choice == 1:
+                            render_img(self.assets["speed_potion"], 490, 350, self.display, True)
+                            render_img(self.assets["big-heart"], 710, 350, self.display, True, transparency=150)
+                        
+                        elif self.upgrade_choice == 0:
+                            render_img(self.assets["speed_potion"], 490, 350, self.display, True, transparency=150)
+                            render_img(self.assets["big-heart"], 710, 350, self.display, True)
+                    
+                    # Store menu (Heart)
+                    if self.store_state == "store-heart":
+                        self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
+                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart < 12:
+                            self.store_addsub_heart += 1
+                            self.store_clickcooldown = 20
+                        if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart > 0:
+                            self.store_addsub_heart -= 1
+                            self.store_clickcooldown = 20
+                        render_text(str(self.store_addsub_heart), self.font, "white", 600, 390, self.display, True)
+                        
+                        # Warn player about min and max hearts
+                        if self.store_addsub_heart >= 12:
+                            self.store_addsub_heart = 12
+                            render_text("Max hearts", self.font, "red", 600, 430, self.display, True)
+                        elif self.store_addsub_heart <= 0:
+                            self.store_addsub_heart = 0
+                            render_text("Min hearts", self.font, "red", 600, 430, self.display, True)
+
+    def open_store(self):
+        # Example prices for upgrades
+        speed_upgrade_cost = 500
+        health_upgrade_cost = 500
+
+        MAX_SPEED = 3
+        MAX_HEALTH = 10
+
+        if self.player.gold >= speed_upgrade_cost and self.player.wants_speed_upgrade():
+            self.player.gold -= speed_upgrade_cost
+            self.player.speed += 0.2  # Adjust the value as needed
+            print("Speed upgraded!")
+        elif self.player.gold >= health_upgrade_cost and self.player.wants_health_upgrade():
+            self.player.gold -= health_upgrade_cost
+            self.player.health += 10  # Adjust the value as needed
+            print("Health upgraded!")
+        else:
+            print("Not enough gold or no valid upgrade selected")
+
+        self.store = False  # Close the store after the transaction
+
     def run(self):
                 
         self.display.blit(self.bg, (0, 0))
+        self.render()
 
         # Example of implementation of code for dialogue
-        name = self.interact()
-        if name is not None:
-            dialogue.dialogue(self, name)
+        self.npc_name = self.interact()
+        if self.npc_name == "Store":
+            self.store = True
             self.e = False
+        
+        elif self.npc_name is not None:
+            dialogue.dialogue(self, self.npc_name)
+            self.e = False
+
 
         # Pause button, if paused don't update the game
         self.check_button()
-        if not self.pause and not self.play:
+        if not self.pause and not self.play and not self.store:
             self.update()
-
-        self.render()
         
         if self.pause:
             self.paused()
@@ -523,3 +652,5 @@ class Play():
         self.minigame()
         self.userinput()
         self.transitions()
+        self.safehouse()
+        
