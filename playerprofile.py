@@ -1,7 +1,7 @@
 import pygame, csv
 from utils import *
 import random
-import pandas as pd 
+
 
 
 class PlayerProfile:

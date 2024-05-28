@@ -2,6 +2,7 @@
 # Undone part used in this file: Tilemap, Clouds
 
 
+from tkinter import font
 import pygame, sys, random, math
 from utils import *
 from entities import Player, Enemy, NPC
@@ -506,18 +507,48 @@ class Play():
         if self.state == "safehouse":
             self.profile.data = self.player.data
             self.profile.saveprogress()
+            
             if self.savetimer < 100:
                 self.savetimer += 1
                 self.display.fill((0, 0, 0))
                 self.display.blit(self.assets["save"], (0, 0))
-
-            # Put your codes here, remember to save the profile data
             else:
+                render_text("welcome to the safehouse", self.font, "white", 600, 300, self.display, centered=True, transparency=255)
                 if self.store:
-                    self.player.gold += 1000
-                    print("Put your store codes here")
-                    self.store = False
+                    self.display.fill((0, 0, 0))
+                    self.display.blit(self.assets["store"], (0, 0))
+                    self.display_store_menu()
+                    
+                    # Check for player interaction to open store menu
+                    if self.player.interact_with_npc():
+                        self.open_store()
 
+    def display_store_menu(self):
+        # Display the store options on the screen
+        self.display.blit(self.assets["store_menu"], (100, 100))  
+        self.display.blit(self.assets["speed_upgrade"], (150, 200))  
+        self.display.blit(self.assets["health_upgrade"], (150, 300))  
+
+    def open_store(self):
+        # Example prices for upgrades
+        speed_upgrade_cost = 500
+        health_upgrade_cost = 500
+
+        MAX_SPEED = 3
+        MAX_HEALTH = 10
+
+        if self.player.gold >= speed_upgrade_cost and self.player.wants_speed_upgrade():
+            self.player.gold -= speed_upgrade_cost
+            self.player.speed += 0.2  # Adjust the value as needed
+            print("Speed upgraded!")
+        elif self.player.gold >= health_upgrade_cost and self.player.wants_health_upgrade():
+            self.player.gold -= health_upgrade_cost
+            self.player.health += 10  # Adjust the value as needed
+            print("Health upgraded!")
+        else:
+            print("Not enough gold or no valid upgrade selected")
+
+        self.store = False  # Close the store after the transaction
 
     def run(self):
                 
