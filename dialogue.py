@@ -69,12 +69,11 @@ def dialogue(self, state):
         choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready for the next level, soldier?", ["Yes", "No"], self.screen)
         if choice == "Yes":
             rundialogues(self.dialogues["EndingP2(2)"])
+            self.player.gold += 2000
             self.load_level("safehouse")
             self.state = "safehouse"
         elif choice == "No":
             rundialogues(self.dialogues["EndingP3(2)"])
-            self.load_level("safehouse")
-            self.state = "safehouse"
 
     if state == "Intro3":
         rundialogues(self.dialogues["IntroP1(3)"])
