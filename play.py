@@ -613,6 +613,8 @@ class Play():
                 
     def safehouse(self):
         if self.state == "safehouse":
+            self.lives = self.player.HP
+            self.maxHP = self.player.HP
             self.profile.data = self.player.data
             self.profile.saveprogress()
             
