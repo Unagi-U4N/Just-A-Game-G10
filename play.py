@@ -131,7 +131,7 @@ class Play():
             self.bg = self.assets["night"]
 
         elif map_id == "safehouse":
-            self.bg = self.assets["safehousebg"]
+            self.bg = self.assets["day"]
 
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
         self.leaf_spawners = []
