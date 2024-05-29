@@ -163,9 +163,19 @@ class Play():
                 npc.name = "TicTacToe"
             elif i == 2 and map_id == "test":
                 npc.name = "Ending"
+            elif i == 0 and map_id == "test2":
+                npc.name = "Intro2"
+            elif i == 2 and map_id == "test2":
+                npc.name = "Ending2"
+            elif i == 0 and map_id == "test3":
+                npc.name = "Intro3"
+            elif i == 2 and map_id == "test3":
+                npc.name = "Ending3"
             elif i == 0 and map_id == "safehouse":
                 npc.not_dialogue = True
                 npc.name = "Store"
+            elif i == 1 and map_id == "safehouse":
+                npc.name = "Proceed"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
@@ -206,6 +216,10 @@ class Play():
 
         for npc in self.npc:
             npc.update(self.tilemap, (0, 0))
+            if self.level == "safehouse":
+                if npc.name != "":
+                    font1 = pygame.font.Font(self.game.font, 35)
+                    render_text(npc.name, font1, (255, 255, 255), npc.pos[0] - self.scroll[0], npc.pos[1] - self.scroll[1] - 30, self.display, False)
 
         for enemy in self.enemies.copy():
             self.enemykill = enemy.update(self.tilemap, (0, 0))
