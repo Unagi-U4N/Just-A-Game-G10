@@ -51,7 +51,8 @@ def dialogue(self, state):
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])
         self.player.gold += 1000
-        self.load_level("safehouse")
+        self.level = "safehouse"
+        self.load_level(self.level)
         self.state = "safehouse"
 
     if state == "Intro2":
