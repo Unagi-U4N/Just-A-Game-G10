@@ -55,14 +55,15 @@ def dialogue(self, state):
         self.load_level(self.level)
         self.state = "safehouse"
 
-    if state == "Intro2":
+    elif state == "Intro2":
         rundialogues(self.dialogues["IntroP1(2)"])
         choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready to continue this level?", ["Yes", "No"], self.screen)
         if choice == "Yes":
             rundialogues(self.dialogues["IntroP2(2)"])
         elif choice == "No":
             rundialogues(self.dialogues["IntroP3(2)"])
-            self.load_level("safehouse")
+            self.level = "safehouse"
+            self.load_level(self.level)
             self.state = "safehouse"
 
     elif state == "Ending2":
@@ -71,17 +72,44 @@ def dialogue(self, state):
         if choice == "Yes":
             rundialogues(self.dialogues["EndingP2(2)"])
             self.player.gold += 2000
-            self.load_level("safehouse")
+            self.level = "safehouse"
+            self.load_level(self.level)
             self.state = "safehouse"
         elif choice == "No":
             rundialogues(self.dialogues["EndingP3(2)"])
 
-    if state == "Intro3":
+    elif state == "Intro3":
         rundialogues(self.dialogues["IntroP1(3)"])
         choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.screen)
         if choice == "I'm not suree......I'm scared now.....":
             rundialogues(self.dialogues["IntroP2(3)"])
-            self.load_level("safehouse")
+            self.level = "safehouse"
+            self.load_level(self.level)
             self.state = "safehouse"
     elif state == "Ending3":
         rundialogues(self.dialogues["EndingP1(3)"])
+
+    elif state == "Proceed":
+        rundialogues(self.dialogues["Proceed"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready to proceed?", ["Yes", "No"], self.screen)
+        if choice == "Yes":
+            rundialogues(self.dialogues["Proceed2"])
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+            choice = dialoguequestions(self.assets["dialoguebox"], "Please choose a level", ["Level 1", "Level 2", "Level 3"], self.screen)
+            rundialogues(self.dialogues["Proceed1"])
+            if choice == "Level 1":
+                self.level = "1"
+                self.load_level(self.level)
+                self.state = "game"
+            elif choice == "2":
+                self.level = "game"
+                self.load_level(self.level)
+                self.state = "level2"
+            elif choice == "3":
+                self.level = "game"
+                self.load_level(self.level)
+                self.state = "game"
+        elif choice == "No":
+            rundialogues(self.dialogues["Proceed3"])
