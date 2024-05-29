@@ -465,6 +465,7 @@ class Play():
                         elif self.store_state == "store_heart":
                             if self.store_addsub_heart > 0 and self.store_addsub_heart <= self.max_heart - self.maxHP and self.player.gold >= self.store_addsub_heart * 750:
                                 self.player.gold -= self.store_addsub_heart * 750
+                                self.player.HP += self.store_addsub_heart
                                 self.maxHP += self.store_addsub_heart
                                 self.lives += self.store_addsub_heart
                                 self.store_state = "store_menu"
@@ -472,7 +473,7 @@ class Play():
 
                         elif self.store_state == "store_speed":
                             if self.store_addsub_speed > 0 and self.store_addsub_speed <= self.max_speed - self.player.speed and self.player.gold >= self.store_addsub_speed * 500:
-                                self.player.gold -= int(self.store_addsub_speed * 500)
+                                self.player.gold -= int(self.store_addsub_speed * 5000)
                                 self.player.speed += self.store_addsub_speed
                                 self.speed = self.player.speed
                                 self.store_state = "store_menu"
@@ -613,8 +614,6 @@ class Play():
                 
     def safehouse(self):
         if self.state == "safehouse":
-            self.lives = self.player.HP
-            self.maxHP = self.player.HP
             self.profile.data = self.player.data
             self.profile.saveprogress()
             
