@@ -157,11 +157,25 @@ class Play():
         # Assign names to the npcs
         self.npc.sort(key=lambda x: x.pos[0])
         for i, npc in enumerate(self.npc):
-            if i == 0 and map_id == "test":
+            # if i == 0 and map_id == "1":
+            #     npc.name = "Intro"
+            # elif i == 1 and map_id == "1":
+            #     npc.name = "TicTacToe"
+            # elif i == 2 and map_id == "1":
+            #     npc.name = "Ending"
+            # elif i == 0 and map_id == "2":
+            #     npc.name = "Intro2"
+            # elif i == 2 and map_id == "2":
+            #     npc.name = "Ending2"
+            # elif i == 0 and map_id == "3":
+            #     npc.name = "Intro3"
+            # elif i == 2 and map_id == "3":
+            #     npc.name = "Ending3"
+            if i == 0 and map_id == "test1":
                 npc.name = "Intro"
-            elif i == 1 and map_id == "test":
+            elif i == 1 and map_id == "test1":
                 npc.name = "TicTacToe"
-            elif i == 2 and map_id == "test":
+            elif i == 2 and map_id == "test1":
                 npc.name = "Ending"
             elif i == 0 and map_id == "test2":
                 npc.name = "Intro2"

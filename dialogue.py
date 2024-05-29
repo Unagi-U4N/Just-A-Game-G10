@@ -50,10 +50,14 @@ def dialogue(self, state):
 
     elif state == "Ending":
         rundialogues(self.dialogues["EndingP1(1)"])
-        self.player.gold += 1000
-        self.level = "safehouse"
-        self.load_level(self.level)
-        self.state = "safehouse"
+        choice = dialoguequestions(self.assets["dialoguebox"], "Enter safehouse?", ["Yes", "No"], self.screen)
+        if choice == "Yes":
+            self.player.gold += 1000
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+        elif choice == "No":
+            rundialogues(self.dialogues["EndingP2(1)"])
 
     elif state == "Intro2":
         rundialogues(self.dialogues["IntroP1(2)"])
@@ -100,15 +104,15 @@ def dialogue(self, state):
             choice = dialoguequestions(self.assets["dialoguebox"], "Please choose a level", ["Level 1", "Level 2", "Level 3"], self.screen)
             rundialogues(self.dialogues["Proceed1"])
             if choice == "Level 1":
-                self.level = "1"
+                self.level = "test1"
                 self.load_level(self.level)
                 self.state = "game"
             elif choice == "2":
-                self.level = "game"
+                self.level = "test2"
                 self.load_level(self.level)
                 self.state = "level2"
             elif choice == "3":
-                self.level = "game"
+                self.level = "test3"
                 self.load_level(self.level)
                 self.state = "game"
         elif choice == "No":
