@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test2", 10000, 3, 3]
+        self.data = ["Ivan", "1", 10000, 2.5, 3]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -89,7 +89,8 @@ class Game:
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
             "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
-            "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
+            "heart": scale_images(load_image("indicators/heart.png"), set_scale=(45, 40)),
+            "heart1": scale_images(load_image("indicators/heart1.png"), set_scale=(45, 40)),
             "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.07),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
             "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
@@ -100,6 +101,7 @@ class Game:
             "speed_potion": scale_images(load_image("indicators/speed_potion.png"), scale=0.25),
             "+": scale_images(load_image("indicators/+.png"), scale=0.07),
             "-": scale_images(load_image("indicators/-.png"), scale=0.07),
+            "shield": scale_images(load_image("indicators/shield.png"), scale=0.05),
         }
 
         self.sfx = {
@@ -111,6 +113,7 @@ class Game:
             'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
             "bullet": pygame.mixer.Sound('data/sfx/bullet.wav'),
             "click": pygame.mixer.Sound('data/sfx/click.wav'),
+            "poison": pygame.mixer.Sound('data/sfx/poison.wav'),
         }
         
         self.sfx['ambience'].set_volume(0.05)
@@ -121,6 +124,7 @@ class Game:
         self.sfx['wasted'].set_volume(1)
         self.sfx['bullet'].set_volume(0.3)
         self.sfx['click'].set_volume(1)
+        self.sfx['poison'].set_volume(0.2)
         
         self.startscreen = StartScreen(self)
         self.game = Play(self)

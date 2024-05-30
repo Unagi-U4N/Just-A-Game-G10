@@ -342,6 +342,8 @@ class Player(PhysicsEntity):
         self.speed = 1.5 # default
         self.size = (16, 30)
         self.poison_timer = 0
+        self.poison_timer2 = 0
+        self.shield = 200
 
     def updateprofile(self, data):
         self.name = data[0]
@@ -357,25 +359,30 @@ class Player(PhysicsEntity):
     def poison(self, tilemap):
 
         # Get the tile the player is standing on, if it is a glitch block, deduct life
-        print(self.poison_timer)
+        # print(self.poison_timer, self.poison_timer2)
 
         if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
-            self.poison_timer += 0.5
-            if self.poison_timer > 60:
+            self.poison_timer2 = min(200, self.poison_timer2 + 1)
+            if self.poison_timer2 == 200:
+                self.poison_timer += 0.5
+                if self.poison_timer > 30:
+                    self.poison_timer = 0
+                    for i in range(30):
+                        angle = random.random() * math.pi * 2
+                        speed = random.random() * 5
+                        self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random(), (50,255,50)))
+                        self.game.sparks.append(Spark(self.rect().center, angle, 1 + random.random(), (200,255,0)))
+                        self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                    # self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random(), (0,0,0)))
+                    # self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random(), (255,255,255)))
+                    return True
+            else:
                 self.poison_timer = 0
-                self.game.sfx['hit'].play()
-                for i in range(30):
-                    angle = random.random() * math.pi * 2
-                    speed = random.random() * 5
-                    self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random(), (50,255,50)))
-                    self.game.sparks.append(Spark(self.rect().center, angle, 1 + random.random(), (200,255,0)))
-                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-                # self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random(), (0,0,0)))
-                # self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random(), (255,255,255)))
-                return True
         
         else:
-            self.poison_timer = max(0, self.poison_timer - 1)
+            self.poison_timer2 = max(0, self.poison_timer2 - 1)
+
+        self.shield = round(max(0, 200 - self.poison_timer2) / 2)
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)

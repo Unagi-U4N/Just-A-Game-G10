@@ -229,6 +229,7 @@ class Play():
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.speed, 0)) # update(self, tilemap, movement=(0,0))
         if self.lives != 1:
             if self.player.poison(tilemap=self.tilemap):
+                self.game.sfx['poison'].play()
                 self.lives = max(0, self.lives - 1)
         if self.lives == 1:
             if self.player.poison(tilemap=self.tilemap):
@@ -320,6 +321,8 @@ class Play():
             self.deductlife = False
             self.respawn = True
             self.lives -= 1
+            self.player.poison_timer2 = 0
+            self.player.poison_timer = 0
 
         # Dead screen transition
         if self.dead or self.player.airtime() and self.lives == 1:
@@ -371,6 +374,8 @@ class Play():
                     self.restart = False
                     self.sfx['wasted'].stop()
                     self.transition = -75
+                    self.player.poison_timer = 0
+                    self.player.poison_timer2 = 0
                     self.shut = False
                     # self.game.sfx['ambience'].play(-1)
 
@@ -534,11 +539,17 @@ class Play():
             spark.render(self.display, offset=self.render_scroll)
 
         # Render the UI
-        for x in range(self.lives):
-            render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+        if self.player.shield != 0:
+            for x in range(self.lives):
+                render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+        else:
+            for x in range(self.lives):
+                render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
         render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
         render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
         render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
+        render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
+        render_text(str(self.player.shield), self.font, "black", 1030, 190, self.display, False)
         num= self.player.gold
         count= 0
 
