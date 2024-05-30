@@ -227,6 +227,13 @@ class Play():
 
         self.clouds.update()
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.speed, 0)) # update(self, tilemap, movement=(0,0))
+        if self.lives != 1:
+            if self.player.poison(tilemap=self.tilemap):
+                self.lives = max(0, self.lives - 1)
+        if self.lives == 1:
+            if self.player.poison(tilemap=self.tilemap):
+                self.dead += 1
+                self.deadmsg = "You were poisoned to death"
 
         for npc in self.npc:
             npc.update(self.tilemap, (0, 0))

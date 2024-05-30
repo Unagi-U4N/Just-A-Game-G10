@@ -31,6 +31,12 @@ class Tilemap:
         if tile_loc in self.tilemap:
             if self.tilemap[tile_loc]['type'] in PHYSICS_TILES:
                 return self.tilemap[tile_loc]
+            
+    def glitch_check(self, pos):
+        tile_loc = str(int(pos[0] // self.tile_size)) + ';' + str(int(pos[1] // self.tile_size))
+        if tile_loc in self.tilemap:
+            if self.tilemap[tile_loc]['type'] == "glitch_blocks":
+                return self.tilemap[tile_loc]
 
     def extract(self, id_pairs, keep=False):
         # Get all the tiles that match the id_pairs
