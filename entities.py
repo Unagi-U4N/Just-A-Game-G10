@@ -344,6 +344,7 @@ class Player(PhysicsEntity):
         self.poison_timer = 0
         self.poison_timer2 = 0
         self.shield = 200
+        self.shield_dur = 200
 
     def updateprofile(self, data):
         self.name = data[0]
@@ -351,6 +352,8 @@ class Player(PhysicsEntity):
         self.gold = data[2]
         self.speed = data[3]
         self.HP = data[4]
+        self.shield = data[5]
+        self.shield_dur = data[5]
 
     def airtime(self):
         if self.air_time > 120:
@@ -362,8 +365,8 @@ class Player(PhysicsEntity):
         # print(self.poison_timer, self.poison_timer2)
 
         if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
-            self.poison_timer2 = min(200, self.poison_timer2 + 1)
-            if self.poison_timer2 == 200:
+            self.poison_timer2 = min(self.shield_dur, self.poison_timer2 + 1)
+            if self.poison_timer2 == self.shield_dur:
                 self.poison_timer += 0.5
                 if self.poison_timer > 30:
                     self.poison_timer = 0
@@ -380,9 +383,9 @@ class Player(PhysicsEntity):
                 self.poison_timer = 0
         
         else:
-            self.poison_timer2 = max(0, self.poison_timer2 - 1)
+            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield_dur/200))
 
-        self.shield = round(max(0, 200 - self.poison_timer2) / 2)
+        self.shield = round(max(0, self.shield_dur - self.poison_timer2) / (self.shield_dur/100))
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
@@ -391,7 +394,7 @@ class Player(PhysicsEntity):
         self.data = [self.name, self.level, self.gold, self.speed, self.HP]
 
         self.air_time += 1
-
+                
         if self.collisions['down']:
             self.air_time = 0
             self.jumps = 1

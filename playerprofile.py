@@ -168,7 +168,7 @@ class PlayerProfile:
                             with open("profile.csv", "a", newline="") as file:
                                 self.saveprofile = True
                                 writer = csv.writer(file)
-                                writer.writerow([self.name, 0, 0, 1.5, 3])
+                                writer.writerow([self.name, 0, 0, 1.5, 3, 100])
                                 file.close()
                             
                     elif event.key == pygame.K_BACKSPACE:

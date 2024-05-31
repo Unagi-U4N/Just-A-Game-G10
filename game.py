@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "1", 10000, 2.5, 3]
+        self.data = ["Ivan", "test2", 10000, 2.5, 3, 1000]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -79,7 +79,10 @@ class Game:
             "ttt3": scale_images(load_image("ttt/ttt3.png"), set_scale=(1200, 675)),
             "X": scale_images(load_image("ttt/X.png"), scale= 0.5),
             "O": scale_images(load_image("ttt/O.png"), scale= 0.5),
-            "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
+            "controls1": scale_images(load_image("info/0.png"), set_scale=(1200, 675)),
+            "controls2": scale_images(load_image("info/1.png"), set_scale=(1200, 675)),
+            "controls3": scale_images(load_image("info/2.png"), set_scale=(1200, 675)),
+            "controls4": scale_images(load_image("info/3.png"), set_scale=(1200, 675)),
             "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),

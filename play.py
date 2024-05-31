@@ -28,6 +28,7 @@ class Play():
         self.leafkill = True
         self.choice = ""
         self.pause = False
+        self.info_page = 0
         self.sfx = game.sfx
         self.game = game
         self.winner = None
@@ -316,7 +317,7 @@ class Play():
             self.felltransition += 1
         
         # Respawn transition
-        if self.lives > 1 and self.deductlife and self.player.airtime() and not self.dead:
+        if self.lives > 1 and self.deductlife and self.player.airtime() and not self.dead and not self.player.wall_slide:
             self.player.air_time = 0
             self.deductlife = False
             self.respawn = True
@@ -408,12 +409,29 @@ class Play():
                 sys.exit()
 
         elif self.choice == "info":
-            render_img(self.assets["controls"], 0, 0, self.display, centered=False)
+            if self.info_page == 0:
+                render_img(self.assets["controls1"], 0, 0, self.display, centered=False)
+            elif self.info_page == 1:
+                render_img(self.assets["controls2"], 0, 0, self.display, centered=False)
+            elif self.info_page == 2:
+                render_img(self.assets["controls3"], 0, 0, self.display, centered=False)
+            elif self.info_page == 3:
+                render_img(self.assets["controls4"], 0, 0, self.display, centered=False)
 
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.pause = not self.pause
+                if self.choice == "info":
+                    if event.key == pygame.K_i:
+                        self.pause = not self.pause
+                    if event.key == pygame.K_LEFT:
+                        self.info_page = (self.info_page - 1) % 4
+                    if event.key == pygame.K_RIGHT:
+                        self.info_page = (self.info_page + 1) % 4
                  
     def userinput(self):
         # This part will check the controls of the player
@@ -428,6 +446,9 @@ class Play():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.choice = "pause"
+                        self.pause = not self.pause
+                    if event.key == pygame.K_i:
+                        self.choice = "info"
                         self.pause = not self.pause
                     if event.key == pygame.K_a:
                         self.movements[0] = True
