@@ -364,9 +364,10 @@ class Player(PhysicsEntity):
         # Get the tile the player is standing on, if it is a glitch block, deduct life
         # print(self.poison_timer, self.poison_timer2)
 
-        if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
-            self.poison_timer2 = min(self.shield_dur, self.poison_timer2 + 1)
-            if self.poison_timer2 == self.shield_dur:
+        if tilemap.glitch_rects_around((self.rect().centerx, self.pos[1] + self.size[1])):
+        # if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
+            self.poison_timer2 = min(self.shield, self.poison_timer2 + 1)
+            if self.poison_timer2 == self.shield:
                 self.poison_timer += 0.5
                 if self.poison_timer > 30:
                     self.poison_timer = 0
@@ -383,15 +384,15 @@ class Player(PhysicsEntity):
                 self.poison_timer = 0
         
         else:
-            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield_dur/200))
+            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield/200))
 
-        self.shield = round(max(0, self.shield_dur - self.poison_timer2) / (self.shield_dur/100))
+        self.shield_dur = round(max(0, self.shield - self.poison_timer2) / (self.shield/100))
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
 
         # print(self.latest_block)
-        self.data = [self.name, self.level, self.gold, self.speed, self.HP]
+        self.data = [self.name, self.level, self.gold, self.speed, self.HP, self.shield]
 
         self.air_time += 1
                 
@@ -436,10 +437,10 @@ class Player(PhysicsEntity):
         # During the dash
         if abs(self.dashing) in {60, 50}:
             for i in range(20):
-             angle = random.random() * math.pi * 2
-             speed = random.random() * 0.5 + 0.5
-             pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
-             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+                angle = random.random() * math.pi * 2
+                speed = random.random() * 0.5 + 0.5
+                pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
+                self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
         
         # Slows down the repulsion after wall jump
         if self.velocity[0] > 0:
