@@ -26,6 +26,7 @@ class Play():
         self.clickpause = False
         self.enemykill = True
         self.leafkill = True
+        self.pause_choice = 0
         self.choice = ""
         self.pause = False
         self.info_page = 0
@@ -83,8 +84,6 @@ class Play():
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
-        # self.load_level(self.level)
-
     def interact(self):
         for npc in self.npc:
             if self.player.rect().colliderect(npc.interact):           
@@ -94,7 +93,7 @@ class Play():
                         return npc.name
                     else:
                         return "Store"
-    
+
     def load(self, data):
         self.player.updateprofile(data)
         self.level = str(data[1])
@@ -140,6 +139,9 @@ class Play():
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
             self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 20 + tree["pos"][1], 23, 13))
+        
+        for tree in self.tilemap.extract([("large_decor", 8), ("large_decor", 9)], keep=True):
+            self.leaf_spawners.append(pygame.Rect(50 + tree["pos"][0], 70 + tree["pos"][1], 40, 20))
         
         self.enemies = []
         
@@ -295,11 +297,12 @@ class Play():
                         speed = random.random() * 5
                         self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random(), (255,0,0)))
                         self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-
+        
         for rect in self.leaf_spawners:
-            if random.random() * 49999 < rect.width * rect.height:
-                pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
-                self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+            if (rect.x) in range(int(self.scroll[0]), int(self.scroll[0]) + 1200):
+                if random.random() * 49999 < rect.width * rect.height:
+                    pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
+                    self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
 
         for particle in self.particles.copy():
             kill = particle.update()
@@ -312,7 +315,7 @@ class Play():
             kill = spark.update()
             if kill:
                 self.sparks.remove(spark)
-        
+
     def death(self):
 
         # Death logic
@@ -405,14 +408,13 @@ class Play():
         self.display.blit(img, (0,0))
         if self.choice == "pause":
             render_img(self.assets["pause"], 0, 0, self.display, centered=False)
-            quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
-            resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+            render_img(self.assets["quit"], 600, 400, self.display, True)
+            render_img(self.assets["resume"], 600, 300, self.display, True)
 
-            if resume:
-                self.pause = not self.pause
-            if quit:
-                pygame.quit()
-                sys.exit()
+            if self.pause_choice == 0:
+                render_img(self.assets["resume2"], 600, 300, self.display, True, True)
+            elif self.pause_choice == 1:
+                render_img(self.assets["quit2"], 600, 400, self.display, True, True)
 
         elif self.choice == "info":
             if self.info_page == 0:
@@ -431,7 +433,20 @@ class Play():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.pause = not self.pause
-                if self.choice == "info":
+                if self.choice == "pause":
+                    if event.key == pygame.K_SPACE:
+                        if self.pause_choice == 0:
+                            self.pause = not self.pause
+                        elif self.pause_choice == 1:
+                            pygame.quit()
+                            sys.exit()
+                    if event.key == pygame.K_UP:
+                        self.pause_choice = (self.pause_choice - 1) % 2
+                    if event.key == pygame.K_DOWN:
+                        self.pause_choice = (self.pause_choice + 1) % 2
+                    if event.key == pygame.K_r:
+                        self.pause = not self.pause
+                elif self.choice == "info":
                     if event.key == pygame.K_i:
                         self.pause = not self.pause
                     if event.key == pygame.K_LEFT:

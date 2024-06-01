@@ -455,15 +455,15 @@ class Player(PhysicsEntity):
     def jump(self):
         # If wall jump, jump in the opposite direction of the wall and up, and reduce the amount of jumps left
         if self.wall_slide:
-            if self.flip and self.last_movement[0] < 0:
+            if self.flip:
                 self.velocity[0] = 6
-                self.velocity[1] = -5
+                self.velocity[1] = -7
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
-            elif not self.flip and self.last_movement[0] > 0:
+            elif not self.flip:
                 self.velocity[0] = -6
-                self.velocity[1] = -5
+                self.velocity[1] = -7
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
