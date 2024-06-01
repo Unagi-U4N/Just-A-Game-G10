@@ -184,6 +184,8 @@ class Play():
                 npc.name = "Ending"
             elif i == 0 and map_id == "test2":
                 npc.name = "Intro2"
+            elif i == 1 and map_id == "test2":
+                npc.name = "TicTacToe"
             elif i == 2 and map_id == "test2":
                 npc.name = "Ending2"
             elif i == 0 and map_id == "test3":
@@ -608,6 +610,8 @@ class Play():
             elif self.results == "Draw":
                 self.play = False
                 dialogue.dialogue(self, "TicTacToeDraw")
+            elif self.results == "Back":
+                self.play = False
                     
     def transitions(self):
         # Dim the screen and slowly light up evertime the map refreshes

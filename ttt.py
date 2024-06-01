@@ -329,6 +329,9 @@ class TicTacToe:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.reset()
+                    return "Back"
                 if event.key == pygame.K_SPACE:
                     if self.state == "1":
                         self.state = "2"
