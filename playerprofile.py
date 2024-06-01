@@ -38,8 +38,8 @@ class PlayerProfile:
                         pass
                     else:
                         # Append the profile to the list
-                        # Name, lvl, gold, speed, HP
-                        self.profiles.append([row[0], row[1], row[2], row[3], row[4]])
+                        # Name, lvl, gold, speed, HP, shield
+                        self.profiles.append([row[0], row[1], row[2], row[3], row[4], row[5]])
                         self.loaded = True
     
         # for i in range(numofbutton):
@@ -109,6 +109,7 @@ class PlayerProfile:
                 self.data[2] = int(self.data[2])
                 self.data[3] = float(self.data[3])
                 self.data[4] = int(self.data[4])
+                self.data[5] = int(self.data[5])
                 render_text(f"Profile {self.data[0]} loaded", self.font, "black", 600, 450, self.display, centered=True)
                 self.timer += 1
                 if self.timer >= 120:
@@ -118,7 +119,7 @@ class PlayerProfile:
             deleted = False
             with open("profile.csv", "w", newline="") as file:
                 writer = csv.writer(file)
-                writer.writerow(["Name", "Level", "Gold", "Speed", "HP"])
+                writer.writerow(["Name", "Level", "Gold", "Speed", "HP", "Shield"])
                 for row in self.profiles:
                     if self.data in self.profiles:
                         self.profiles.remove(self.data)
@@ -168,7 +169,7 @@ class PlayerProfile:
                             with open("profile.csv", "a", newline="") as file:
                                 self.saveprofile = True
                                 writer = csv.writer(file)
-                                writer.writerow([self.name, 0, 0, 1.5, 3])
+                                writer.writerow([self.name, 1, 0, 1.5, 3, 100])
                                 file.close()
                             
                     elif event.key == pygame.K_BACKSPACE:
@@ -186,7 +187,7 @@ class PlayerProfile:
                             self.name += event.unicode
 
             if self.saveprofile:
-                self.data = [self.name, 0, 0, 1.5, 3]
+                self.data = [self.name, 1, 0, 1.5, 3, 100]
                 render_text("Profile created", self.font, "black", 600, 400, self.display, centered=True)
                 pygame.display.update()
                 self.timer += 1
@@ -199,7 +200,6 @@ class PlayerProfile:
     def saveprogress(self):
 
         # Modify the data of the player, then save it to the csv file
-
         # Read the csv file
         if not self.loaded:
             with open("profile.csv", "r") as file:
@@ -209,19 +209,20 @@ class PlayerProfile:
                         pass
                     else:
                         # Append the profile to the list
-                        # Name, lvl, gold, speed, HP
-                        self.profiles.append([row[0], row[1], row[2], row[3], row[4]])
+                        # Name, lvl, gold, speed, HP, shield
+                        self.profiles.append([row[0], row[1], row[2], row[3], row[4], row[5]])
                         self.loaded = True
         
         with open("profile.csv", "w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(["Name", "Level", "Gold", "Speed", "HP"])
+            writer.writerow(["Name", "Level", "Gold", "Speed", "HP", "Shield"])
             for row in self.profiles:
                 if row[0] == self.data[0]:
                     row[1] = self.data[1]
                     row[2] = self.data[2]
                     row[3] = self.data[3]
                     row[4] = self.data[4]
+                    row[5] = self.data[5]
                 writer.writerow(row)
             file.close()
             

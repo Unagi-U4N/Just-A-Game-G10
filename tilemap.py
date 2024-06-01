@@ -1,6 +1,17 @@
 import pygame, json
 
 NEIGHBOURS_OFFSETS = [(-1, -1), (-1, 0), (-1,1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
+WIDE_NEIGHBOURS_OFFSETS = [(-3, -3), (-3, -2), (-3, -1), (-3, 0), (-3, 1),
+                            (-3, 2), (-3, 3), (-2, -3), (-2, -2), (-2, -1),
+                            (-2, 0), (-2, 1), (-2, 2), (-2, 3), (-1, -3),
+                            (-1, -2), (-1, -1), (-1, 0), (-1, 1), (-1, 2),
+                            (-1, 3), (0, -3), (0, -2), (0, -1), (0, 0),
+                            (0, 1), (0, 2), (0, 3), (1, -3), (1, -2),
+                            (1, -1), (1, 0), (1, 1), (1, 2), (1, 3),
+                            (2, -3), (2, -2), (2, -1), (2, 0), (2, 1),
+                            (2, 2), (2, 3), (3, -3), (3, -2), (3, -1),
+                            (3, 0), (3, 1), (3, 2), (3, 3)]
+
 PHYSICS_TILES = {"stone", "grass", "metal", "glitch_blocks"}
 
 class Tilemap:
@@ -31,6 +42,12 @@ class Tilemap:
         if tile_loc in self.tilemap:
             if self.tilemap[tile_loc]['type'] in PHYSICS_TILES:
                 return self.tilemap[tile_loc]
+            
+    def glitch_check(self, pos):
+        tile_loc = str(int(pos[0] // self.tile_size)) + ';' + str(int(pos[1] // self.tile_size))
+        if tile_loc in self.tilemap:
+            if self.tilemap[tile_loc]['type'] == "glitch_blocks":
+                return self.tilemap[tile_loc]
 
     def extract(self, id_pairs, keep=False):
         # Get all the tiles that match the id_pairs
@@ -52,11 +69,16 @@ class Tilemap:
         
         return matches
 
-    def tiles_around(self, pos):
+    def tiles_around(self, pos, wide=False):
         # Get the location of the tile in the grid based on the position of the player
         tiles = []
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
-        for offset in NEIGHBOURS_OFFSETS:
+        # Get the tiles around the player
+        if wide:
+            neignbour_offsets = WIDE_NEIGHBOURS_OFFSETS
+        else:
+            neignbour_offsets = NEIGHBOURS_OFFSETS
+        for offset in neignbour_offsets:
             check_loc = str(tile_loc[0] + offset[0]) + ';' + str(tile_loc[1] + offset[1])
             if check_loc in self.tilemap:
                 tiles.append(self.tilemap[check_loc])
@@ -67,6 +89,14 @@ class Tilemap:
         # If the tile is a physics tile, add rect to it
         for tile in self.tiles_around(pos):
             if tile["type"] in PHYSICS_TILES:
+                rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
+        return rect
+    
+    def glitch_rects_around(self, pos):
+        rect = []
+        # If the tile is a glitch tile, add rect to it
+        for tile in self.tiles_around(pos, True):
+            if tile["type"] == "glitch_blocks":
                 rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
         return rect
 

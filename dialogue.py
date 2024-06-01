@@ -104,15 +104,15 @@ def dialogue(self, state):
             choice = dialoguequestions(self.assets["dialoguebox"], "Please choose a level", ["Level 1", "Level 2", "Level 3"], self.screen)
             rundialogues(self.dialogues["Proceed1"])
             if choice == "Level 1":
-                self.level = "test1"
+                self.level = "1"
                 self.load_level(self.level)
                 self.state = "game"
             elif choice == "2":
-                self.level = "test2"
+                self.level = "2"
                 self.load_level(self.level)
                 self.state = "level2"
             elif choice == "3":
-                self.level = "test3"
+                self.level = "3"
                 self.load_level(self.level)
                 self.state = "game"
         elif choice == "No":

@@ -1,2 +1,3 @@
-Use your skills and wits to overcome these obstacles and 
-advance to the next level. Good luck, Soldier !!!
+If you get close to the glitch blocks,
+your shield will erode slowly, eventually exposing
+you to it and dealing damage.

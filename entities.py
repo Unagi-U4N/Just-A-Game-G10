@@ -69,6 +69,11 @@ class PhysicsEntity:
                     self.collisions['up'] = True
                 self.pos[1] = entity_rect.y
 
+        # entity_rect = self.rect()
+        # for rect in tilemap.glitch_rects_around(self.pos):
+        #     if entity_rect.colliderect(rect):
+        #         print("Glitch")
+
         # Flip the sprite based on the movement
         if movement[0] > 0:
             self.flip = False
@@ -335,6 +340,11 @@ class Player(PhysicsEntity):
         self.wall_slide = False
         self.dashing = 0
         self.speed = 1.5 # default
+        self.size = (16, 30)
+        self.poison_timer = 0
+        self.poison_timer2 = 0
+        self.shield = 200
+        self.shield_dur = 200
 
     def updateprofile(self, data):
         self.name = data[0]
@@ -342,19 +352,50 @@ class Player(PhysicsEntity):
         self.gold = data[2]
         self.speed = data[3]
         self.HP = data[4]
+        self.shield = data[5]
+        self.shield_dur = data[5]
 
     def airtime(self):
         if self.air_time > 120:
             return True
+        
+    def poison(self, tilemap):
+
+        # Get the tile the player is standing on, if it is a glitch block, deduct life
+        # print(self.poison_timer, self.poison_timer2)
+
+        if tilemap.glitch_rects_around((self.rect().centerx, self.pos[1] + self.size[1])):
+        # if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
+            self.poison_timer2 = min(self.shield, self.poison_timer2 + 1)
+            if self.poison_timer2 == self.shield:
+                self.poison_timer += 0.5
+                if self.poison_timer > 30:
+                    self.poison_timer = 0
+                    for i in range(30):
+                        angle = random.random() * math.pi * 2
+                        speed = random.random() * 5
+                        self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random(), (50,255,50)))
+                        self.game.sparks.append(Spark(self.rect().center, angle, 1 + random.random(), (200,255,0)))
+                        self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                    # self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random(), (0,0,0)))
+                    # self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random(), (255,255,255)))
+                    return True
+            else:
+                self.poison_timer = 0
+        
+        else:
+            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield/200))
+
+        self.shield_dur = round(max(0, self.shield - self.poison_timer2) / (self.shield/100))
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
 
         # print(self.latest_block)
-        self.data = [self.name, self.level, self.gold, self.speed, self.HP]
+        self.data = [self.name, self.level, self.gold, self.speed, self.HP, self.shield]
 
         self.air_time += 1
-
+                
         if self.collisions['down']:
             self.air_time = 0
             self.jumps = 1
@@ -396,10 +437,10 @@ class Player(PhysicsEntity):
         # During the dash
         if abs(self.dashing) in {60, 50}:
             for i in range(20):
-             angle = random.random() * math.pi * 2
-             speed = random.random() * 0.5 + 0.5
-             pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
-             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+                angle = random.random() * math.pi * 2
+                speed = random.random() * 0.5 + 0.5
+                pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
+                self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
         
         # Slows down the repulsion after wall jump
         if self.velocity[0] > 0:

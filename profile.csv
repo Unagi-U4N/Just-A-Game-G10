@@ -1,3 +1,2 @@
-Name,Level,Gold,Speed,HP
-Ivan,test1,10250,3,4
-James, 2, 200, 3, 4
+Name,Level,Gold,Speed,HP,Shield
+Ivan,test2,10800,3.0,3,400
