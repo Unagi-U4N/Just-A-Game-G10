@@ -370,8 +370,9 @@ class Play():
             
             # Restart the game
             if self.restart:
-                self.transition += 1
-                if self.transition > 75:
+                self.felltransition += 1
+                if self.felltransition > 60:
+                    self.slowmo = False
                     self.lives = self.maxHP
                     self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
@@ -383,10 +384,11 @@ class Play():
                     self.playedwaste = False
                     self.restart = False
                     self.sfx['wasted'].stop()
-                    self.transition = -75
+                    # self.transition = -75
                     self.player.poison_timer = 0
                     self.player.poison_timer2 = 0
-                    self.shut = False
+                    # self.shut = False
+                    self.felltransition = -60
                     # self.game.sfx['ambience'].play(-1)
 
             # Load respawn screen
@@ -653,25 +655,25 @@ class Play():
             img.set_alpha(min(200, abs(self.transition) * 2))
             self.display.blit(img, (0,0))
 
-        if self.felltransition != 0:
+        if self.felltransition != 0 and not self.restart:
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(min(200, abs(self.felltransition) * 4))
             self.display.blit(img, (0,0))
   
         # Secondary screen, used for transition when dead
-        if self.transition:
-            transition_surf = pygame.Surface((1200, 675))
-            self.shut = True if self.transition in range(70, 135) else False
-            if self.transition < 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
+        # if self.transition:
+        #     transition_surf = pygame.Surface((1200, 675))
+        #     self.shut = True if self.transition in range(70, 135) else False
+        #     if self.transition < 0:
+        #         transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
+        #         transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
 
-            elif self.transition > 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
-            transition_surf.set_colorkey((0, 0, 0))
-            self.display.blit(transition_surf, (0, 0))
+        #     elif self.transition > 0:
+        #         transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
+        #         transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
+        #     transition_surf.set_colorkey((0, 0, 0))
+        #     self.display.blit(transition_surf, (0, 0))
 
         # secondary screen, used for transition when falling
         if self.felltransition:
