@@ -401,7 +401,7 @@ class Play():
             
         img=pygame.Surface((1200, 675))
         img.fill((0,0,0))
-        img.set_alpha(150)
+        img.set_alpha(200)
         self.display.blit(img, (0,0))
         if self.choice == "pause":
             render_img(self.assets["pause"], 0, 0, self.display, centered=False)
@@ -528,11 +528,28 @@ class Play():
                                 self.store_state = "store_menu"
                                 self.store_addsub_shield = 0
 
-                    if event.key == pygame.K_LEFT and self.store_state == "store_menu":
-                        self.upgrade_choice = (self.upgrade_choice + 1) % 3
+                    if event.key == pygame.K_LEFT:
+                        if self.store_state == "store_menu":
+                            self.upgrade_choice = (self.upgrade_choice + 1) % 3
+                        else:
+                                if self.store_state == "store_heart" and self.store_addsub_heart < self.max_heart - self.maxHP:
+                                    self.store_addsub_heart += 1
+                                elif self.store_state == "store_speed" and self.store_addsub_speed < self.max_speed - self.player.speed:
+                                    self.store_addsub_speed = round(self.store_addsub_speed + 0.1, 1)
+                                elif self.store_state == "store_shield" and self.store_addsub_shield < self.max_shield - self.player.shield/100:
+                                    self.store_addsub_shield += 1
                             
-                    if event.key == pygame.K_RIGHT and self.store_state == "store_menu":
-                        self.upgrade_choice = (self.upgrade_choice - 1) % 3
+                    if event.key == pygame.K_RIGHT:
+                        if self.store_state == "store_menu":
+                            self.upgrade_choice = (self.upgrade_choice - 1) % 3
+                        else:
+                                if self.store_state == "store_heart" and self.store_addsub_heart > 0:
+                                    self.store_addsub_heart -= 1
+                                elif self.store_state == "store_speed" and self.store_addsub_speed > 0:
+                                    self.store_addsub_speed = round(self.store_addsub_speed - 0.1, 1)
+                                elif self.store_state == "store_shield" and self.store_addsub_shield > 0:
+                                    self.store_addsub_shield -= 1
+                    
         else:
             pygame.event.clear()
             self.movements = [False, False]
@@ -591,7 +608,7 @@ class Play():
         count= 0
 
         while num !=0:
-            num//= 10
+            num//= 5
             count += 1
         render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
         render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
@@ -671,7 +688,7 @@ class Play():
                 
     def safehouse(self):
         if self.state == "safehouse":
-            self.lives = self.maxHP
+            self.lives = self.player.HP
             self.profile.data = self.player.data
             self.profile.saveprogress()
             
@@ -687,7 +704,7 @@ class Play():
                 if self.store:
                     img = pygame.Surface((1200, 675))
                     img.fill((0,0,0))
-                    img.set_alpha(150)
+                    img.set_alpha(200)
                     self.display.blit(img, (0,0))
                     self.display.blit(self.assets[self.store_state], (0, 0))
                     if self.store_state == "store_menu":

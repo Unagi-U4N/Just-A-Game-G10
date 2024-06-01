@@ -97,7 +97,7 @@ class Game:
             "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.06),
             "big-shield": scale_images(load_image("indicators/shield.png"), scale= 0.08),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
-            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
+            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.08),
             "store": scale_images(load_image("store/store.png"), set_scale=(1200, 675)),
             "store_menu": scale_images(load_image("store/store_menu.png"), set_scale=(1200, 675)),
             "store_speed": scale_images(load_image("store/store_speed.png"), set_scale=(1200, 675)),

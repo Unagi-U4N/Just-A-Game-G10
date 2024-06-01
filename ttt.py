@@ -321,7 +321,7 @@ class TicTacToe:
     def run(self):
         img=pygame.Surface((1200, 675))
         img.fill((0,0,0))
-        img.set_alpha(150)
+        img.set_alpha(200)
         self.display.blit(img, (0,0))
 
         for event in pygame.event.get():
