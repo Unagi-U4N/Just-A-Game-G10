@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "1", 10000, 2.5, 3, 100]
+        self.data = ["Ivan", "test1", 10000, 2.5, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -46,8 +46,10 @@ class Game:
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
-            "loadscreen1": load_image("loadscreen1.png"),
-            "loadscreen2": load_image("loadscreen2.png"),
+            "level_selection": scale_images(load_image("level_selection.png"), set_scale=(1200, 675)),
+            "level_1": scale_images(load_image("background/level1.png"), set_scale=(1200, 675)),
+            "level_2": scale_images(load_image("background/level2.png"), set_scale=(1200, 675)),
+            "level_3": scale_images(load_image("background/level3.png"), set_scale=(1200, 675)),
             "save": scale_images(load_image("background/savescreen.png"), set_scale=(1200, 675)),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
