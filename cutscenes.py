@@ -2,7 +2,7 @@ import pygame, sys
 from utils import *
 
 # Get the top right coordinates of the dialogue box and return a tuple
-dialoguebox_pos = (350, 490)
+dialoguebox_pos = (350, 485)
 
 def get_cutscene(game, type, cutscenes, screen):
     
@@ -70,12 +70,16 @@ def runscenes(scenes):
         scene = scenes[scene]
         scene.draw()
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     skip = True
                     scene.fadescreen = 0
                     if skip and scene.done:
                         next = True
+                        scene.status = {msg: False for msg in scene.msgs}
 
         if skip:
             scene.alldone = True
@@ -95,7 +99,7 @@ def dialoguequestions(img, question, choices, screen):
         render_img(img, 655, 550, screen)
         render_text(question, pygame.font.Font("data/monogram.ttf", 30), "black", dialoguebox_pos[0], dialoguebox_pos[1], screen, centered=False)
         for i in range(len(choices)):
-            render_text(choices[i], pygame.font.Font("data/monogram.ttf", 30), "black", dialoguebox_pos[0] + 50, dialoguebox_pos[1] + 35 + i * 25, screen, centered=False)
+            render_text(choices[i], pygame.font.Font("data/monogram.ttf", 30), "black", dialoguebox_pos[0] + 50, dialoguebox_pos[1] + 35 + i * 30, screen, centered=False)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
