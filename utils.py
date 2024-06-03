@@ -13,7 +13,7 @@ BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
 BASE_DIALOGUE_PATH = get_path() + "data/dialogues/"
 
-def render_text(text, font, color, x, y, display, centered=True, transparency=255):
+def render_text(text, font, color, x, y, display, centered=True, transparency=255, click=False):
     # render text on the display, make sure the text is centered
     texts = font.render(text, True, color)
     if centered:
@@ -22,7 +22,13 @@ def render_text(text, font, color, x, y, display, centered=True, transparency=25
         text_rect = (x, y)
     texts.set_alpha(transparency)  # Set transparency effect
     display.blit(texts, text_rect)
-    return text_rect
+
+    if click:
+        if text_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                return True
+    else:
+        return text_rect
 
 def render_img(img, x, y, display, centered=True, click=False, hover=None, transparency=255):
     # render image on the display, make sure the image is centered, clickable

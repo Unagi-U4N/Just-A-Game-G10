@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test", 10000, 3, 3]
+        self.data = ["Ivan", "test2", 10000, 2.5, 3, 400]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -79,7 +79,10 @@ class Game:
             "ttt3": scale_images(load_image("ttt/ttt3.png"), set_scale=(1200, 675)),
             "X": scale_images(load_image("ttt/X.png"), scale= 0.5),
             "O": scale_images(load_image("ttt/O.png"), scale= 0.5),
-            "controls": scale_images(load_image("controls.png"), set_scale=(1200, 675)),
+            "controls1": scale_images(load_image("info/0.png"), set_scale=(1200, 675)),
+            "controls2": scale_images(load_image("info/1.png"), set_scale=(1200, 675)),
+            "controls3": scale_images(load_image("info/2.png"), set_scale=(1200, 675)),
+            "controls4": scale_images(load_image("info/3.png"), set_scale=(1200, 675)),
             "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
@@ -89,17 +92,21 @@ class Game:
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
             "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
-            "heart": scale_images(load_image("indicators/heart.png"), scale= 0.035),
-            "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.07),
+            "heart": scale_images(load_image("indicators/heart.png"), set_scale=(45, 40)),
+            "heart1": scale_images(load_image("indicators/heart1.png"), set_scale=(45, 40)),
+            "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.06),
+            "big-shield": scale_images(load_image("indicators/shield.png"), scale= 0.08),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
             "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
-            "store": scale_images(load_image("store.png"), set_scale=(1200, 675)),
-            "store_menu": scale_images(load_image("store_menu.png"), set_scale=(1200, 675)),
-            "store_speed": scale_images(load_image("store_speed.png"), set_scale=(1200, 675)),
-            "store_heart": scale_images(load_image("store_heart.png"), set_scale=(1200, 675)),
-            "speed_potion": scale_images(load_image("indicators/speed_potion.png"), scale=0.25),
+            "store": scale_images(load_image("store/store.png"), set_scale=(1200, 675)),
+            "store_menu": scale_images(load_image("store/store_menu.png"), set_scale=(1200, 675)),
+            "store_speed": scale_images(load_image("store/store_speed.png"), set_scale=(1200, 675)),
+            "store_heart": scale_images(load_image("store/store_heart.png"), set_scale=(1200, 675)),
+            "store_shield": scale_images(load_image("store/store_shield.png"), set_scale=(1200, 675)),
+            "speed_potion": scale_images(load_image("indicators/speed_potion.png"), scale=0.2),
             "+": scale_images(load_image("indicators/+.png"), scale=0.07),
             "-": scale_images(load_image("indicators/-.png"), scale=0.07),
+            "shield": scale_images(load_image("indicators/shield.png"), scale=0.05),
         }
 
         self.sfx = {
@@ -111,6 +118,7 @@ class Game:
             'wasted': pygame.mixer.Sound('data/sfx/wasted.wav'),
             "bullet": pygame.mixer.Sound('data/sfx/bullet.wav'),
             "click": pygame.mixer.Sound('data/sfx/click.wav'),
+            "poison": pygame.mixer.Sound('data/sfx/poison.wav'),
         }
         
         self.sfx['ambience'].set_volume(0.05)
@@ -121,6 +129,7 @@ class Game:
         self.sfx['wasted'].set_volume(1)
         self.sfx['bullet'].set_volume(0.3)
         self.sfx['click'].set_volume(1)
+        self.sfx['poison'].set_volume(0.2)
         
         self.startscreen = StartScreen(self)
         self.game = Play(self)
