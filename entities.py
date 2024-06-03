@@ -84,6 +84,8 @@ class PhysicsEntity:
 
         self.velocity[1] = min(7, self.velocity[1] + 0.35)
 
+        # self.animation.update()
+
         if self.collisions['down'] or self.collisions['up']:
             self.velocity[1] = 0
 
@@ -357,6 +359,10 @@ class Player(PhysicsEntity):
 
     def airtime(self):
         if self.air_time > 120:
+            return True
+        
+    def interact_core(self, tilemap):
+        if tilemap.core_around((self.rect().centerx, self.pos[1] + self.size[1])):
             return True
         
     def poison(self, tilemap):

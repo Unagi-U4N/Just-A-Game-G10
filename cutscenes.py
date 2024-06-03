@@ -203,7 +203,7 @@ class Cutscene(Logic):
             if self.alldone:
                 self.status = {msg: True for msg in self.msgs}
                 self.done = True
-                render_img(self.game.assets["arrow"], 600, 600, self.screen,centered=True)
+                render_img(self.game.assets["arrow_w"], 600, 600, self.screen,centered=True)
         
 
 class Dialogue(Logic):

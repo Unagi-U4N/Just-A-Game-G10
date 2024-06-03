@@ -97,6 +97,14 @@ class Tilemap:
         # If the tile is a glitch tile, add rect to it
         for tile in self.tiles_around(pos, True):
             if tile["type"] == "glitch_blocks":
+                    rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
+        return rect
+    
+    def core_around(self, pos):
+        # Get the core tile around the player
+        rect = []
+        for tile in self.tiles_around(pos):
+            if tile["type"] == "decor" and tile["variant"] == 4:
                 rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
         return rect
 

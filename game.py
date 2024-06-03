@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test1", 10000, 2.5, 3, 100]
+        self.data = ["Ivan", "test3", 10000, 2.5, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -66,10 +66,13 @@ class Game:
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
+            "core": Animation(scale_images(load_images("core"), scale=1.5), img_dur=15, loop=False),
+            "good_core": scale_images(load_image("core/49.png"), scale= 1.5),
             "gun": scale_images(load_image("gun.png")),
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
             "arrow": scale_images(load_image("arrow.png"), scale= 0.2),
+            "arrow_w": scale_images(load_image("arrow_white.png"), scale= 0.2),
             "quit": scale_images(load_image("button/quit.png"), scale=0.5),
             "resume": scale_images(load_image("button/resume.png"), scale=0.5),
             "quit2": scale_images(load_image("button/quit2.png"), scale=0.5),

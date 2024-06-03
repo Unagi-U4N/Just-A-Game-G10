@@ -6,6 +6,7 @@ from tkinter import font
 import pygame, sys, random, math
 from utils import *
 from entities import Player, Enemy, NPC
+from cutscenes import *
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
@@ -68,6 +69,9 @@ class Play():
         self.transitioning = True
         self.transition = 0
         self.transition_timer = 0
+        self.core_animation_timer = 0
+        self.core_animation = False
+        self.animation = self.assets["core"].copy()
         self.transition_ed = True
         self.results = ""
         self.felltransition = 0
@@ -87,12 +91,20 @@ class Play():
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
-    def interact(self):
-        for npc in self.npc:
-            if self.player.rect().colliderect(npc.interact):           
-                render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+    def interact(self, isnpc=True):
+        # Check if the player is interacting with the npc
+        if isnpc:
+            for npc in self.npc:
+                if self.player.rect().colliderect(npc.interact):           
+                    render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                    if self.e:
+                        return npc.name
+        else:
+            if not self.animation.done:
+                render_text("Interact with core", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                 if self.e:
-                    return npc.name
+                    self.e = False
+                    self.core_animation = True
 
     def load(self, data):
         self.player.updateprofile(data)
@@ -225,6 +237,19 @@ class Play():
         if self.game.exclamation is not None:
             self.game.exclamation.clear()
         self.exclamation = self.game.exclamation
+
+    def core(self):
+        # Core animation logic
+        if self.player.interact_core(tilemap=self.tilemap):
+            self.interact(False)
+            if self.core_animation:
+                self.display.fill((0, 0, 0))
+                self.animation.update()
+                render_img(self.animation.img(), 600, 500, self.display, centered=True)
+                if self.animation.done:
+                    render_img(self.assets["good_core"], 600, 500, self.display, centered=True)
+                    render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
+                    render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
 
     def update(self):
 
@@ -467,7 +492,16 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select:
+        if self.core_animation:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.animation.done:
+                        self.core_animation = False
+
+        elif not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -895,7 +929,9 @@ class Play():
 
         # Pause button, if paused don't update the game
         self.check_button()
-        if not self.pause and not self.play and not self.store:
+
+        # Get condition to update the game
+        if not self.pause and not self.play and not self.store and not self.core_animation:
             self.update()
         
         if self.pause:
@@ -904,6 +940,7 @@ class Play():
         self.death()
         self.minigame()
         self.userinput()
+        self.core()
         self.transitions()
         self.safehouse()
         if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3"]:
