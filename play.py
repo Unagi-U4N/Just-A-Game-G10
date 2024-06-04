@@ -250,6 +250,7 @@ class Play():
     def core(self):
         # Core animation logic
         if self.player.interact_core(tilemap=self.tilemap):
+            print("interact")
             self.interact(False)
             if self.core_animation:
                 self.display.fill((0, 0, 0))
