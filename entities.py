@@ -84,6 +84,8 @@ class PhysicsEntity:
 
         self.velocity[1] = min(7, self.velocity[1] + 0.35)
 
+        # self.animation.update()
+
         if self.collisions['down'] or self.collisions['up']:
             self.velocity[1] = 0
 
@@ -339,7 +341,7 @@ class Player(PhysicsEntity):
         self.jumps = 1
         self.wall_slide = False
         self.dashing = 0
-        self.speed = 1.5 # default
+        self.speed = 2 # default
         self.size = (16, 30)
         self.poison_timer = 0
         self.poison_timer2 = 0
@@ -357,6 +359,10 @@ class Player(PhysicsEntity):
 
     def airtime(self):
         if self.air_time > 120:
+            return True
+        
+    def interact_core(self, tilemap):
+        if tilemap.core_around((self.rect().centerx, self.pos[1] + self.size[1])):
             return True
         
     def poison(self, tilemap):
@@ -455,15 +461,15 @@ class Player(PhysicsEntity):
     def jump(self):
         # If wall jump, jump in the opposite direction of the wall and up, and reduce the amount of jumps left
         if self.wall_slide:
-            if self.flip and self.last_movement[0] < 0:
+            if self.flip:
                 self.velocity[0] = 6
-                self.velocity[1] = -5
+                self.velocity[1] = -7
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True
-            elif not self.flip and self.last_movement[0] > 0:
+            elif not self.flip:
                 self.velocity[0] = -6
-                self.velocity[1] = -5
+                self.velocity[1] = -7
                 self.air_time = 5
                 self.jumps = max(0, self.jumps -1)
                 return True

@@ -127,9 +127,9 @@ class Animation:
     
     def img(self):
         # return the image of the current frame
-        return self.images[int(self.frame / self.img_dur)]
+        return self.images[int(self.frame // self.img_dur)]
     
-    def update(self):
+    def update(self, log=False):
         if self.loop:
             # modulo frame by the total number of frames (each img dur * number of images)
             self.frame = (self.frame + 1) % (self.img_dur * len(self.images)) 
@@ -137,6 +137,9 @@ class Animation:
             self.frame = min(self.frame + 1, self.img_dur * len(self.images) - 1)
             if self.frame >= self.img_dur * len(self.images) - 1:
                 self.done = True
+
+        if log:
+            print(self.frame, self.frame // self.img_dur)
 
 # Might need to use pygame to scale up all the assets by 2 times
 # Currently scaling up the assets manually in each file

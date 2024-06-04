@@ -97,6 +97,14 @@ class Tilemap:
         # If the tile is a glitch tile, add rect to it
         for tile in self.tiles_around(pos, True):
             if tile["type"] == "glitch_blocks":
+                    rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
+        return rect
+    
+    def core_around(self, pos):
+        # Get the core tile around the player
+        rect = []
+        for tile in self.tiles_around(pos):
+            if tile["type"] == "grass" and tile["variant"] == 14:
                 rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
         return rect
 
@@ -121,7 +129,7 @@ class Tilemap:
         # print("Ongrid tiles: " + str(self.tilecount))
 
         for tile in self.offgrid_tiles:
-            if tile["pos"][0] in range(offset[0] - 200, offset[0] + 1400) and tile["pos"][1] in range(offset[1] - 200, offset[1] + 800):
+            if tile["pos"][0] in range(offset[0] - 400, offset[0] + 1400) and tile["pos"][1] in range(offset[1] - 200, offset[1] + 800):
                 display.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
                 self.count += 1
 

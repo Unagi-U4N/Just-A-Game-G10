@@ -22,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "test2", 10000, 2.5, 3, 400]
-        # self.data = []
+        # self.data = ["Ivan", "2", 10000, 4, 3, 100]
+        self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -46,8 +46,10 @@ class Game:
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
-            "loadscreen1": load_image("loadscreen1.png"),
-            "loadscreen2": load_image("loadscreen2.png"),
+            "level_selection": scale_images(load_image("level_selection.png"), set_scale=(1200, 675)),
+            "level_1": scale_images(load_image("background/level1.png"), set_scale=(1200, 675)),
+            "level_2": scale_images(load_image("background/level2.png"), set_scale=(1200, 675)),
+            "level_3": scale_images(load_image("background/level3.png"), set_scale=(1200, 675)),
             "save": scale_images(load_image("background/savescreen.png"), set_scale=(1200, 675)),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
@@ -64,10 +66,13 @@ class Game:
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
+            "core": Animation(scale_images(load_images("core"), scale=1.5), img_dur=15, loop=False),
+            "good_core": scale_images(load_image("core/49.png"), scale= 1.5),
             "gun": scale_images(load_image("gun.png")),
             "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
             "!": scale_images(load_image("!.png"), scale= 0.8),
-            "arrow": scale_images(load_image("arrow.png"), scale= 2),
+            "arrow": scale_images(load_image("arrow.png"), scale= 0.2),
+            "arrow_w": scale_images(load_image("arrow_white.png"), scale= 0.2),
             "quit": scale_images(load_image("button/quit.png"), scale=0.5),
             "resume": scale_images(load_image("button/resume.png"), scale=0.5),
             "quit2": scale_images(load_image("button/quit2.png"), scale=0.5),
@@ -91,13 +96,13 @@ class Game:
             "delloadgamebg": scale_images(load_image("background/delloadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
-            "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.6),
+            "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.7),
             "heart": scale_images(load_image("indicators/heart.png"), set_scale=(45, 40)),
             "heart1": scale_images(load_image("indicators/heart1.png"), set_scale=(45, 40)),
             "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.06),
             "big-shield": scale_images(load_image("indicators/shield.png"), scale= 0.08),
             "speed": scale_images(load_image("indicators/speed.png"), scale= 0.035),
-            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.035),
+            "gold": scale_images(load_image("indicators/gold.png"), scale= 0.08),
             "store": scale_images(load_image("store/store.png"), set_scale=(1200, 675)),
             "store_menu": scale_images(load_image("store/store_menu.png"), set_scale=(1200, 675)),
             "store_speed": scale_images(load_image("store/store_speed.png"), set_scale=(1200, 675)),
@@ -132,10 +137,10 @@ class Game:
         self.sfx['poison'].set_volume(0.2)
         
         self.startscreen = StartScreen(self)
-        self.game = Play(self)
+        # self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "game"
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
@@ -144,7 +149,7 @@ class Game:
 
             if self.state == "start":
                 newloadexit = self.startscreen.run()
-                # self.music.play_music("music","music")
+                # self.music.play_music("music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -153,25 +158,33 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            if self.state == "game":
+            elif self.state == "game":
                 if not self.loaded:
+                    self.game = Play(self)
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
-                # self.music.play_music("music","music")
+                # self.music.play_music("music")
 
-            if self.state == "newgame":
+            elif self.state == "cutscene":
+                self.state = "game"
+                if self.cutscene == "Intro":
+                    # self.music.play_music("intense1")
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.runscenes(cutscene)
+
+            elif self.state == "newgame":
                 self.data = self.profile.create_profile()
                 if type(self.data) is list:
                     self.state = "cutscene"
                     self.cutscene = "Intro"
-                if self.data == "start":
+                elif self.data == "start":
                     self.startscreen = StartScreen(self)
                     self.state = "start"
-                if self.data == "deleteprofile":
+                elif self.data == "deleteprofile":
                     self.state = "deleteprofile"
 
-            if self.state == "loadgame":
+            elif self.state == "loadgame":
                 self.data = self.profile.read_profile()
                 if type(self.data) is list:
                     self.state = "game"
@@ -179,20 +192,13 @@ class Game:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
 
-            if self.state == "deleteprofile":
+            elif self.state == "deleteprofile":
                 state = self.profile.read_profile(delete=True)
                 if type(state) is str:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
                 elif state:
                     self.state = "newgame"
-    
-            if self.state == "cutscene":
-                if self.cutscene == "Intro":
-                    # self.music.play_music("intense", "intense3")
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.runscenes(cutscene)
-                    self.state = "game"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()

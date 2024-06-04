@@ -52,7 +52,8 @@ def dialogue(self, state):
         rundialogues(self.dialogues["EndingP1(1)"])
         choice = dialoguequestions(self.assets["dialoguebox"], "Enter safehouse?", ["Yes", "No"], self.screen)
         if choice == "Yes":
-            self.player.gold += 1000
+            self.player.gold += 1000*int(self.level)
+            self.prevlevel = self.level
             self.level = "safehouse"
             self.load_level(self.level)
             self.state = "safehouse"

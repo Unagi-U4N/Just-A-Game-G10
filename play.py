@@ -6,6 +6,7 @@ from tkinter import font
 import pygame, sys, random, math
 from utils import *
 from entities import Player, Enemy, NPC
+from cutscenes import *
 from tilemap import Tilemap
 from clouds import Clouds
 from particle import Particle
@@ -14,6 +15,8 @@ import dialogue
 from music import Music
 from ttt import *
 from playerprofile import *
+from safehouse import *
+from startscreen import StartScreen
 
 class Play():
     def __init__(self, game):
@@ -26,6 +29,7 @@ class Play():
         self.clickpause = False
         self.enemykill = True
         self.leafkill = True
+        self.pause_choice = 0
         self.choice = ""
         self.pause = False
         self.info_page = 0
@@ -46,10 +50,15 @@ class Play():
         self.font = game.font
         self.bg = self.assets["day"]
         self.sfx = game.sfx
-        self.level = 1
+        self.start = False
+        self.level = "1"
+        self.prevlevel = ""
         self.current_level = 0
         self.upgrade_choice = 0
         self.store = False
+        self.can_load_level = False
+        self.level_select = False
+        self.level_select_change = True
         self.store_state = "store"
         self.max_heart = 15
         self.max_speed = 3
@@ -65,6 +74,9 @@ class Play():
         self.transitioning = True
         self.transition = 0
         self.transition_timer = 0
+        self.core_animation_timer = 0
+        self.core_animation = False
+        self.animation = self.assets["core"].copy()
         self.transition_ed = True
         self.results = ""
         self.felltransition = 0
@@ -74,6 +86,7 @@ class Play():
         self.playedwaste = False
         self.restart = False
         self.shut = False
+        self.HUD = True
         self.respawn = False
         self.font = pygame.font.Font(self.game.font, 36)
         self.font2 = pygame.font.Font(self.game.font, 50)
@@ -83,21 +96,28 @@ class Play():
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
 
-        # self.load_level(self.level)
-
-    def interact(self):
-        for npc in self.npc:
-            if self.player.rect().colliderect(npc.interact):           
-                render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
-                if self.e:
-                    if not npc.not_dialogue:
+    def interact(self, isnpc=True):
+        # Check if the player is interacting with the npc
+        if isnpc:
+            for npc in self.npc:
+                if self.player.rect().colliderect(npc.interact):           
+                    render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                    if self.e:
                         return npc.name
-                    else:
-                        return "Store"
-    
+        else:
+            if not self.animation.done:
+                render_text("Interact with core", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                if self.e:
+                    self.e = False
+                    self.core_animation = True
+
     def load(self, data):
         self.player.updateprofile(data)
-        self.level = str(data[1])
+
+        self.level = str(data[1]) if str(data[1]) == "1" else "safehouse"
+        if self.level == "safehouse":
+            self.state = "safehouse"
+            self.start = True
         self.maxHP = self.player.HP
         self.lives = self.player.HP
         self.speed = self.player.speed
@@ -105,25 +125,27 @@ class Play():
 
     def check_button(self):
         # Check if the pause or info button is clicked
-        pause = render_img(self.assets["pausebuttonround"], 70, 70, self.display, True, True)
-        info = render_img(self.assets["info"], 140, 70, self.display, True, True)
 
-        self.clickpause = True
-        if pause:
-            if self.pausetimer > 50:
-                self.pause = not self.pause
+        if self.HUD:
+            pause = render_img(self.assets["pausebuttonround"], 70, 70, self.display, True, True)
+            info = render_img(self.assets["info"], 140, 70, self.display, True, True)
 
-                self.choice = "pause"
-                self.pausetimer = 0
-        elif info:
-            if self.pausetimer > 50:
-                self.pause = not self.pause
-                self.choice = "info"
-                self.pausetimer = 0
+            self.clickpause = True
+            if pause:
+                if self.pausetimer > 50:
+                    self.pause = not self.pause
 
-        # Limit the button to be clicked once every 50 frames
-        if self.clickpause:
-            self.pausetimer += 1
+                    self.choice = "pause"
+                    self.pausetimer = 0
+            elif info:
+                if self.pausetimer > 50:
+                    self.pause = not self.pause
+                    self.choice = "info"
+                    self.pausetimer = 0
+
+            # Limit the button to be clicked once every 50 frames
+            if self.clickpause:
+                self.pausetimer += 1
 
     def load_level(self, map_id):
 
@@ -140,6 +162,9 @@ class Play():
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
             self.leaf_spawners.append(pygame.Rect(4 + tree["pos"][0], 20 + tree["pos"][1], 23, 13))
+        
+        for tree in self.tilemap.extract([("large_decor", 8), ("large_decor", 9)], keep=True):
+            self.leaf_spawners.append(pygame.Rect(50 + tree["pos"][0], 70 + tree["pos"][1], 40, 20))
         
         self.enemies = []
         
@@ -184,6 +209,8 @@ class Play():
                 npc.name = "Ending"
             elif i == 0 and map_id == "test2":
                 npc.name = "Intro2"
+            elif i == 1 and map_id == "test2":
+                npc.name = "TicTacToe"
             elif i == 2 and map_id == "test2":
                 npc.name = "Ending2"
             elif i == 0 and map_id == "test3":
@@ -191,7 +218,6 @@ class Play():
             elif i == 2 and map_id == "test3":
                 npc.name = "Ending3"
             elif i == 0 and map_id == "safehouse":
-                npc.not_dialogue = True
                 npc.name = "Store"
             elif i == 1 and map_id == "safehouse":
                 npc.name = "Proceed"
@@ -220,6 +246,22 @@ class Play():
         if self.game.exclamation is not None:
             self.game.exclamation.clear()
         self.exclamation = self.game.exclamation
+
+    def core(self):
+        # Core animation logic
+        if self.player.interact_core(tilemap=self.tilemap):
+            self.interact(False)
+            if self.core_animation:
+                self.display.fill((0, 0, 0))
+                self.animation.update()
+                render_img(self.animation.img(), 600, 500, self.display, centered=True)
+                if self.animation.done:
+                    render_img(self.assets["good_core"], 600, 500, self.display, centered=True)
+                    render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
+                    render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
+            elif not self.core_animation and self.animation.done:
+                self.level = "test1"
+                self.load_level(self.level)
 
     def update(self):
 
@@ -293,11 +335,12 @@ class Play():
                         speed = random.random() * 5
                         self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random(), (255,0,0)))
                         self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0, 7)))
-
+        
         for rect in self.leaf_spawners:
-            if random.random() * 49999 < rect.width * rect.height:
-                pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
-                self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
+            if (rect.x) in range(int(self.scroll[0]), int(self.scroll[0]) + 1200):
+                if random.random() * 49999 < rect.width * rect.height:
+                    pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
+                    self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
 
         for particle in self.particles.copy():
             kill = particle.update()
@@ -310,7 +353,7 @@ class Play():
             kill = spark.update()
             if kill:
                 self.sparks.remove(spark)
-        
+
     def death(self):
 
         # Death logic
@@ -362,11 +405,13 @@ class Play():
 
             else:
                 pygame.event.clear()
+                self.movements = [False, False]
             
             # Restart the game
             if self.restart:
-                self.transition += 1
-                if self.transition > 75:
+                self.felltransition += 1
+                if self.felltransition > 60:
+                    self.slowmo = False
                     self.lives = self.maxHP
                     self.player.gold = max(0, self.player.gold - 100)
                     self.dead = 0
@@ -378,11 +423,14 @@ class Play():
                     self.playedwaste = False
                     self.restart = False
                     self.sfx['wasted'].stop()
-                    self.transition = -75
+                    # self.transition = -75
                     self.player.poison_timer = 0
                     self.player.poison_timer2 = 0
-                    self.shut = False
+                    # self.shut = False
+                    self.felltransition = -60
                     # self.game.sfx['ambience'].play(-1)
+                    pygame.event.clear()
+                    self.movements = [False, False]
 
             # Load respawn screen
         if self.respawn:
@@ -392,6 +440,8 @@ class Play():
                 self.deductlife = True
                 self.respawn = False
                 self.felltransition = -60
+                pygame.event.clear()
+                self.movements = [False, False]
 
     def paused(self):
 
@@ -399,18 +449,17 @@ class Play():
             
         img=pygame.Surface((1200, 675))
         img.fill((0,0,0))
-        img.set_alpha(150)
+        img.set_alpha(200)
         self.display.blit(img, (0,0))
         if self.choice == "pause":
             render_img(self.assets["pause"], 0, 0, self.display, centered=False)
-            quit = render_img(self.assets["quit"], 600, 400, self.display, True, True, self.assets["quit2"])
-            resume = render_img(self.assets["resume"], 600, 300, self.display, True, True, self.assets["resume2"])
+            render_img(self.assets["quit"], 600, 400, self.display, True)
+            render_img(self.assets["resume"], 600, 300, self.display, True)
 
-            if resume:
-                self.pause = not self.pause
-            if quit:
-                pygame.quit()
-                sys.exit()
+            if self.pause_choice == 0:
+                render_img(self.assets["resume2"], 600, 300, self.display, True, True)
+            elif self.pause_choice == 1:
+                render_img(self.assets["quit2"], 600, 400, self.display, True, True)
 
         elif self.choice == "info":
             if self.info_page == 0:
@@ -429,7 +478,26 @@ class Play():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.pause = not self.pause
-                if self.choice == "info":
+                if self.choice == "pause":
+                    if event.key == pygame.K_SPACE:
+                        if self.pause_choice == 0:
+                            self.pause = not self.pause
+                        elif self.pause_choice == 1:
+
+                            # Reset the data, reset all the classes
+                            self.game.state = "start"
+                            self.game.data = []
+                            self.game.startscreen = StartScreen(self.game)
+                            self.game.profile = PlayerProfile(self.game)
+                            self.game.loaded = False
+                            
+                    if event.key == pygame.K_UP:
+                        self.pause_choice = (self.pause_choice - 1) % 2
+                    if event.key == pygame.K_DOWN:
+                        self.pause_choice = (self.pause_choice + 1) % 2
+                    if event.key == pygame.K_r:
+                        self.pause = not self.pause
+                elif self.choice == "info":
                     if event.key == pygame.K_i:
                         self.pause = not self.pause
                     if event.key == pygame.K_LEFT:
@@ -442,7 +510,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning:
+        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -454,6 +522,8 @@ class Play():
                     if event.key == pygame.K_i:
                         self.choice = "info"
                         self.pause = not self.pause
+                    if event.key == pygame.K_h:
+                        self.HUD = not self.HUD
                     if event.key == pygame.K_a:
                         self.movements[0] = True
                     if event.key == pygame.K_d:
@@ -472,6 +542,39 @@ class Play():
                         self.movements[1] = False
                     if event.key == pygame.K_e:
                         self.e = False
+
+        elif self.core_animation:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.animation.done:
+                        self.core_animation = False
+        
+        elif self.level_select:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.level_select = False
+
+                    # If the transition timer is done, allow the player to change the level
+                    if event.key == pygame.K_LEFT and self.level_select_change and self.level != "level_1":
+                        self.level = "level_" + str(int(self.level.split("_")[1]) - 1)
+                        self.level_select_change = False
+                    if event.key == pygame.K_RIGHT and self.level_select_change and self.level != "level_3":
+                        self.level = "level_" + str(int(self.level.split("_")[1]) + 1)
+                        self.level_select_change = False
+
+                    if event.key == pygame.K_SPACE and self.can_load_level:
+                        self.level = self.level.split("_")[1]
+                        self.load_level(self.level)
+                        self.state = "game"
+                        self.start = False
+                        self.level_select = False
 
         elif self.store:
             for event in pygame.event.get():
@@ -526,11 +629,28 @@ class Play():
                                 self.store_state = "store_menu"
                                 self.store_addsub_shield = 0
 
-                    if event.key == pygame.K_LEFT and self.store_state == "store_menu":
-                        self.upgrade_choice = (self.upgrade_choice + 1) % 3
+                    if event.key == pygame.K_LEFT:
+                        if self.store_state == "store_menu":
+                            self.upgrade_choice = (self.upgrade_choice + 1) % 3
+                        else:
+                                if self.store_state == "store_heart" and self.store_addsub_heart < self.max_heart - self.maxHP:
+                                    self.store_addsub_heart += 1
+                                elif self.store_state == "store_speed" and self.store_addsub_speed < self.max_speed - self.player.speed:
+                                    self.store_addsub_speed = round(self.store_addsub_speed + 0.1, 1)
+                                elif self.store_state == "store_shield" and self.store_addsub_shield < self.max_shield - self.player.shield/100:
+                                    self.store_addsub_shield += 1
                             
-                    if event.key == pygame.K_RIGHT and self.store_state == "store_menu":
-                        self.upgrade_choice = (self.upgrade_choice - 1) % 3
+                    if event.key == pygame.K_RIGHT:
+                        if self.store_state == "store_menu":
+                            self.upgrade_choice = (self.upgrade_choice - 1) % 3
+                        else:
+                                if self.store_state == "store_heart" and self.store_addsub_heart > 0:
+                                    self.store_addsub_heart -= 1
+                                elif self.store_state == "store_speed" and self.store_addsub_speed > 0:
+                                    self.store_addsub_speed = round(self.store_addsub_speed - 0.1, 1)
+                                elif self.store_state == "store_shield" and self.store_addsub_shield > 0:
+                                    self.store_addsub_shield -= 1
+                    
         else:
             pygame.event.clear()
             self.movements = [False, False]
@@ -574,25 +694,26 @@ class Play():
             spark.render(self.display, offset=self.render_scroll)
 
         # Render the UI
-        if self.player.shield_dur != 0:
-            for x in range(self.lives):
-                render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
-        else:
-            for x in range(self.lives):
-                render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
-        render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
-        render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
-        render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
-        render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
-        render_text(str(min(100, self.player.shield_dur)), self.font, "black", 1030, 190, self.display, False)
-        num= self.player.gold
-        count= 0
+        if self.HUD:
+            if self.player.shield_dur != 0:
+                for x in range(self.lives):
+                    render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+            else:
+                for x in range(self.lives):
+                    render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
+            render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
+            render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
+            render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
+            render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
+            render_text(str(min(100, self.player.shield_dur)), self.font, "black", 1030, 190, self.display, False)
+            num= self.player.gold
+            count= 0
 
-        while num !=0:
-            num//= 10
-            count += 1
-        render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-        render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
+            while num !=0:
+                num//= 5
+                count += 1
+            render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
+            render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
 
     def minigame(self):
         # Play minigame
@@ -608,6 +729,8 @@ class Play():
             elif self.results == "Draw":
                 self.play = False
                 dialogue.dialogue(self, "TicTacToeDraw")
+            elif self.results == "Back":
+                self.play = False
                     
     def transitions(self):
         # Dim the screen and slowly light up evertime the map refreshes
@@ -617,25 +740,25 @@ class Play():
             img.set_alpha(min(200, abs(self.transition) * 2))
             self.display.blit(img, (0,0))
 
-        if self.felltransition != 0:
+        if self.felltransition != 0 and not self.restart:
             img = pygame.Surface((1200, 675))
             img.fill((0,0,0))
             img.set_alpha(min(200, abs(self.felltransition) * 4))
             self.display.blit(img, (0,0))
   
         # Secondary screen, used for transition when dead
-        if self.transition:
-            transition_surf = pygame.Surface((1200, 675))
-            self.shut = True if self.transition in range(70, 135) else False
-            if self.transition < 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
+        # if self.transition:
+        #     transition_surf = pygame.Surface((1200, 675))
+        #     self.shut = True if self.transition in range(70, 135) else False
+        #     if self.transition < 0:
+        #         transition_surf.blit(self.assets["loadscreen1"], (0, min(337, -675 - self.transition * 9)))
+        #         transition_surf.blit(self.assets["loadscreen2"], (0, min(675, 1012 + self.transition * 9)))
 
-            elif self.transition > 0:
-                transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
-                transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
-            transition_surf.set_colorkey((0, 0, 0))
-            self.display.blit(transition_surf, (0, 0))
+        #     elif self.transition > 0:
+        #         transition_surf.blit(self.assets["loadscreen1"], (0, min(0, -337 + self.transition * 9)))
+        #         transition_surf.blit(self.assets["loadscreen2"], (0, max(337, 675 - self.transition * 9)))
+        #     transition_surf.set_colorkey((0, 0, 0))
+        #     self.display.blit(transition_surf, (0, 0))
 
         # secondary screen, used for transition when falling
         if self.felltransition:
@@ -644,8 +767,9 @@ class Play():
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
 
-    def level_transition(self, timer, text):
+    def level_transition(self, timer, text=None):
 
+        # Transition between levels
         if self.current_level != self.level:
             self.current_level = self.level
             self.transition_ed = False 
@@ -656,136 +780,38 @@ class Play():
                 self.transition_timer += 1
                 img = pygame.Surface((1200, 675))
                 img.fill((0,0,0))
-                img.set_alpha(255-self.transition_timer/timer*255)
+                dim = self.transition_timer/timer*255
+                img.set_alpha(255-dim)
                 self.display.blit(img, (0,0))
-                render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
-
+                if text:
+                    render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
+            
             elif self.transition_timer == timer:
                 self.transition_timer = 0
                 self.transition_ed = True
                 self.transitioning = False
+                self.level_select_change = True
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
                 
     def safehouse(self):
-        if self.state == "safehouse":
-            self.lives = self.maxHP
-            self.profile.data = self.player.data
-            self.profile.saveprogress()
-            
-            if self.savetimer < 100:
-                self.transitioning = True
-                self.savetimer += 1
-                self.display.fill((0, 0, 0))
-                self.display.blit(self.assets["save"], (0, 0))
-    
-            else:
-                self.transitioning = False
-                self.level_transition(200, "Welcome to the safehouse")
-                if self.store:
-                    img = pygame.Surface((1200, 675))
-                    img.fill((0,0,0))
-                    img.set_alpha(150)
-                    self.display.blit(img, (0,0))
-                    self.display.blit(self.assets[self.store_state], (0, 0))
-                    if self.store_state == "store_menu":
-                        if self.upgrade_choice == 1:
-                            render_img(self.assets["speed_potion"], 445, 370, self.display, True)
-                            render_img(self.assets["big-heart"], 600, 370, self.display, True, transparency=150)
-                            render_img(self.assets["big-shield"], 750, 370, self.display, True, transparency=150)
-                        
-                        elif self.upgrade_choice == 0:
-                            render_img(self.assets["speed_potion"], 445, 370, self.display, True, transparency=150)
-                            render_img(self.assets["big-heart"], 600, 370, self.display, True)
-                            render_img(self.assets["big-shield"], 750, 370, self.display, True, transparency=150)
-
-                        elif self.upgrade_choice == 2:
-                            render_img(self.assets["speed_potion"], 445, 370, self.display, True, transparency=150)
-                            render_img(self.assets["big-heart"], 600, 370, self.display, True, transparency=150)
-                            render_img(self.assets["big-shield"], 750, 370, self.display, True)
-                    
-                    # Store menu (Heart)
-                    if self.store_state == "store_heart":
-                        self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
-                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart < self.max_heart - self.maxHP:
-                            self.store_addsub_heart += 1
-                            self.store_clickcooldown = 20
-                        if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_heart > 0:
-                            self.store_addsub_heart -= 1
-                            self.store_clickcooldown = 20
-                        render_text(str(self.store_addsub_heart), self.font, "white", 600, 390, self.display, True)
-                        
-                        # Warn player about min and max hearts
-                        if self.store_addsub_heart >= self.max_heart - self.maxHP:
-                            self.store_addsub_heart = self.max_heart - self.maxHP
-                            render_text("Max hearts", self.font, "red", 600, 330, self.display, True)
-                        elif self.store_addsub_heart <= 0:
-                            self.store_addsub_heart = 0
-                            render_text("Min hearts", self.font, "red", 600, 330, self.display, True)
-
-                        if self.player.gold < self.store_addsub_heart * 750:
-                            render_text("Not enough gold", self.font, "red", 600, 440, self.display, True)
-
-                        render_text(str(self.store_addsub_heart * 750), self.font, "black", 600, 490, self.display, True)
-
-                    # Store menu (Speed)
-                    if self.store_state == "store_speed":
-
-                        # make the speed be 1 decimal point
-                        self.store_addsub_speed = round(self.store_addsub_speed, 1)
-                        self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
-                        if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_speed < self.max_speed - self.player.speed:
-                            self.store_addsub_speed = round(self.store_addsub_speed + 0.1, 1)
-                            self.store_clickcooldown = 20
-                        if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_speed > 0:
-                            self.store_addsub_speed = round(self.store_addsub_speed - 0.1, 1)
-                            self.store_clickcooldown = 20
-                        render_text(str(self.store_addsub_speed), self.font, "white", 600, 400, self.display, True)
-                        
-                        # Warn player about min and max speed
-                        if self.store_addsub_speed >= self.max_speed - self.player.speed:
-                            self.store_addsub_speed = self.max_speed - self.player.speed
-                            render_text("Max speed", self.font, "red", 600, 330, self.display, True)
-                        elif self.store_addsub_speed <= 0:
-                            self.store_addsub_speed = 0
-                            render_text("Min speed", self.font, "red", 600, 330, self.display, True)
-
-                        if self.player.gold < self.store_addsub_speed * 5000:
-                            render_text("Not enough gold", self.font, "red", 600, 440, self.display, True)
-
-                        render_text(str(int(self.store_addsub_speed * 5000)), self.font, "black", 600, 490, self.display, True)
-
-                # Store menu (Shield)
-                if self.store_state == "store_shield":
-                    self.store_clickcooldown = max(0, self.store_clickcooldown - 1)
-                    if render_img(self.assets["+"], 500, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_shield < self.max_shield - self.player.shield/100:
-                        self.store_addsub_shield += 1
-                        self.store_clickcooldown = 20
-                    if render_img(self.assets["-"], 700, 390, self.display, True, True) and self.store_clickcooldown == 0 and self.store_addsub_shield > 0:
-                        self.store_addsub_shield -= 1
-                        self.store_clickcooldown = 20
-                    render_text("x" + str(round(self.player.shield/100 + self.store_addsub_shield)), self.font, "black", 600, 380, self.display, True)
-                    
-                    # Warn player about min and max shield
-                    if self.store_addsub_shield >= self.max_shield - self.player.shield/100:
-                        self.store_addsub_shield = self.max_shield - self.player.shield/100
-                        render_text("Max shield", self.font, "red", 600, 330, self.display, True)
-                    elif self.store_addsub_shield <= 0:
-                        self.store_addsub_shield = 0
-                        render_text("Min shield", self.font, "red", 600, 330, self.display, True)
-
-                    if self.player.gold < self.store_addsub_shield * 600:
-                        render_text("Not enough gold", self.font, "red", 600, 440, self.display, True)
-
-                    render_text(str(round(self.store_addsub_shield * 600)), self.font, "black", 600, 490, self.display, True)
+       safehouse(self)
 
     def run(self):
                 
         self.display.blit(self.bg, (0, 0))
         self.render()
 
-        # Example of implementation of code for dialogue
         self.npc_name = self.interact()
         if self.npc_name == "Store":
             self.store = True
+            self.e = False
+
+        elif self.npc_name == "Proceed":
+            self.level_select = True
             self.e = False
         
         elif self.npc_name is not None:
@@ -795,7 +821,9 @@ class Play():
 
         # Pause button, if paused don't update the game
         self.check_button()
-        if not self.pause and not self.play and not self.store:
+
+        # Get condition to update the game
+        if not self.pause and not self.play and not self.store and not self.core_animation:
             self.update()
         
         if self.pause:
@@ -804,8 +832,9 @@ class Play():
         self.death()
         self.minigame()
         self.userinput()
+        self.core()
         self.transitions()
         self.safehouse()
-        if self.level != "safehouse":
-            self.level_transition(200, "Level " + str(self.level))
+        if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3", "safehouse"]:
+            self.level_transition(150, "Level " + str(self.level))
         
