@@ -201,7 +201,6 @@ class Game:
                     self.state = "newgame"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
-            print(self.state)
             pygame.display.update()
             self.clock.tick(60)
 
