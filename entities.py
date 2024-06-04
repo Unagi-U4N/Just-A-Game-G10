@@ -341,7 +341,7 @@ class Player(PhysicsEntity):
         self.jumps = 1
         self.wall_slide = False
         self.dashing = 0
-        self.speed = 1.5 # default
+        self.speed = 2 # default
         self.size = (16, 30)
         self.poison_timer = 0
         self.poison_timer2 = 0

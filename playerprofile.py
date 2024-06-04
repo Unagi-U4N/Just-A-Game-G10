@@ -113,6 +113,7 @@ class PlayerProfile:
                 render_text(f"Profile {self.data[0]} loaded", self.font, "black", 600, 450, self.display, centered=True)
                 self.timer += 1
                 if self.timer >= 120:
+                    self.timer = 0
                     return self.data
         
         if delete:

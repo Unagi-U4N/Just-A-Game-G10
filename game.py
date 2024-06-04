@@ -22,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "2", 10000, 4, 3, 100]
-        # self.data = []
+        # self.data = ["Ivan", "2", 10000, 4, 3, 100]
+        self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -137,10 +137,10 @@ class Game:
         self.sfx['poison'].set_volume(0.2)
         
         self.startscreen = StartScreen(self)
-        self.game = Play(self)
+        # self.game = Play(self)
         self.profile = PlayerProfile(self)
-        self.music = Music(self)
-        self.state = "game"
+        # self.music = Music(self)
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
@@ -149,7 +149,7 @@ class Game:
 
             if self.state == "start":
                 newloadexit = self.startscreen.run()
-                self.music.play_music("music")
+                # self.music.play_music("music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -158,25 +158,33 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            if self.state == "game":
+            elif self.state == "game":
                 if not self.loaded:
+                    self.game = Play(self)
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
-                self.music.play_music("music")
+                # self.music.play_music("music")
 
-            if self.state == "newgame":
+            elif self.state == "cutscene":
+                self.state = "game"
+                if self.cutscene == "Intro":
+                    # self.music.play_music("intense1")
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscenes.runscenes(cutscene)
+
+            elif self.state == "newgame":
                 self.data = self.profile.create_profile()
                 if type(self.data) is list:
                     self.state = "cutscene"
                     self.cutscene = "Intro"
-                if self.data == "start":
+                elif self.data == "start":
                     self.startscreen = StartScreen(self)
                     self.state = "start"
-                if self.data == "deleteprofile":
+                elif self.data == "deleteprofile":
                     self.state = "deleteprofile"
 
-            if self.state == "loadgame":
+            elif self.state == "loadgame":
                 self.data = self.profile.read_profile()
                 if type(self.data) is list:
                     self.state = "game"
@@ -184,20 +192,13 @@ class Game:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
 
-            if self.state == "deleteprofile":
+            elif self.state == "deleteprofile":
                 state = self.profile.read_profile(delete=True)
                 if type(state) is str:
                     self.startscreen = StartScreen(self)
                     self.state = "start"
                 elif state:
                     self.state = "newgame"
-    
-            if self.state == "cutscene":
-                if self.cutscene == "Intro":
-                    self.music.play_music("intense1")
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.runscenes(cutscene)
-                    self.state = "game"
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
             pygame.display.update()
