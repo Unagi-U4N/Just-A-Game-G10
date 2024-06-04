@@ -321,7 +321,7 @@ class TicTacToe:
     def run(self):
         img=pygame.Surface((1200, 675))
         img.fill((0,0,0))
-        img.set_alpha(150)
+        img.set_alpha(200)
         self.display.blit(img, (0,0))
 
         for event in pygame.event.get():
@@ -329,6 +329,9 @@ class TicTacToe:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.reset()
+                    return "Back"
                 if event.key == pygame.K_SPACE:
                     if self.state == "1":
                         self.state = "2"
