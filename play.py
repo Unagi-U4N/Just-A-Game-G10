@@ -250,6 +250,9 @@ class Play():
                     render_img(self.assets["good_core"], 600, 500, self.display, centered=True)
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
                     render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
+            elif not self.core_animation and self.animation.done:
+                self.level = "test1"
+                self.load_level(self.level)
 
     def update(self):
 
@@ -492,16 +495,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if self.core_animation:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.animation.done:
-                        self.core_animation = False
-
-        elif not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
+        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -533,6 +527,15 @@ class Play():
                         self.movements[1] = False
                     if event.key == pygame.K_e:
                         self.e = False
+
+        elif self.core_animation:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.animation.done:
+                        self.core_animation = False
         
         elif self.level_select:
             for event in pygame.event.get():
