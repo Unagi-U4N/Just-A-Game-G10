@@ -9,7 +9,7 @@ def safehouse(self):
             self.profile.data = self.player.data
             self.profile.saveprogress()
             
-            if self.savetimer < 100:
+            if self.savetimer < 100 and not self.start:
                 self.transitioning = True
                 self.savetimer += 1
                 self.display.fill((0, 0, 0))

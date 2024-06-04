@@ -16,6 +16,7 @@ from music import Music
 from ttt import *
 from playerprofile import *
 from safehouse import *
+from startscreen import StartScreen
 
 class Play():
     def __init__(self, game):
@@ -113,7 +114,7 @@ class Play():
     def load(self, data):
         self.player.updateprofile(data)
 
-        self.level = str(data[1]) if data[1] == "1" else "safehouse"
+        self.level = str(data[1]) if str(data[1]) == "1" else "safehouse"
         if self.level == "safehouse":
             self.state = "safehouse"
             self.start = True
@@ -482,8 +483,14 @@ class Play():
                         if self.pause_choice == 0:
                             self.pause = not self.pause
                         elif self.pause_choice == 1:
-                            pygame.quit()
-                            sys.exit()
+
+                            # Reset the data, reset all the classes
+                            self.game.state = "start"
+                            self.game.data = []
+                            self.game.startscreen = StartScreen(self.game)
+                            self.game.profile = PlayerProfile(self.game)
+                            self.game.loaded = False
+                            
                     if event.key == pygame.K_UP:
                         self.pause_choice = (self.pause_choice - 1) % 2
                     if event.key == pygame.K_DOWN:
