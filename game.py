@@ -32,6 +32,7 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+            "Ending": load_script("Ending"),
         }
 
         self.assets= {
@@ -140,8 +141,8 @@ class Game:
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "start"
-        self.cutscene = "Intro"
+        self.state = "cutscene"
+        self.cutscene = "Ending"
 
     def run(self):
         
@@ -168,9 +169,9 @@ class Game:
 
             elif self.state == "cutscene":
                 self.state = "game"
-                if self.cutscene == "Intro":
+                if self.cutscene == "Ending":
                     # self.music.play_music("intense1")
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    cutscene = cutscenes.get_cutscene(self, "Ending", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
 
             elif self.state == "newgame":
