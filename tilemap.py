@@ -12,7 +12,7 @@ WIDE_NEIGHBOURS_OFFSETS = [(-3, -3), (-3, -2), (-3, -1), (-3, 0), (-3, 1),
                             (2, 2), (2, 3), (3, -3), (3, -2), (3, -1),
                             (3, 0), (3, 1), (3, 2), (3, 3)]
 
-PHYSICS_TILES = {"stone", "grass", "metal", "glitch_blocks"}
+PHYSICS_TILES = {"stone", "grass", "metal", "glitch_blocks", "cave_blocks"}
 
 class Tilemap:
     # Create a tilemap with a grid of tiles size 16x16 (default)
