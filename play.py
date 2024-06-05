@@ -157,6 +157,10 @@ class Play():
         elif map_id == "safehouse":
             self.bg = self.assets["safehousebg"]
 
+        elif map_id == "3":
+            self.bg = self.assets["cave"]
+
+        
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
