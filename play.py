@@ -114,11 +114,12 @@ class Play():
 
     def load(self, data):
         self.player.updateprofile(data)
-
         self.level = str(data[1]) if str(data[1]) == "1" else "safehouse"
         if self.level == "safehouse":
             self.state = "safehouse"
             self.start = True
+        else:
+            self.start = False
         self.maxHP = self.player.HP
         self.lives = self.player.HP
         self.speed = self.player.speed
@@ -159,6 +160,10 @@ class Play():
         elif map_id == "safehouse":
             self.bg = self.assets["safehousebg"]
 
+        elif map_id == "3":
+            self.bg = self.assets["cave"]
+
+        
         self.tilemap.load("data/maps/" + str(map_id) + ".json")
         self.leaf_spawners = []
         for tree in self.tilemap.extract([("large_decor", 2)], keep=True):
@@ -251,6 +256,7 @@ class Play():
     def core(self):
         # Core animation logic
         if self.player.interact_core(tilemap=self.tilemap):
+            # print("interact")
             self.interact(False)
             if self.core_animation:
                 self.display.fill((0, 0, 0))
@@ -371,7 +377,7 @@ class Play():
             self.felltransition += 1
         
         # Respawn transition
-        if self.lives > 1 and self.deductlife and self.player.airtime() and not self.dead and not self.player.wall_slide:
+        if self.lives > 1 and self.deductlife and self.player.airtime(self.level) and not self.dead and not self.player.wall_slide:
             self.player.air_time = 0
             self.deductlife = False
             self.respawn = True
@@ -380,7 +386,7 @@ class Play():
             self.player.poison_timer = 0
 
         # Dead screen transition
-        if self.dead or self.player.airtime() and self.lives == 1:
+        if self.dead or self.player.airtime(self.level) and self.lives == 1:
             self.deadscreen = True
             self.dead += 1
             if self.reasonofdeath is None:
@@ -842,6 +848,6 @@ class Play():
         self.core()
         self.transitions()
         self.safehouse()
-        if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3", "safehouse"]:
+        if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3", "safehouse", "4"]:
             self.level_transition(150, "Level " + str(self.level))
         

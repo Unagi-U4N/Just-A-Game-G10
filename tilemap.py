@@ -104,7 +104,7 @@ class Tilemap:
         # Get the core tile around the player
         rect = []
         for tile in self.tiles_around(pos):
-            if tile["type"] == "grass" and tile["variant"] == 14:
+            if tile["type"] == "decor" and tile["variant"] == 7:
                 rect.append(pygame.Rect(tile["pos"][0] * self.tile_size, tile["pos"][1] * self.tile_size, self.tile_size, self.tile_size))
         return rect
 
@@ -119,8 +119,8 @@ class Tilemap:
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
-        for x in range(offset[0] // self.tile_size, (offset[0] + display.get_width()) // self.tile_size + 1):
-            for y in range(offset[1] // self.tile_size, (offset[1] + display.get_height()) // self.tile_size + 1):
+        for x in range(offset[0] // self.tile_size - 10, (offset[0] + display.get_width()) // self.tile_size + 10):
+            for y in range(offset[1] // self.tile_size - 10, (offset[1] + display.get_height()) // self.tile_size + 10):
                 loc = str(x) + ';' + str(y)
                 if loc in self.tilemap:
                     self.xcount += 1

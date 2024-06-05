@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "3" , 10000, 4, 3, 100]
+        self.data = ["Ivan", "3", 10000, 4, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -56,6 +56,7 @@ class Game:
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
             "clouds": load_images("clouds"),
             "safehousebg": scale_images(load_image("background/safehousebg.png"), set_scale=(1200, 675)),
+            "cave": scale_images(load_image("background/cave.png"), set_scale=(1200, 675)),
             "newgamebg": scale_images(load_image("background/newgame.png"), set_scale=(1200, 675)),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
