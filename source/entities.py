@@ -2,9 +2,9 @@ import math
 import random
 
 import pygame
-from particle import Particle
-from spark import Spark
-import cutscenes
+from source.particle import Particle
+from source.spark import Spark
+import source.cutscenes
 
 
 class PhysicsEntity:

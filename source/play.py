@@ -4,20 +4,20 @@
 
 from tkinter import font
 import pygame, sys, random, math
-from utils import *
-from entities import Player, Enemy, NPC
-from cutscenes import *
-from tilemap import Tilemap
-from clouds import Clouds
-from particle import Particle
-from spark import Spark
-import dialogue
-from music import Music
-from ttt import *
-from playerprofile import *
-from safehouse import *
-from startscreen import StartScreen
-from cutscenes import *
+from source.utils import *
+from source.entities import Player, Enemy, NPC
+from source.cutscenes import *
+from source.tilemap import Tilemap
+from source.clouds import Clouds
+from source.particle import Particle
+from source.spark import Spark
+from source.dialogue import *
+from source.music import Music
+from source.ttt import *
+from source.playerprofile import *
+from source.safehouse import *
+from source.startscreen import StartScreen
+from source.cutscenes import *
 
 class Play():
     def __init__(self, game):
@@ -40,7 +40,7 @@ class Play():
         self.screen = game.screen
         self.display = game.display
         self.assets = game.assets
-        self.dialogues = dialogue.init_dialogue(self)
+        self.dialogues = init_dialogue(self)
         self.cutscenes = game.cutscenes
         self.clouds = Clouds(self.assets["clouds"], 16)
         self.player = Player(game, (0, 0))
@@ -675,8 +675,6 @@ class Play():
             self.movements = [False, False]
         
     def render(self):
-        print(self.prevlevel, self.level, self.start)
-
         # Render all the assets
         if self.level == "3" or "4":
             pass
@@ -767,13 +765,13 @@ class Play():
             if self.results == "Win":
                 self.canplay = False
                 self.play = False
-                dialogue.dialogue(self, "TicTacToeWin")
+                dialogue(self, "TicTacToeWin")
             elif self.results == "Lose":
                 self.play = False
-                dialogue.dialogue(self, "TicTacToeLose")
+                dialogue(self, "TicTacToeLose")
             elif self.results == "Draw":
                 self.play = False
-                dialogue.dialogue(self, "TicTacToeDraw")
+                dialogue(self, "TicTacToeDraw")
             elif self.results == "Back":
                 self.play = False
                     
@@ -860,7 +858,7 @@ class Play():
             self.e = False
         
         elif self.npc_name is not None:
-            dialogue.dialogue(self, self.npc_name)
+            dialogue(self, self.npc_name)
             self.e = False
 
 

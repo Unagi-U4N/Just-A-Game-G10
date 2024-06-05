@@ -5,12 +5,12 @@
 # Contributors: Ivan, Yuven, Putra
 
 import pygame, sys
-from utils import *
-from startscreen import StartScreen
-from play import *
-from playerprofile import *
-import cutscenes
-from music import Music
+from source.utils import *
+from source.startscreen import StartScreen
+from source.play import *
+from source.playerprofile import *
+import source.cutscenes
+from source.music import Music
 
 class Game:
     def __init__(self):
@@ -47,7 +47,7 @@ class Game:
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "tile_background":scale_images(load_images("tiles/background")),
             "background": scale_images(load_image("background/background.png"), set_scale=(1200, 675)),
-            "level_selection": scale_images(load_image("level_selection.png"), set_scale=(1200, 675)),
+            "level_selection": scale_images(load_image("miscellaneous/level_selection.png"), set_scale=(1200, 675)),
             "level_1": scale_images(load_image("background/level1.png"), set_scale=(1200, 675)),
             "level_2": scale_images(load_image("background/level2.png"), set_scale=(1200, 675)),
             "level_3": scale_images(load_image("background/level3.png"), set_scale=(1200, 675)),
@@ -71,17 +71,17 @@ class Game:
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
             "core": Animation(scale_images(load_images("core"), scale=1.5), img_dur=15, loop=False),
             "good_core": scale_images(load_image("core/49.png"), scale= 1.5),
-            "gun": scale_images(load_image("gun.png")),
-            "projectile": scale_images(load_image("projectile.png"), scale= 1.5),
-            "!": scale_images(load_image("!.png"), scale= 0.8),
-            "arrow": scale_images(load_image("arrow.png"), scale= 0.2),
-            "arrow_w": scale_images(load_image("arrow_white.png"), scale= 0.2),
+            "gun": scale_images(load_image("entities/enemy/gun.png")),
+            "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
+            "!": scale_images(load_image("entities/enemy/!.png"), scale= 0.8),
+            "arrow": scale_images(load_image("indicators/arrow.png"), scale= 0.2),
+            "arrow_w": scale_images(load_image("indicators/arrow_white.png"), scale= 0.2),
             "quit": scale_images(load_image("button/quit.png"), scale=0.5),
             "resume": scale_images(load_image("button/resume.png"), scale=0.5),
             "quit2": scale_images(load_image("button/quit2.png"), scale=0.5),
             "resume2": scale_images(load_image("button/resume2.png"), scale=0.5),
             "pausebuttonround": scale_images(load_image("button/pausebuttonround.png"), scale=0.15),
-            "pause": scale_images(load_image("pause.png"), set_scale=(1200, 675)),
+            "pause": scale_images(load_image("miscellaneous/pause.png"), set_scale=(1200, 675)),
             "ttt1": scale_images(load_image("ttt/ttt1.png"), set_scale=(1200, 675)),
             "ttt2": scale_images(load_image("ttt/ttt2.png"), set_scale=(1200, 675)),
             "ttt3": scale_images(load_image("ttt/ttt3.png"), set_scale=(1200, 675)),
@@ -91,7 +91,6 @@ class Game:
             "controls2": scale_images(load_image("info/1.png"), set_scale=(1200, 675)),
             "controls3": scale_images(load_image("info/2.png"), set_scale=(1200, 675)),
             "controls4": scale_images(load_image("info/3.png"), set_scale=(1200, 675)),
-            "startcontrols": scale_images(load_image("controll.png"), scale=0.4),
             "info": scale_images(load_image("button/info.png"), scale=0.15),
             "buttonleft": scale_images(load_image("button/buttonleft.png"), scale= 1),
             "buttonright": scale_images(load_image("button/buttonright.png"), scale= 1),
@@ -99,7 +98,7 @@ class Game:
             "delloadgamebg": scale_images(load_image("background/delloadgame.png"), set_scale=(1200, 675)),
             "profileup": scale_images(load_image("button/profileup.png"), scale= 0.5),
             "profiledown": scale_images(load_image("button/profiledown.png"), scale= 0.5),
-            "dialoguebox": scale_images(load_image("dialoguebox.png"), scale=0.7),
+            "dialoguebox": scale_images(load_image("miscellaneous/dialoguebox.png"), scale=0.7),
             "heart": scale_images(load_image("indicators/heart.png"), set_scale=(45, 40)),
             "heart1": scale_images(load_image("indicators/heart1.png"), set_scale=(45, 40)),
             "big-heart": scale_images(load_image("indicators/heart.png"), scale= 0.06),
@@ -173,8 +172,8 @@ class Game:
                 self.state = "game"
                 if self.cutscene == "Intro":
                     # self.music.play_music("intense1")
-                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
-                    cutscenes.runscenes(cutscene)
+                    cutscene = source.cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    source.cutscenes.runscenes(cutscene)
 
             elif self.state == "newgame":
                 self.data = self.profile.create_profile()

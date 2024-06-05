@@ -1,7 +1,7 @@
-from utils import *
-from cutscenes import *
-from ttt import *
-from startscreen import *
+from source.utils import *
+from source.cutscenes import *
+from source.ttt import *
+from source.startscreen import *
 
 # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
 dialogues = load_dialogue()

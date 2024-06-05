@@ -1,5 +1,5 @@
 import pygame, csv
-from utils import *
+from source.utils import *
 import random
 
 
@@ -31,7 +31,7 @@ class PlayerProfile:
             self.display.blit(self.loadbg, (0,0))
         # Read the csv file
         if not self.loaded:
-            with open("profile.csv", "r") as file:
+            with open("source/profile.csv", "r") as file:
                 reader = csv.reader(file)
                 for i, row in enumerate(reader):
                     if i == 0 or i > 8:
@@ -118,7 +118,7 @@ class PlayerProfile:
         
         if delete:
             deleted = False
-            with open("profile.csv", "w", newline="") as file:
+            with open("source/profile.csv", "w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerow(["Name", "Level", "Gold", "Speed", "HP", "Shield"])
                 for row in self.profiles:
@@ -136,10 +136,10 @@ class PlayerProfile:
         # Create profile
     def create_profile(self):
         self.display.blit(self.newbg, (0,0))
-        with open("profile.csv", "r") as file:
+        with open("source/profile.csv", "r") as file:
             numofprofiles = len(list(csv.reader(file)))
             file.close()
-        with open("profile.csv", "r") as file:
+        with open("source/profile.csv", "r") as file:
             for row in csv.reader(file):
                 if numofprofiles > 8 and not self.saveprofile:
                     render_text("Profile limit reached", self.font, "red", 600, 400, self.display, centered=True)
@@ -167,7 +167,7 @@ class PlayerProfile:
                         self.game.sfx['click'].play()
                         
                         if not self.exist:
-                            with open("profile.csv", "a", newline="") as file:
+                            with open("source/profile.csv", "a", newline="") as file:
                                 self.saveprofile = True
                                 writer = csv.writer(file)
                                 writer.writerow([self.name, 1, 0, 1.5, 3, 100])
@@ -203,7 +203,7 @@ class PlayerProfile:
         # Modify the data of the player, then save it to the csv file
         # Read the csv file
         if not self.loaded:
-            with open("profile.csv", "r") as file:
+            with open("source/profile.csv", "r") as file:
                 reader = csv.reader(file)
                 for i, row in enumerate(reader):
                     if i == 0 or i > 8:
@@ -214,7 +214,7 @@ class PlayerProfile:
                         self.profiles.append([row[0], row[1], row[2], row[3], row[4], row[5]])
                         self.loaded = True
         
-        with open("profile.csv", "w", newline="") as file:
+        with open("source/profile.csv", "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["Name", "Level", "Gold", "Speed", "HP", "Shield"])
             for row in self.profiles:

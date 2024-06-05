@@ -1,5 +1,5 @@
 import pygame, sys
-from utils import *
+from source.utils import *
 
 # Get the top right coordinates of the dialogue box and return a tuple
 dialoguebox_pos = (350, 485)

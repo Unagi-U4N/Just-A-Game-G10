@@ -1,9 +1,9 @@
 import pygame, sys, random, math
-from utils import *
-from entities import Player, Enemy
-from tilemap import Tilemap
-from clouds import Clouds
-from particle import Particle
+from source.utils import *
+from source.entities import Player, Enemy
+from source.tilemap import Tilemap
+from source.clouds import Clouds
+from source.particle import Particle
 
 class StartScreen:
     def __init__(self, game):

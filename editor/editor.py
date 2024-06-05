@@ -1,7 +1,7 @@
 import pygame
 import sys
-from utils import *
-from tilemap import Tilemap
+from source.utils import *
+from source.tilemap import Tilemap
 
 # Constants
 SCREEN_SIZE = (1200, 675)
@@ -22,7 +22,7 @@ class Editor:
         self.display = pygame.Surface(SCREEN_SIZE)
         self.clock = pygame.time.Clock()
         self.paused =True
-        self.paused_img = scale_images(load_image("editor_pause.png"), (1200, 675))
+        self.paused_img = scale_images(load_image("miscellaneous/editor_pause.png"), (1200, 675))
 
         self.assets = {
             "decor": scale_images(load_images("tiles/decor")),

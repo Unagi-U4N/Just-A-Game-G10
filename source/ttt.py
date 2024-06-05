@@ -1,5 +1,5 @@
 import math, copy, sys, pygame
-from utils import *
+from source.utils import *
 
 X = "X"
 O = "O"
