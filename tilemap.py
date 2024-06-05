@@ -12,7 +12,7 @@ WIDE_NEIGHBOURS_OFFSETS = [(-3, -3), (-3, -2), (-3, -1), (-3, 0), (-3, 1),
                             (2, 2), (2, 3), (3, -3), (3, -2), (3, -1),
                             (3, 0), (3, 1), (3, 2), (3, 3)]
 
-PHYSICS_TILES = {"stone", "grass", "metal", "glitch_blocks"}
+PHYSICS_TILES = {"stone", "grass", "metal", "glitch_blocks", "cave_blocks"}
 
 class Tilemap:
     # Create a tilemap with a grid of tiles size 16x16 (default)
@@ -119,8 +119,8 @@ class Tilemap:
             
         # For all of the tiles that are visible on the screen, render them
         # Tiles that are rendered on the grid, visible and interactable
-        for x in range(offset[0] // self.tile_size, (offset[0] + display.get_width()) // self.tile_size + 1):
-            for y in range(offset[1] // self.tile_size, (offset[1] + display.get_height()) // self.tile_size + 1):
+        for x in range(offset[0] // self.tile_size - 10, (offset[0] + display.get_width()) // self.tile_size + 10):
+            for y in range(offset[1] // self.tile_size - 10, (offset[1] + display.get_height()) // self.tile_size + 10):
                 loc = str(x) + ';' + str(y)
                 if loc in self.tilemap:
                     self.xcount += 1

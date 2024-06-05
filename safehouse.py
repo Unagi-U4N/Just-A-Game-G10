@@ -5,7 +5,7 @@ def safehouse(self):
             self.lives = self.player.HP
             if not self.start:
                 # print(self.prevlevel, self.player.level)
-                if self.prevlevel == self.player.level:
+                if self.prevlevel == str(self.player.level):
                     self.player.level = str(int(self.player.level) + 1)
             self.profile.data = self.player.data
             self.profile.saveprogress()

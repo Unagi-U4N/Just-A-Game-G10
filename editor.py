@@ -29,6 +29,7 @@ class Editor:
             "grass": scale_images(load_images("tiles/grass")),
             "stone": scale_images(load_images("tiles/stone")),
             "metal": scale_images(load_images("tiles/metal")),
+            "cave_blocks": scale_images(load_images("tiles/cave blocks")),
             "glitch_blocks": scale_images(load_images("tiles/glitch blocks")),
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "spawners": scale_images(load_images("tiles/spawners")),
@@ -157,8 +158,8 @@ class Editor:
                     self.shift = False
 
     def update_scroll(self):
-        self.scroll[0] += (self.movements[1] - self.movements[0]) * 3
-        self.scroll[1] += (self.movements[3] - self.movements[2]) * 3
+        self.scroll[0] += (self.movements[1] - self.movements[0]) * 5
+        self.scroll[1] += (self.movements[3] - self.movements[2]) * 5
 
     def render(self):
         self.display.fill((255, 255, 255))
