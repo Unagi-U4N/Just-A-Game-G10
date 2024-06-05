@@ -64,7 +64,8 @@ class Editor:
         self.bgs = [
             scale_images(load_image("background/daybg.png"), SCREEN_SIZE),
             scale_images(load_image("background/nightbg.png"), SCREEN_SIZE),
-            scale_images(load_image("background/safehousebg.png"), SCREEN_SIZE)
+            scale_images(load_image("background/safehousebg.png"), SCREEN_SIZE),
+            scale_images(load_image("background/cave.png"), SCREEN_SIZE),
         ]
 
         self.tile_selector_rects = []

@@ -357,8 +357,9 @@ class Player(PhysicsEntity):
         self.shield = data[5]
         self.shield_dur = data[5]
 
-    def airtime(self):
-        if self.air_time > 120:
+    def airtime(self, level):
+        air = 1000 if level == "3" else 250
+        if self.air_time > air:
             return True
         
     def interact_core(self, tilemap):
