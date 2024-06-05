@@ -38,8 +38,9 @@ def dialogue(self, state):
 
     elif state == "TicTacToeWin":
         rundialogues(self.dialogues["TicTacToeWin"])
-        self.maxHP += 3
-        self.lives += 3
+        self.player.HP += 2
+        self.HP = self.player.HP
+        self.maxHP = self.player.HP
     
     elif state == "TicTacToeLose":
         rundialogues(self.dialogues["TicTacToeLose"])

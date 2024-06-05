@@ -1,7 +1,7 @@
 import pygame
 import sys
-from source.utils import *
-from source.tilemap import Tilemap
+from utils import *
+from tilemap import Tilemap
 
 # Constants
 SCREEN_SIZE = (1200, 675)
@@ -40,13 +40,13 @@ class Editor:
         self.movements = [False, False, False, False]
 
         try:
-            self.tilemap.load('map.json')
+            self.tilemap.load('source/map.json')
         except FileNotFoundError:
             pass
 
 
         try:
-            self.tilemap.load('map.json')
+            self.tilemap.load('source/map.json')
         except FileNotFoundError:
             pass
 
@@ -130,7 +130,7 @@ class Editor:
                     # Loop through the backgrounds
                     self.count = (self.count + 1) % len(self.bgs)
                 elif event.key == pygame.K_o:
-                    self.tilemap.save("map.json")
+                    self.tilemap.save("source/map.json")
                 elif event.key == pygame.K_ESCAPE:
                     self.paused = not self.paused
                 elif event.key == pygame.K_a:

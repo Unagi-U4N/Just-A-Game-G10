@@ -199,8 +199,6 @@ class Play():
             if i == 0 and map_id == "1":
                 npc.name = "Intro"
             elif i == 1 and map_id == "1":
-                npc.name = "TicTacToe"
-            elif i == 2 and map_id == "1":
                 npc.name = "Ending"
             elif i == 0 and map_id == "2":
                 npc.name = "Intro2"
@@ -210,26 +208,12 @@ class Play():
                 npc.name = "Intro3"
             elif i == 0 and map_id == "4":
                 npc.name = "Ending3"
-            elif i == 0 and map_id == "test1":
-                npc.name = "Intro"
-            elif i == 1 and map_id == "test1":
-                npc.name = "TicTacToe"
-            elif i == 2 and map_id == "test1":
-                npc.name = "Ending"
-            elif i == 0 and map_id == "test2":
-                npc.name = "Intro2"
-            elif i == 1 and map_id == "test2":
-                npc.name = "TicTacToe"
-            elif i == 2 and map_id == "test2":
-                npc.name = "Ending2"
-            elif i == 0 and map_id == "test3":
-                npc.name = "Intro3"
-            elif i == 2 and map_id == "test3":
-                npc.name = "Ending3"
-            elif i == 0 and map_id == "safehouse":
-                npc.name = "Store"
             elif i == 1 and map_id == "safehouse":
+                npc.name = "Store"
+            elif i == 2 and map_id == "safehouse":
                 npc.name = "Proceed"
+            elif i == 0 and map_id == "safehouse":
+                npc.name = "TicTacToe"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
         self.scroll = [0, 0]
