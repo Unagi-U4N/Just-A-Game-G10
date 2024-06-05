@@ -94,6 +94,9 @@ def dialogue(self, state):
             self.state = "safehouse"
     elif state == "Ending3":
         rundialogues(self.dialogues["EndingP1(3)"])
+        self.level = "safehouse"
+        self.load_level(self.level)
+        self.state = "safehouse"
 
     elif state == "Proceed":
         rundialogues(self.dialogues["Proceed"])

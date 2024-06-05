@@ -101,13 +101,16 @@ class Play():
         # Check if the player is interacting with the npc
         if isnpc:
             for npc in self.npc:
-                if self.player.rect().colliderect(npc.interact):           
-                    render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                if self.player.rect().colliderect(npc.interact):
+                    if self.level == "1" or "2":           
+                        render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                    else:
+                        render_text("Press E", pygame.font.Font(self.game.font, 40), (255, 255, 255), 600, 550, self.display)
                     if self.e:
                         return npc.name
         else:
             if not self.animation.done:
-                render_text("Interact with core", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
+                render_text("Interact with core", pygame.font.Font(self.game.font, 40), (255, 255, 255), 600, 550, self.display)
                 if self.e:
                     self.e = False
                     self.core_animation = True
@@ -205,7 +208,7 @@ class Play():
                 npc.name = "Ending2"
             elif i == 0 and map_id == "3":
                 npc.name = "Intro3"
-            elif i == 2 and map_id == "3":
+            elif i == 0 and map_id == "4":
                 npc.name = "Ending3"
             elif i == 0 and map_id == "test1":
                 npc.name = "Intro"
