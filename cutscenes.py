@@ -23,8 +23,17 @@ def get_cutscene(game, type, cutscenes, screen):
         Cutscenes["Intro"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (350, 300), 40, 40, screen, cutscenes[type]["9"][1])   
     
     elif type == "Ending":
-        Cutscenes["Ending"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (50, 50), 20, 50, screen, cutscenes[type]["1"][1])
-
+        Cutscenes["Ending"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (100, 300), 40, 40, screen, cutscenes[type]["0"][1])
+        Cutscenes["Ending"]["1"] = Cutscene(game, cutscenes[type]["1"][0], (100, 270), 40, 20, screen, cutscenes[type]["1"][1])
+        Cutscenes["Ending"]["2"] = Cutscene(game, cutscenes[type]["2"][0], (30, 410), 40, 20, screen, cutscenes[type]["2"][1])       
+        Cutscenes["Ending"]["3"] = Cutscene(game, cutscenes[type]["3"][0], (100, 370), 40, 20, screen, cutscenes[type]["3"][1])     
+        Cutscenes["Ending"]["4"] = Cutscene(game, cutscenes[type]["4"][0], (70, 300), 40, 20, screen, cutscenes[type]["4"][1])  
+        Cutscenes["Ending"]["5"] = Cutscene(game, cutscenes[type]["5"][0], (100, 300), 40, 20, screen, cutscenes[type]["5"][1]) 
+        Cutscenes["Ending"]["6"] = Cutscene(game, cutscenes[type]["6"][0], (150, 300), 40, 20, screen, cutscenes[type]["6"][1])             
+        Cutscenes["Ending"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (150, 300), 40, 20, screen, cutscenes[type]["7"][1])
+        Cutscenes["Ending"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (140, 300), 40, 20, screen, cutscenes[type]["8"][1]) 
+        Cutscenes["Ending"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (110, 250), 40, 40, screen, cutscenes[type]["9"][1])   
+    
     return Cutscenes[type]
 
 def rundialogues(dialogues):

@@ -1,6 +1,7 @@
 from utils import *
 from cutscenes import *
 from ttt import *
+from startscreen import *
 
 # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
 dialogues = load_dialogue()
@@ -94,6 +95,11 @@ def dialogue(self, state):
             self.state = "safehouse"
     elif state == "Ending3":
         rundialogues(self.dialogues["EndingP1(3)"])
+        self.game.startscreen = StartScreen(self.game)
+        self.game.loaded = False
+        self.game.state = "start"
+        # self.load_level(self.level)
+        # self.state = "safehouse"
 
     elif state == "Proceed":
         rundialogues(self.dialogues["Proceed"])

@@ -32,6 +32,7 @@ class Game:
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
+            "Ending": load_script("Ending"),
         }
 
         self.assets= {
@@ -56,6 +57,7 @@ class Game:
             "clouds": load_images("clouds"),
             "safehousebg": scale_images(load_image("background/safehousebg.png"), set_scale=(1200, 675)),
             "cave": scale_images(load_image("background/cave.png"), set_scale=(1200, 675)),
+            "cave_blocks": scale_images(load_images("tiles/cave blocks")),
             "newgamebg": scale_images(load_image("background/newgame.png"), set_scale=(1200, 675)),
             "player/idle": Animation(scale_images(load_images("entities/player/idle")), img_dur=2),
             "player/run": Animation(scale_images(load_images("entities/player/run")), img_dur=2),
