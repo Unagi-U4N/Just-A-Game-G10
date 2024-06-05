@@ -22,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        # self.data = ["Ivan", "2" , 10000, 4, 3, 100]
-        self.data = []
+        self.data = ["Ivan", "3" , 10000, 4, 3, 100]
+        # self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -141,8 +141,8 @@ class Game:
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
         # self.music = Music(self)
-        self.state = "cutscene"
-        self.cutscene = "Ending"
+        self.state = "game"
+        self.cutscene = "Intro"
 
     def run(self):
         
@@ -169,9 +169,9 @@ class Game:
 
             elif self.state == "cutscene":
                 self.state = "game"
-                if self.cutscene == "Ending":
+                if self.cutscene == "Intro":
                     # self.music.play_music("intense1")
-                    cutscene = cutscenes.get_cutscene(self, "Ending", self.cutscenes, self.screen)
+                    cutscene = cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
                     cutscenes.runscenes(cutscene)
 
             elif self.state == "newgame":
