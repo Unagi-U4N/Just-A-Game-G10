@@ -102,7 +102,7 @@ class Play():
         if isnpc:
             for npc in self.npc:
                 if self.player.rect().colliderect(npc.interact):
-                    if self.level in ["1", "2"]:           
+                    if self.level in ["1", "safehouse"]:           
                         render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                     else:
                         render_text("Press E", pygame.font.Font(self.game.font, 40), (255, 255, 255), 600, 550, self.display)
