@@ -113,7 +113,6 @@ class Play():
 
     def load(self, data):
         self.player.updateprofile(data)
-
         self.level = str(data[1]) if str(data[1]) == "1" else "safehouse"
         if self.level == "safehouse":
             self.state = "safehouse"
