@@ -672,6 +672,7 @@ class Play():
             self.movements = [False, False]
         
     def render(self):
+        print(self.prevlevel, self.level, self.start)
 
         # Render all the assets
         self.clouds.render(self.display, offset=self.render_scroll)
