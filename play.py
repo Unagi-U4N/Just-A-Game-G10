@@ -102,7 +102,7 @@ class Play():
         if isnpc:
             for npc in self.npc:
                 if self.player.rect().colliderect(npc.interact):
-                    if self.level == "1" or "2":           
+                    if self.level in ["1", "2"]:           
                         render_text("Press E", pygame.font.Font(self.game.font, 40), (0, 0, 0), 600, 550, self.display)
                     else:
                         render_text("Press E", pygame.font.Font(self.game.font, 40), (255, 255, 255), 600, 550, self.display)
@@ -288,7 +288,10 @@ class Play():
         self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5) / 20
         self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
-        self.clouds.update()
+        if self.level in ["3", "4"]:
+            pass
+        else:
+            self.clouds.update()
         self.player.update(self.tilemap ,((self.movements[1] - self.movements[0]) * self.speed, 0)) # update(self, tilemap, movement=(0,0))
         if self.lives != 1:
             if self.player.poison(tilemap=self.tilemap):
@@ -675,7 +678,10 @@ class Play():
         print(self.prevlevel, self.level, self.start)
 
         # Render all the assets
-        self.clouds.render(self.display, offset=self.render_scroll)
+        if self.level == "3" or "4":
+            pass
+        else:
+            self.clouds.render(self.display, offset=self.render_scroll)
         self.tilemap.render(self.display, offset=self.render_scroll) 
 
         # Render the enemies
@@ -712,25 +718,47 @@ class Play():
 
         # Render the UI
         if self.HUD:
-            if self.player.shield_dur != 0:
-                for x in range(self.lives):
-                    render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
-            else:
-                for x in range(self.lives):
-                    render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
-            render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
-            render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
-            render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
-            render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
-            render_text(str(min(100, self.player.shield_dur)), self.font, "black", 1030, 190, self.display, False)
-            num= self.player.gold
-            count= 0
+            if self.level in ["3", "4", "2"]:
+                if self.player.shield_dur != 0:
+                    for x in range(self.lives):
+                        render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+                else:
+                    for x in range(self.lives):
+                        render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
+                render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
+                render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
+                render_text(str(self.speed), self.font, "white", 1030, 100, self.display, False)
+                render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
+                render_text(str(min(100, self.player.shield_dur)), self.font, "white", 1030, 190, self.display, False)
+                num= self.player.gold
+                count= 0
 
-            while num !=0:
-                num//= 5
-                count += 1
-            render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-            render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
+                while num !=0:
+                    num//= 5
+                    count += 1
+                render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
+                render_text(str(self.player.gold), self.font, "white", 1030 - count * 2, 145, self.display, False)
+            
+            elif self.level in ["1", "safehouse"]:
+                if self.player.shield_dur != 0:
+                    for x in range(self.lives):
+                        render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
+                else:
+                    for x in range(self.lives):
+                        render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
+                render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
+                render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
+                render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
+                render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
+                render_text(str(min(100, self.player.shield_dur)), self.font, "black", 1030, 190, self.display, False)
+                num= self.player.gold
+                count= 0
+
+                while num !=0:
+                    num//= 5
+                    count += 1
+                render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
+                render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
 
     def minigame(self):
         # Play minigame
