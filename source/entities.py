@@ -358,7 +358,7 @@ class Player(PhysicsEntity):
         self.shield_dur = data[5]
 
     def airtime(self, level):
-        air = 1000 if level == "3" else 250
+        air = 1000 if level == "3" else 100
         if self.air_time > air:
             return True
         
@@ -513,3 +513,16 @@ class NPC(PhysicsEntity):
 
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
+
+class Sign:
+    def __init__(self, game, type, pos):
+        self.game = game
+        self.pos = [int(pos[0]), int(pos[1])]
+        self.type = type
+        self.animation = self.game.assets[self.type].copy()
+
+    def update(self):
+        self.animation.update()
+
+    def render(self, surf, offset=(0, 0)):
+        surf.blit(self.animation.img(), (self.pos[0] - offset[0], self.pos[1] - offset[1]))

@@ -34,6 +34,7 @@ class Editor:
             "large_decor": scale_images(load_images("tiles/large_decor")),
             "spawners": scale_images(load_images("tiles/spawners")),
             "tile_background": scale_images(load_images("tiles/background")),
+            "sign": scale_images(load_images("tiles/sign")),
         }
 
         self.tilemap = Tilemap(self, tile_Size=TILE_SIZE)

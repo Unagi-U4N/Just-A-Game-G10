@@ -3,9 +3,10 @@
 
 
 from tkinter import font
+from itertools import repeat
 import pygame, sys, random, math
 from source.utils import *
-from source.entities import Player, Enemy, NPC
+from source.entities import Player, Enemy, NPC, Sign
 from source.cutscenes import *
 from source.tilemap import Tilemap
 from source.clouds import Clouds
@@ -39,6 +40,7 @@ class Play():
         self.winner = None
         self.screen = game.screen
         self.display = game.display
+        self.shakescreen = game.shakescreen
         self.assets = game.assets
         self.dialogues = init_dialogue(self)
         self.cutscenes = game.cutscenes
@@ -62,7 +64,7 @@ class Play():
         self.level_select_change = True
         self.store_state = "store"
         self.max_heart = 15
-        self.max_speed = 3
+        self.max_speed = 2.5
         self.max_shield = 10
         self.store_addsub_heart = 0
         self.store_addsub_speed = 0
@@ -163,7 +165,7 @@ class Play():
         elif map_id == "safehouse":
             self.bg = self.assets["safehousebg"]
 
-        elif map_id == "3":
+        elif map_id == "3" or map_id == "4":
             self.bg = self.assets["cave"]
 
         
@@ -176,8 +178,20 @@ class Play():
             self.leaf_spawners.append(pygame.Rect(50 + tree["pos"][0], 70 + tree["pos"][1], 40, 20))
         
         self.enemies = []
-        
+        self.signs = []
         self.npc = []
+
+        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2)]):
+            type = ""
+            if sign["variant"] == 0:
+                type = "jump_sign"
+            elif sign["variant"] == 1:
+                type = "dash_sign"
+            elif sign["variant"] == 2:
+                type = "wall_slide_sign"
+
+            self.signs.append(Sign(self, type, sign["pos"]))
+
         for spawner in self.tilemap.extract([("spawners", 0), ("spawners", 1), ("spawners", 2), ("spawners", 3), ("spawners", 4)]):
             if spawner["variant"] == 0:
                 self.player.pos = spawner["pos"]
@@ -281,10 +295,14 @@ class Play():
             if self.player.poison(tilemap=self.tilemap):
                 self.game.sfx['poison'].play()
                 self.lives = max(0, self.lives - 1)
+                self.game.offset = screenshake(5, 10)
         if self.lives == 1:
             if self.player.poison(tilemap=self.tilemap):
                 self.dead += 1
                 self.deadmsg = "You were poisoned to death"
+
+        for sign in self.signs:
+            sign.update()
 
         for npc in self.npc:
             npc.update(self.tilemap, (0, 0))
@@ -296,6 +314,7 @@ class Play():
         for enemy in self.enemies.copy():
             self.enemykill = enemy.update(self.tilemap, (0, 0))
             if self.enemykill:
+                self.game.offset = screenshake(5, 10)
                 self.enemies.remove(enemy)
                 self.lives = min(self.maxHP, self.lives + 1)
                 self.player.gold += 100
@@ -573,6 +592,7 @@ class Play():
                         self.level_select_change = False
 
                     if event.key == pygame.K_SPACE and self.can_load_level:
+                        self.canplay = True
                         self.level = self.level.split("_")[1]
                         self.load_level(self.level)
                         self.state = "game"
@@ -660,7 +680,7 @@ class Play():
         
     def render(self):
         # Render all the assets
-        if self.level == "3" or "4":
+        if self.level in ["3", "4"]:
             pass
         else:
             self.clouds.render(self.display, offset=self.render_scroll)
@@ -674,6 +694,10 @@ class Play():
         # Render the npcs
         for npc in self.npc:
             npc.render(self.display, offset=self.render_scroll)
+
+        # Render the signs
+        for sign in self.signs:
+            sign.render(self.display, offset=self.render_scroll)
 
         # Render the player
         self.player.render(self.display, offset=self.render_scroll)

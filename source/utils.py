@@ -114,6 +114,21 @@ def scale_images(images, set_scale=None, scale=2):
         else:
             return [pygame.transform.scale(img, (img.get_width() * scale, img.get_height() * scale)) for img in images]
 
+def screenshake(intensity, amplitude):
+        # Screenshake effect, shake x axis, intensity = how much to shake, amplitude = how far to shake
+        # Yield is used to return a list of values for the funtion instead of a single value like the conventional "return"
+        s = -1
+        for i in range(0, 3):
+            for x in range(0, amplitude, intensity):
+                yield x * s, 0
+            for x in range(amplitude, 0, intensity):
+                yield x * s, 0
+            s *= -1
+        
+        # Return (0, 0) to reset the screen
+        while True:
+            yield 0, 0
+            
 class Animation:
     def __init__(self, images, img_dur=5, loop=True):
         self.images = images

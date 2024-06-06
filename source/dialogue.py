@@ -8,7 +8,7 @@ dialogues = load_dialogue()
 
 def init_dialogue(self):
     Dialogues = {
-        npc: {str(num): Dialogue(self, self.screen, dialogues[npc][str(num)]) for num in range(len(dialogues[npc]))} for npc in dialogues
+        npc: {str(num): Dialogue(self, self.shakescreen, dialogues[npc][str(num)]) for num in range(len(dialogues[npc]))} for npc in dialogues
     }
     return Dialogues
 

@@ -223,7 +223,7 @@ class Dialogue(Logic):
         self.fadescreenbool = False
         self.fadescreen = 0
         self.name = npc
-        self.display = pygame.Surface((1200, 675))
+        # self.display = pygame.Surface((1200, 675))
 
     def draw(self):
         super().draw()

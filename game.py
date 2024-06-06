@@ -17,18 +17,20 @@ class Game:
         pygame.init()
 
         pygame.display.set_caption('Just A Game')
-        self.screen = pygame.display.set_mode((1200, 675))
+        self.shakescreen = pygame.display.set_mode((1200, 675))
+        self.screen = self.shakescreen.copy()
         self.display = pygame.Surface((1200, 675))
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "3", 10000, 4, 3, 100]
+        self.data = ["Ivan", "1", 10000, 5, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
         self.intro = {}
         self.font = "data/monogram.ttf"
+        self.offset = repeat((0, 0))
 
         self.cutscenes = {
             "Intro": load_script("Intro"),
@@ -69,8 +71,11 @@ class Game:
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
-            "core": Animation(scale_images(load_images("core"), scale=1.5), img_dur=15, loop=False),
-            "good_core": scale_images(load_image("core/49.png"), scale= 1.5),
+            "core": Animation(scale_images(load_images("animation/core"), scale=1.5), img_dur=15, loop=False),
+            "jump_sign": Animation(scale_images(load_images("animation/jump_sign")), img_dur=10, loop=True),
+            "dash_sign": Animation(scale_images(load_images("animation/dash_sign")), img_dur=15, loop=True),
+            "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),
+            "good_core": scale_images(load_image("animation/core/49.png"), scale= 1.5),
             "gun": scale_images(load_image("entities/enemy/gun.png")),
             "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
             "!": scale_images(load_image("entities/enemy/!.png"), scale= 0.8),
@@ -202,7 +207,9 @@ class Game:
                 elif state:
                     self.state = "newgame"
             
+            # Blit the screen over self.shakescreen with the offset
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()),(0, 0))
+            self.shakescreen.blit(self.screen, next(self.offset))
             pygame.display.update()
             self.clock.tick(60)
 
