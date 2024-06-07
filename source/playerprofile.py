@@ -1,4 +1,4 @@
-import pygame, csv
+import pygame, csv, sys
 from source.utils import *
 import random
 
@@ -52,6 +52,9 @@ class PlayerProfile:
         # Get player keyboard input (1-8)
 
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:    
                 if event.key == pygame.K_1:
                     if len(self.profiles) > 0:
@@ -131,8 +134,6 @@ class PlayerProfile:
 
             return deleted
         
-        pygame.display.update()
-
         # Create profile
     def create_profile(self):
         self.display.blit(self.newbg, (0,0))
@@ -162,8 +163,11 @@ class PlayerProfile:
 
             # Get player keyboard alphabet input
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN and self.exist == False:
                         self.game.sfx['click'].play()
                         
                         if not self.exist:
@@ -190,13 +194,11 @@ class PlayerProfile:
             if self.saveprofile:
                 self.data = [self.name, 1, 0, 1.5, 3, 100]
                 render_text("Profile created", self.font, "black", 600, 400, self.display, centered=True)
-                pygame.display.update()
                 self.timer += 1
                 if self.timer >= 120:
                     return self.data
 
             render_text(self.name, self.font, "black", 600, 340, self.display, centered=True)
-            pygame.display.update()
 
     def saveprogress(self):
 

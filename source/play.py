@@ -272,11 +272,8 @@ class Play():
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
                     render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
             elif not self.core_animation and self.animation.done:
-                # self.music.play_music("intense1")
-                self.game.cutscene = "Ending"
                 self.game.state = "cutscene"
-                cutscene = get_cutscene(self, "Ending", self.cutscenes, self.shakescreen)
-                runscenes(cutscene)
+                self.game.cutscene = "Ending"
                 self.game.state = "game"
                 self.level = "4"
                 self.load_level(self.level)

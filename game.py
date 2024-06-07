@@ -15,7 +15,6 @@ from source.music import Music
 class Game:
     def __init__(self):
         pygame.init()
-
         pygame.display.set_caption('Just A Game')
         self.shakescreen = pygame.display.set_mode((1200, 675))
         self.screen = self.shakescreen.copy()
@@ -23,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "2", 10000, 2.5, 3, 100]
-        # self.data = []
+        # self.data = ["Ivan", "2", 10000, 2.5, 3, 100]
+        self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -148,8 +147,8 @@ class Game:
         self.startscreen = StartScreen(self)
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
-        # self.music = Music(self)
-        self.state = "game"
+        self.music = Music(self)
+        self.state = "start"
         self.cutscene = "Intro"
 
     def run(self):
@@ -158,7 +157,7 @@ class Game:
 
             if self.state == "start":
                 newloadexit = self.startscreen.run()
-                # self.music.play_music("music")
+                self.music.play_music("music")
                 if newloadexit == "New Game":
                     self.state = "newgame"
                 elif newloadexit == "Load Game":
@@ -173,13 +172,17 @@ class Game:
                     self.game.load(self.data)
                     self.loaded = True
                 self.game.run()
-                # self.music.play_music("music")
+                self.music.play_music("music")
 
             elif self.state == "cutscene":
                 self.state = "game"
                 if self.cutscene == "Intro":
-                    # self.music.play_music("intense1")
-                    cutscene = source.cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.screen)
+                    self.music.play_music("intense1")
+                    cutscene = source.cutscenes.get_cutscene(self, "Intro", self.cutscenes, self.shakescreen)
+                    source.cutscenes.runscenes(cutscene)
+                elif self.cutscene == "Ending":
+                    self.music.play_music("intense2")
+                    cutscene = source.cutscenes.get_cutscene(self, "Ending", self.cutscenes, self.shakescreen)
                     source.cutscenes.runscenes(cutscene)
 
             elif self.state == "newgame":
@@ -215,4 +218,5 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
 
-Game().run()
+if __name__ == '__main__':
+    Game().run()

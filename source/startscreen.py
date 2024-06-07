@@ -1,6 +1,6 @@
 import pygame, sys, random, math
 from source.utils import *
-from source.entities import Player, Enemy
+from source.entities import Player, Enemy, Sign
 from source.tilemap import Tilemap
 from source.clouds import Clouds
 from source.particle import Particle
@@ -40,6 +40,21 @@ class StartScreen:
             else:
                 enemy = Enemy(self, spawner["pos"], (16, 30), name="") # Scaled
                 self.enemies.append(enemy)
+
+        self.signs = []
+        
+        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2), ("sign", 3)]):
+            type = ""
+            if sign["variant"] == 0:
+                type = "jump_sign"
+            elif sign["variant"] == 1:
+                type = "dash_sign"
+            elif sign["variant"] == 2:
+                type = "wall_slide_sign"
+            elif sign["variant"] == 3:
+                type = "wall_jump_sign"
+
+            self.signs.append(Sign(self, type, sign["pos"]))
 
         # Sort the enemies based on their position
         self.enemies.sort(key=lambda x: x.pos[0])
@@ -97,6 +112,10 @@ class StartScreen:
                 self.startcountdown = True
                 self.name = enemy.name
                 self.enemies.remove(enemy)
+
+        for sign in self.signs:
+            sign.update()
+            sign.render(self.display, offset=render_scroll)
         
         if self.startcountdown:
             self.cooldown -= 1
