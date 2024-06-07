@@ -49,6 +49,7 @@ class Play():
         self.ttt = TicTacToe(self)
         self.playerrespawn = (0, 0)
         self.render_scroll = (0, 0)
+        self.scroll = [0, 0]
         self.tilemap = Tilemap(game, tile_Size=32)
         self.font = game.font
         self.bg = self.assets["day"]
@@ -81,6 +82,7 @@ class Play():
         self.core_animation = False
         self.animation = self.assets["core"].copy()
         self.transition_ed = True
+        self.level_transitioning = True
         self.results = ""
         self.felltransition = 0
         self.play = False
@@ -198,6 +200,7 @@ class Play():
             if spawner["variant"] == 0:
                 self.player.pos = spawner["pos"]
                 self.player.air_time = 0
+
             elif spawner["variant"] == 1:
                 self.enemies.append(Enemy(self, spawner["pos"], (16, 30), difficulty=1)) # Scaled
             elif spawner["variant"] == 2:
@@ -232,7 +235,6 @@ class Play():
                 npc.name = "TicTacToe"
 
         # Deals with offset, when the player moves, everything moves in the opposite direction to make the illusion that the player is moving
-        self.scroll = [0, 0]
         self.dead = 0 
         self.firsthit = False
         self.deadscreen = False
@@ -283,9 +285,13 @@ class Play():
 
         # Update the game, the particles, enemies, npc, player
 
-        # Make sure that the player is always in the middle of the screen
-        self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
-        self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5) / 20
+        if self.level_transitioning:
+            # Make sure that the player is always in the middle of the screen
+            self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600)
+            self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5)
+        else:
+            self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600) / 20
+            self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5) / 20
         self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
         if self.level in ["3", "4"]:
@@ -828,6 +834,7 @@ class Play():
             self.transition_ed = False 
 
         if not self.transition_ed:
+            self.level_transitioning = True
             if self.transition_timer < timer:
                 self.transitioning = True
                 self.transition_timer += 1
@@ -840,6 +847,7 @@ class Play():
                     render_text(text, self.font2, "white", 600, 300, self.display, centered=True, transparency=255)
             
             elif self.transition_timer == timer:
+                self.level_transitioning = False
                 self.transition_timer = 0
                 self.transition_ed = True
                 self.transitioning = False
