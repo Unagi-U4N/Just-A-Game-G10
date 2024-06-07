@@ -16,7 +16,7 @@ def dialogue(self, state):
     choice = None
     self.movements = [False, False]
     if state == "Intro":
-        rundialogues(self, self, self.dialogues["IntroP1(1)"])
+        rundialogues(self, self.dialogues["IntroP1(1)"])
         choice = dialoguequestions(self.assets["dialoguebox"], "Anyways, what brings you here traveller?",["I have no idea, where am I?", "I was tasked to replace the core"], self.shakescreen)
         rundialogues(self, self.dialogues["IntroP2(1)"])
 
