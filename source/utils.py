@@ -4,10 +4,10 @@ import pygame, os
 
 def get_path():
     path = os.getcwd()
-    # if "Just-A-Game-G10" not in path:
-    #     return "Just-A-Game-G10/"
-    # else:
-    return path
+    if "Just-A-Game-G10" not in path:
+        return "Just-A-Game-G10/"
+    else:
+        return ""
     
 BASE_IMG_PATH = get_path() + "data/images/"
 BASE_SCENE_PATH = get_path() + "data/cutscenes/"
