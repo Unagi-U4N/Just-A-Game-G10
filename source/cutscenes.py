@@ -36,7 +36,7 @@ def get_cutscene(game, type, cutscenes, screen):
     
     return Cutscenes[type]
 
-def rundialogues(dialogues):
+def rundialogues(self, dialogues):
     num = 0
     repeat = False
     while not repeat:
@@ -61,6 +61,7 @@ def rundialogues(dialogues):
                 dialogue.alldone = True
 
             if next and dialogue.done and skip:
+                dialogue.reset()
                 num += 1
 
         if num == len(dialogues):
@@ -88,7 +89,6 @@ def runscenes(scenes):
                     scene.fadescreen = 0
                     if skip and scene.done:
                         next = True
-                        scene.status = {msg: False for msg in scene.msgs}
 
         if skip:
             scene.alldone = True
@@ -138,6 +138,7 @@ class Logic:
         self.msg = self.msgs[self.lines]
         self.color = color
         self.pos = list(pos)
+        self.oripos = self.pos.copy()
         self.speed = speed
         self.screen = screen
         self.img = img
@@ -187,6 +188,15 @@ class Logic:
                 self.alldone = True
             
             pygame.display.flip()
+
+    def reset(self):
+        self.lines = 0
+        self.pos = self.oripos
+        self.msg = self.msgs[self.lines]
+        self.frame = 0
+        self.done = False
+        self.alldone = False
+        self.status = {msg: False for msg in self.msgs}
         
 class Cutscene(Logic):
     def __init__(self, game, msgs, pos, size, speed, screen, img=None, color="white"):
