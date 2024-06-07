@@ -138,7 +138,6 @@ class Logic:
         self.msg = self.msgs[self.lines]
         self.color = color
         self.pos = list(pos)
-        self.oripos = self.pos.copy()
         self.speed = speed
         self.screen = screen
         self.img = img
@@ -191,7 +190,7 @@ class Logic:
 
     def reset(self):
         self.lines = 0
-        self.pos = self.oripos
+        self.pos = list(dialoguebox_pos)
         self.msg = self.msgs[self.lines]
         self.frame = 0
         self.done = False
