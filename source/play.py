@@ -586,17 +586,19 @@ class Play():
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        self.current_level = "safehouse"
+                        self.level = "safehouse"
                         self.level_select = False
 
                     # If the transition timer is done, allow the player to change the level
-                    if event.key == pygame.K_LEFT and self.level_select_change and self.level != "level_1":
+                    elif event.key == pygame.K_LEFT and self.level_select_change and self.level != "level_1":
                         self.level = "level_" + str(int(self.level.split("_")[1]) - 1)
                         self.level_select_change = False
-                    if event.key == pygame.K_RIGHT and self.level_select_change and self.level != "level_3":
+                    elif event.key == pygame.K_RIGHT and self.level_select_change and self.level != "level_3":
                         self.level = "level_" + str(int(self.level.split("_")[1]) + 1)
                         self.level_select_change = False
 
-                    if event.key == pygame.K_SPACE and self.can_load_level:
+                    elif event.key == pygame.K_SPACE and self.can_load_level:
                         self.canplay = True
                         self.level = self.level.split("_")[1]
                         self.load_level(self.level)
@@ -678,6 +680,12 @@ class Play():
                                     self.store_addsub_speed = round(self.store_addsub_speed - 0.1, 1)
                                 elif self.store_state == "store_shield" and self.store_addsub_shield > 0:
                                     self.store_addsub_shield -= 1
+
+        elif self.transitioning or self.restart:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
                     
         else:
             pygame.event.clear()
@@ -789,6 +797,11 @@ class Play():
                 render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
                 render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
 
+        img = pygame.Surface((1200, 675))
+        img.fill((0,255,0))
+        img.set_alpha(self.player.poison_timer1)
+        self.display.blit(img, (0,0))
+        
     def minigame(self):
         # Play minigame
         if self.play and self.canplay:
@@ -867,11 +880,6 @@ class Play():
                 self.transition_ed = True
                 self.transitioning = False
                 self.level_select_change = True
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
                 
     def safehouse(self):
        safehouse(self)

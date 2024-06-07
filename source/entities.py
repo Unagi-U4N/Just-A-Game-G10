@@ -5,6 +5,7 @@ import pygame
 from source.particle import Particle
 from source.spark import Spark
 import source.cutscenes
+from source.utils import render_img, render_text
 
 
 class PhysicsEntity:
@@ -344,6 +345,7 @@ class Player(PhysicsEntity):
         self.speed = 2 # default
         self.size = (16, 30)
         self.poison_timer = 0
+        self.poison_timer1 = 0
         self.poison_timer2 = 0
         self.shield = 200
         self.shield_dur = 200
@@ -375,6 +377,7 @@ class Player(PhysicsEntity):
         # if tilemap.glitch_check((self.rect().centerx, self.pos[1] + self.size[1])):
             self.poison_timer2 = min(self.shield, self.poison_timer2 + 1)
             if self.poison_timer2 == self.shield:
+                self.poison_timer1 = min(50, self.poison_timer1 + 0.5)
                 self.poison_timer += 0.5
                 if self.poison_timer > 30:
                     self.poison_timer = 0
@@ -391,7 +394,8 @@ class Player(PhysicsEntity):
                 self.poison_timer = 0
         
         else:
-            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield/200))
+            self.poison_timer2 = max(0, self.poison_timer2 - 1*(self.shield/800))
+            self.poison_timer1 = max(0, self.poison_timer1 - 0.5)
 
         self.shield_dur = round(max(0, self.shield - self.poison_timer2) / (self.shield/100))
 
