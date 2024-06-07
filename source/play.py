@@ -697,6 +697,15 @@ class Play():
         # Render the enemies
         for enemy in self.enemies:
             if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
+                glitch = 0
+                if self.level == "2":
+                    glitch = 0.1
+                elif self.level == "3":
+                    glitch = 0.2
+                if random.random() < glitch:
+                    enemy.flip = not enemy.flip
+                    if random.random() < glitch:
+                        enemy.pos[0] += random.choice([-100*glitch, 100*glitch])
                 enemy.render(self.display, offset=self.render_scroll)
         
         # Render the npcs
@@ -719,7 +728,16 @@ class Play():
         
         # Render the projectiles
         for projectile in self.projectiles.copy():
-            img = self.assets['projectile']
+            glitch = 0
+            if self.level == "2":
+                glitch = 0.5
+            elif self.level == "3":
+                glitch = 1
+            if random.random() < glitch:
+                projectiletype = random.choice(["projectile", "gun", "enemy", "!"])
+                img = self.assets[projectiletype]
+            else:
+                img = self.assets["projectile"]
             self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - self.render_scroll[0], projectile[0][1] - img.get_height() / 2 - self.render_scroll[1]))
 
         # Render the particles

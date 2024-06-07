@@ -23,7 +23,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "3", 10000, 4, 3, 100]
+        self.data = ["Ivan", "2", 10000, 2.5, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -66,6 +66,7 @@ class Game:
             "player/jump": Animation(scale_images(load_images("entities/player/jump")), img_dur=2, loop=False),
             "player/slide": Animation(scale_images(load_images("entities/player/slide")), img_dur=2, loop=False),
             "player/wall_slide": Animation(scale_images(load_images("entities/player/wall_slide")), img_dur=2, loop=False),
+            "enemy": scale_images(load_image("entities/enemy/idle/00.png")),
             "enemy/idle": Animation(scale_images(load_images("entities/enemy/idle")), img_dur=2),
             "enemy/run": Animation(scale_images(load_images("entities/enemy/run")), img_dur=2),
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
