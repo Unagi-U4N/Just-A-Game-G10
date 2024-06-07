@@ -358,8 +358,8 @@ class Player(PhysicsEntity):
         self.shield_dur = data[5]
 
     def airtime(self, level):
-        air = 1000 if level == "3" else 100
-        if self.air_time > air:
+        air = 1000 if level == "3" else 150
+        if self.air_time > air and not self.wall_slide:
             return True
         
     def interact_core(self, tilemap):
@@ -410,6 +410,7 @@ class Player(PhysicsEntity):
         self.wall_slide = False
         if (self.collisions['right'] or self.collisions['left']) and self.air_time > 4:
             self.wall_slide = True
+            self.air_time = 5
             self.velocity[1] = min(self.velocity[1], 1.5)
             if self.collisions['right']:
                 self.flip = False

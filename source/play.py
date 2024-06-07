@@ -181,7 +181,7 @@ class Play():
         self.signs = []
         self.npc = []
 
-        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2)]):
+        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2), ("sign", 3)]):
             type = ""
             if sign["variant"] == 0:
                 type = "jump_sign"
@@ -189,6 +189,8 @@ class Play():
                 type = "dash_sign"
             elif sign["variant"] == 2:
                 type = "wall_slide_sign"
+            elif sign["variant"] == 3:
+                type = "wall_jump_sign"
 
             self.signs.append(Sign(self, type, sign["pos"]))
 
@@ -256,8 +258,8 @@ class Play():
 
     def core(self):
         # Core animation logic
-        if self.player.interact_core(tilemap=self.tilemap):
-            # print("interact")
+        interact = self.player.interact_core(tilemap=self.tilemap)
+        if interact:
             self.interact(False)
             if self.core_animation:
                 self.display.fill((0, 0, 0))
@@ -271,7 +273,7 @@ class Play():
                 # self.music.play_music("intense1")
                 self.game.cutscene = "Ending"
                 self.game.state = "cutscene"
-                cutscene = get_cutscene(self, "Ending", self.cutscenes, self.screen)
+                cutscene = get_cutscene(self, "Ending", self.cutscenes, self.shakescreen)
                 runscenes(cutscene)
                 self.game.state = "game"
                 self.level = "4"
@@ -565,13 +567,13 @@ class Play():
                     if event.key == pygame.K_e:
                         self.e = False
 
-        elif self.core_animation:
+        elif self.core_animation and self.animation.done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE and self.animation.done:
+                    if event.key == pygame.K_SPACE:
                         self.core_animation = False
         
         elif self.level_select:

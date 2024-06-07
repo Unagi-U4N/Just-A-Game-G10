@@ -23,7 +23,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "1", 10000, 5, 3, 100]
+        self.data = ["Ivan", "3", 10000, 4, 3, 100]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -75,6 +75,7 @@ class Game:
             "jump_sign": Animation(scale_images(load_images("animation/jump_sign")), img_dur=10, loop=True),
             "dash_sign": Animation(scale_images(load_images("animation/dash_sign")), img_dur=15, loop=True),
             "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),
+            "wall_jump_sign": Animation(scale_images(load_images("animation/wall_jump_sign")), img_dur=15, loop=True),
             "good_core": scale_images(load_image("animation/core/49.png"), scale= 1.5),
             "gun": scale_images(load_image("entities/enemy/gun.png")),
             "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
