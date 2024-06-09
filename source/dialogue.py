@@ -88,14 +88,38 @@ def dialogue(self, state):
 
     elif state == "Intro3":
         rundialogues(self, self.dialogues["IntroP1(3)"])
-        choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.shakescreen)
-        if choice == "I'm not suree......I'm scared now.....":
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready to continue this level?", ["Yes", "No"], self.shakescreen)
+        if choice == "Yes":
             rundialogues(self, self.dialogues["IntroP2(3)"])
+        elif choice == "No":
+            rundialogues(self, self.dialogues["IntroP3(3)"])
             self.level = "safehouse"
             self.load_level(self.level)
             self.state = "safehouse"
+
     elif state == "Ending3":
         rundialogues(self, self.dialogues["EndingP1(3)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready for the next level, soldier?", ["Yes", "No"], self.shakescreen)
+        if choice == "Yes":
+            rundialogues(self, self.dialogues["EndingP2(3)"])
+            self.player.gold += 1000*int(self.level)
+            self.prevlevel = self.level
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+        elif choice == "No":
+            rundialogues(self, self.dialogues["EndingP3(3)"])
+
+    elif state == "Intro4":
+        rundialogues(self, self.dialogues["IntroP1(4)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.shakescreen)
+        if choice == "I'm not suree......I'm scared now.....":
+            rundialogues(self, self.dialogues["IntroP2(4)"])
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+    elif state == "Ending4":
+        rundialogues(self, self.dialogues["EndingP1(4)"])
         self.game.startscreen = StartScreen(self.game)
         self.game.loaded = False
         self.game.state = "start"

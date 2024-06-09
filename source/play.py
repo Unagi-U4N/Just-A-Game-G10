@@ -102,7 +102,7 @@ class Play():
         }
         self.text = ""
         self.randomtext = ["You can jump and dash at the same time to go furher",
-                           "Enemies will have an exclamation mark above their heads when they are prepared to shoot",
+                           "An exclamation mark will appear when enemies are prepared to shoot",
                            "You can dodge bullets by dashing through them",
                            "You can repeat the same levels to get more gold and upgrade your character"]
 
@@ -232,8 +232,12 @@ class Play():
                 npc.name = "Ending2"
             elif i == 0 and map_id == "3":
                 npc.name = "Intro3"
-            elif i == 0 and map_id == "4":
+            elif i == 1 and map_id == "3":
                 npc.name = "Ending3"
+            elif i == 0 and map_id == "4":
+                npc.name = "Intro4"
+            elif i == 0 and map_id == "5":
+                npc.name = "Ending4"
             elif i == 1 and map_id == "safehouse":
                 npc.name = "Store"
             elif i == 2 and map_id == "safehouse":
