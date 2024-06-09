@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "3", 10000, 3, 3, 1000]
+        self.data = ["Ivan", "1", 10000, 3, 3, 1000]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
