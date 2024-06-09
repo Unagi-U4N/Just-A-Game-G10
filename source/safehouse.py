@@ -143,11 +143,11 @@ def safehouse(self):
                 if int(self.level.split("_")[1]) <= int(self.player.level):
                     self.can_load_level = True
                 else:
-                    if int(self.level.split("_")[1]) == 4:
-                        self.can_load_level = False
-                        render_text("Coming Soon", self.font2, "red", 600, 400, self.display, centered=True)
-                    else:
-                        self.can_load_level = False
-                        render_text("Locked", self.font2, "red", 600, 400, self.display, centered=True)
-                        render_text("Complete the previous level to unlock", self.font, "white", 600, 450, self.display, centered=True)
+                    # if int(self.level.split("_")[1]) == 4:
+                    #     self.can_load_level = False
+                    #     render_text("Coming Soon", self.font2, "red", 600, 400, self.display, centered=True)
+                    # else:
+                    self.can_load_level = False
+                    render_text("Locked", self.font2, "red", 600, 400, self.display, centered=True)
+                    render_text("Complete the previous level to unlock", self.font, "white", 600, 450, self.display, centered=True)
       
