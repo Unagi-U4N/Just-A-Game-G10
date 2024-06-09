@@ -22,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        # self.data = ["Ivan", "2", 10000, 2.5, 3, 100]
-        self.data = []
+        self.data = ["Ivan", "2", 10000, 2.5, 10, 1000]
+        # self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -52,6 +52,7 @@ class Game:
             "level_1": scale_images(load_image("background/level1.png"), set_scale=(1200, 675)),
             "level_2": scale_images(load_image("background/level2.png"), set_scale=(1200, 675)),
             "level_3": scale_images(load_image("background/level3.png"), set_scale=(1200, 675)),
+            "level_4": scale_images(load_image("background/level4.png"), set_scale=(1200, 675)),
             "save": scale_images(load_image("background/savescreen.png"), set_scale=(1200, 675)),
             "day": scale_images(load_image("background/daybg.png"), set_scale=(1200, 675)),
             "night": scale_images(load_image("background/nightbg.png"), set_scale=(1200, 675)),
@@ -76,6 +77,7 @@ class Game:
             "dash_sign": Animation(scale_images(load_images("animation/dash_sign")), img_dur=15, loop=True),
             "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),
             "wall_jump_sign": Animation(scale_images(load_images("animation/wall_jump_sign")), img_dur=15, loop=True),
+            "poison_sign": Animation(scale_images(load_images("animation/poison_sign")), img_dur=15, loop=True),
             "good_core": scale_images(load_image("animation/core/49.png"), scale= 1.5),
             "gun": scale_images(load_image("entities/enemy/gun.png")),
             "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
@@ -148,7 +150,7 @@ class Game:
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
         self.music = Music(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):

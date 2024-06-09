@@ -28,7 +28,7 @@ def dialogue(self, state):
                 if self.player.gold >= 500:
                     rundialogues(self, self.dialogues["TicTacToeP1(1)Extra"])
                     self.play = True
-                elif self.player.gold <500:
+                elif self.player.gold < 500:
                     rundialogues(self, self.dialogues["TicTacToeP2(1)Extra"])
                     pass
             elif choice == "No":
@@ -38,9 +38,22 @@ def dialogue(self, state):
 
     elif state == "TicTacToeWin":
         rundialogues(self, self.dialogues["TicTacToeWin"])
-        self.player.HP += 2
-        self.HP = self.player.HP
-        self.maxHP = self.player.HP
+        if self.player.HP <= self.max_heart - 2:
+            rundialogues(self, self.dialogues["TicTacToeWin(HP)"])
+            self.player.HP += 2
+            self.HP = self.player.HP
+            self.maxHP = self.player.HP
+        elif self.player.speed <= self.max_speed - 0.3 and self.player.HP == self.max_heart:
+            rundialogues(self, self.dialogues["TicTacToeWin(Speed)"])
+            self.player.speed += 0.3
+            self.speed = self.player.speed
+        elif self.player.shield <= self.max_shield*100 - 200 and self.player.speed == self.max_speed and self.player.HP == self.max_heart:
+            rundialogues(self, self.dialogues["TicTacToeWin(Shield)"])
+            self.player.shield += 2
+            self.shield = self.player.shield
+        else:
+            rundialogues(self, self.dialogues["TicTacToeWin(Max)"])
+            self.player.gold += 1500
     
     elif state == "TicTacToeLose":
         rundialogues(self, self.dialogues["TicTacToeLose"])
@@ -88,14 +101,38 @@ def dialogue(self, state):
 
     elif state == "Intro3":
         rundialogues(self, self.dialogues["IntroP1(3)"])
-        choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.shakescreen)
-        if choice == "I'm not suree......I'm scared now.....":
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready to continue this level?", ["Yes", "No"], self.shakescreen)
+        if choice == "Yes":
             rundialogues(self, self.dialogues["IntroP2(3)"])
+        elif choice == "No":
+            rundialogues(self, self.dialogues["IntroP3(3)"])
             self.level = "safehouse"
             self.load_level(self.level)
             self.state = "safehouse"
+
     elif state == "Ending3":
         rundialogues(self, self.dialogues["EndingP1(3)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "Are you ready for the next level, soldier?", ["Yes", "No"], self.shakescreen)
+        if choice == "Yes":
+            rundialogues(self, self.dialogues["EndingP2(3)"])
+            self.player.gold += 1000*int(self.level)
+            self.prevlevel = self.level
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+        elif choice == "No":
+            rundialogues(self, self.dialogues["EndingP3(3)"])
+
+    elif state == "Intro4":
+        rundialogues(self, self.dialogues["IntroP1(4)"])
+        choice = dialoguequestions(self.assets["dialoguebox"], "ARE YOU READY, SOLDIER?", ["YES, I AM SO READY", "I'm not suree......I'm scared now....."], self.shakescreen)
+        if choice == "I'm not suree......I'm scared now.....":
+            rundialogues(self, self.dialogues["IntroP2(4)"])
+            self.level = "safehouse"
+            self.load_level(self.level)
+            self.state = "safehouse"
+    elif state == "Ending4":
+        rundialogues(self, self.dialogues["EndingP1(4)"])
         self.game.startscreen = StartScreen(self.game)
         self.game.loaded = False
         self.game.state = "start"

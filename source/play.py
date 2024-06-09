@@ -100,6 +100,11 @@ class Play():
             "fall" : ["You ignored physics class", "You thought you were superman", "So this is the FALLEN angel?", "Just a reminder you're not a bird"],
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
+        self.text = ""
+        self.randomtext = ["You can jump and dash at the same time to go further",
+                           "An exclamation mark will appear when enemies are prepared to shoot",
+                           "You can dodge bullets by dashing through them",
+                           "You can repeat the same levels to get more gold and upgrade your character"]
 
     def interact(self, isnpc=True):
         # Check if the player is interacting with the npc
@@ -158,16 +163,16 @@ class Play():
 
     def load_level(self, map_id):
 
-        if map_id == "1":
+        if map_id == "1" or map_id == "2":
             self.bg = self.assets["day"]
 
-        elif map_id == "2":
+        elif map_id == "3":
             self.bg = self.assets["night"]
 
         elif map_id == "safehouse":
             self.bg = self.assets["safehousebg"]
 
-        elif map_id == "3" or map_id == "4":
+        elif map_id == "4" or map_id == "5":
             self.bg = self.assets["cave"]
 
         
@@ -183,7 +188,7 @@ class Play():
         self.signs = []
         self.npc = []
 
-        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2), ("sign", 3)]):
+        for sign in self.tilemap.extract([("sign", 0), ("sign", 1), ("sign", 2), ("sign", 3), ("sign", 4)]):
             type = ""
             if sign["variant"] == 0:
                 type = "jump_sign"
@@ -193,6 +198,8 @@ class Play():
                 type = "wall_slide_sign"
             elif sign["variant"] == 3:
                 type = "wall_jump_sign"
+            elif sign["variant"] == 4:
+                type = "poison_sign"
 
             self.signs.append(Sign(self, type, sign["pos"]))
 
@@ -221,16 +228,20 @@ class Play():
                 npc.name = "Ending"
             elif i == 0 and map_id == "2":
                 npc.name = "Intro2"
-            elif i == 2 and map_id == "2":
+            elif i == 1 and map_id == "2":
                 npc.name = "Ending2"
             elif i == 0 and map_id == "3":
                 npc.name = "Intro3"
-            elif i == 0 and map_id == "4":
+            elif i == 1 and map_id == "3":
                 npc.name = "Ending3"
+            elif i == 0 and map_id == "4":
+                npc.name = "Intro4"
+            elif i == 0 and map_id == "5":
+                npc.name = "Ending4"
             elif i == 1 and map_id == "safehouse":
                 npc.name = "Store"
             elif i == 2 and map_id == "safehouse":
-                npc.name = "Proceed"
+                npc.name = "Next level"
             elif i == 0 and map_id == "safehouse":
                 npc.name = "TicTacToe"
 
@@ -594,7 +605,7 @@ class Play():
                     elif event.key == pygame.K_LEFT and self.level_select_change and self.level != "level_1":
                         self.level = "level_" + str(int(self.level.split("_")[1]) - 1)
                         self.level_select_change = False
-                    elif event.key == pygame.K_RIGHT and self.level_select_change and self.level != "level_3":
+                    elif event.key == pygame.K_RIGHT and self.level_select_change and self.level != "level_4":
                         self.level = "level_" + str(int(self.level.split("_")[1]) + 1)
                         self.level_select_change = False
 
@@ -703,9 +714,9 @@ class Play():
         for enemy in self.enemies:
             if int(enemy.pos[0]) in range(int(self.player.pos[0] - self.display.get_width() / 2 - 100), int(self.player.pos[0] + self.display.get_width() / 2 + 100)):
                 glitch = 0
-                if self.level == "2":
+                if self.level == "3":
                     glitch = 0.1
-                elif self.level == "3":
+                elif self.level == "4":
                     glitch = 0.2
                 if random.random() < glitch:
                     enemy.flip = not enemy.flip
@@ -735,8 +746,10 @@ class Play():
         for projectile in self.projectiles.copy():
             glitch = 0
             if self.level == "2":
-                glitch = 0.5
+                glitch = 0.2
             elif self.level == "3":
+                glitch = 0.5
+            elif self.level == "4":
                 glitch = 1
             if random.random() < glitch:
                 projectiletype = random.choice(["projectile", "gun", "enemy", "!"])
@@ -755,47 +768,47 @@ class Play():
 
         # Render the UI
         if self.HUD:
-            if self.level in ["3", "4", "2"]:
+            if self.level in ["3", "4", "5"]:
                 if self.player.shield_dur != 0:
                     for x in range(self.lives):
                         render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
                 else:
                     for x in range(self.lives):
                         render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
-                render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
+                # render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
                 render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
                 render_text(str(self.speed), self.font, "white", 1030, 100, self.display, False)
                 render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
                 render_text(str(min(100, self.player.shield_dur)), self.font, "white", 1030, 190, self.display, False)
-                num= self.player.gold
-                count= 0
+                # num= self.player.gold
+                # count= 0
 
-                while num !=0:
-                    num//= 5
-                    count += 1
+                # while num !=0:
+                #     num//= 5
+                #     count += 1
                 render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-                render_text(str(self.player.gold), self.font, "white", 1030 - count * 2, 145, self.display, False)
+                render_text(str(self.player.gold), self.font, "white", 1030, 145, self.display, False)
             
-            elif self.level in ["1", "safehouse"]:
+            elif self.level in ["1", "2", "safehouse"]:
                 if self.player.shield_dur != 0:
                     for x in range(self.lives):
                         render_img(self.game.assets["heart"], 1140 - x * 50,70, self.display, centered=True)
                 else:
                     for x in range(self.lives):
                         render_img(self.game.assets["heart1"], 1140 - x * 50,70, self.display, centered=True)
-                render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
+                # render_text(str(self.maxHP), self.font, "white", 1141, 70, self.display, True)
                 render_img(self.game.assets["speed"], 1141, 115, self.display, centered=True)
                 render_text(str(self.speed), self.font, "black", 1030, 100, self.display, False)
                 render_img(self.game.assets["shield"], 1143, 210, self.display, centered=True)
                 render_text(str(min(100, self.player.shield_dur)), self.font, "black", 1030, 190, self.display, False)
-                num= self.player.gold
-                count= 0
+                # num= self.player.gold
+                # count= 0
 
-                while num !=0:
-                    num//= 5
-                    count += 1
+                # while num !=0:
+                #     num//= 5
+                #     count += 1
                 render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
-                render_text(str(self.player.gold), self.font, "black", 1030 - count * 2, 145, self.display, False)
+                render_text(str(self.player.gold), self.font, "black", 1030, 145, self.display, False)
 
         img = pygame.Surface((1200, 675))
         img.fill((0,255,0))
@@ -854,7 +867,7 @@ class Play():
             transition_surf.set_colorkey((255, 255, 255))
             self.display.blit(transition_surf, (0, 0))
 
-    def level_transition(self, timer, text=None):
+    def level_transition(self, timer, text=None, tips=True):
 
         # Transition between levels
         if self.current_level != self.level:
@@ -863,7 +876,21 @@ class Play():
 
         if not self.transition_ed:
             self.level_transitioning = True
-            if self.transition_timer < timer:
+            if tips:
+                timer *= 2
+
+            if self.transition_timer < timer/2 and tips:
+                self.transition_timer += 1
+                img = pygame.Surface((1200, 675))
+                img.fill((0,0,0))
+                self.display.blit(img, (0,0))
+                render_img(self.game.assets["glitch_blocks"][5], 870, 600, self.game.display, True)
+                render_text("Loading...", pygame.font.Font(self.game.font, 50), (255, 255, 255), 1000, 600, self.game.display, True)
+                if self.text == "":
+                    self.text = random.choice(self.randomtext)
+                render_text(self.text, self.font, "white", 600, 300, self.display, centered=True, transparency=255)
+            elif self.transition_timer < timer:
+                self.text = ""
                 self.transitioning = True
                 self.transition_timer += 1
                 img = pygame.Surface((1200, 675))
@@ -894,7 +921,7 @@ class Play():
             self.store = True
             self.e = False
 
-        elif self.npc_name == "Proceed":
+        elif self.npc_name == "Next level":
             self.level_select = True
             self.e = False
         
@@ -919,6 +946,6 @@ class Play():
         self.core()
         self.transitions()
         self.safehouse()
-        if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3", "safehouse", "4"]:
-            self.level_transition(150, "Level " + str(self.level))
+        if self.state != "safehouse" and self.level not in ["level_1", "level_2", "level_3", "level_4", "safehouse", "5"]:
+            self.level_transition(200, "Level " + str(self.level))
         
