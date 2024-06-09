@@ -101,7 +101,7 @@ class Play():
             "enemy" : ["You were killed by an enemy", "Unfortunately you are not bulletproof", "You were too weak", "You were too fragile", "You thought bullet was friendly", "Stop playing, touch grass"],
         }
         self.text = ""
-        self.randomtext = ["You can jump and dash at the same time to go furher",
+        self.randomtext = ["You can jump and dash at the same time to go further",
                            "An exclamation mark will appear when enemies are prepared to shoot",
                            "You can dodge bullets by dashing through them",
                            "You can repeat the same levels to get more gold and upgrade your character"]

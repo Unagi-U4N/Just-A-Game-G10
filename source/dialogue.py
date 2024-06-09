@@ -28,7 +28,7 @@ def dialogue(self, state):
                 if self.player.gold >= 500:
                     rundialogues(self, self.dialogues["TicTacToeP1(1)Extra"])
                     self.play = True
-                elif self.player.gold <500:
+                elif self.player.gold < 500:
                     rundialogues(self, self.dialogues["TicTacToeP2(1)Extra"])
                     pass
             elif choice == "No":
@@ -38,9 +38,22 @@ def dialogue(self, state):
 
     elif state == "TicTacToeWin":
         rundialogues(self, self.dialogues["TicTacToeWin"])
-        self.player.HP += 2
-        self.HP = self.player.HP
-        self.maxHP = self.player.HP
+        if self.player.HP <= self.max_heart - 2:
+            rundialogues(self, self.dialogues["TicTacToeWin(HP)"])
+            self.player.HP += 2
+            self.HP = self.player.HP
+            self.maxHP = self.player.HP
+        elif self.player.speed <= self.max_speed - 0.3 and self.player.HP == self.max_heart:
+            rundialogues(self, self.dialogues["TicTacToeWin(Speed)"])
+            self.player.speed += 0.3
+            self.speed = self.player.speed
+        elif self.player.shield <= self.max_shield*100 - 200 and self.player.speed == self.max_speed and self.player.HP == self.max_heart:
+            rundialogues(self, self.dialogues["TicTacToeWin(Shield)"])
+            self.player.shield += 2
+            self.shield = self.player.shield
+        else:
+            rundialogues(self, self.dialogues["TicTacToeWin(Max)"])
+            self.player.gold += 1500
     
     elif state == "TicTacToeLose":
         rundialogues(self, self.dialogues["TicTacToeLose"])
