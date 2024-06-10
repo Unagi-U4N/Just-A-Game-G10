@@ -22,8 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        # self.data = ["Ivan", "4", 10000, 2.5, 3, 1000]
-        self.data = []
+        self.data = ["Ivan", "4", 10000, 2, 3, 100]
+        # self.data = []
         self.sparks = []    
         self.projectiles = []
         self.exclamation = []
@@ -72,13 +72,13 @@ class Game:
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
-            "core": Animation(scale_images(load_images("animation/core"), scale=1.5), img_dur=15, loop=False),
+            "core": Animation(scale_images(load_images("animation/core")), img_dur=15, loop=False),
             "jump_sign": Animation(scale_images(load_images("animation/jump_sign")), img_dur=10, loop=True),
             "dash_sign": Animation(scale_images(load_images("animation/dash_sign")), img_dur=15, loop=True),
             "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),
             "wall_jump_sign": Animation(scale_images(load_images("animation/wall_jump_sign")), img_dur=15, loop=True),
             "poison_sign": Animation(scale_images(load_images("animation/poison_sign")), img_dur=15, loop=True),
-            "good_core": scale_images(load_image("animation/core/49.png"), scale= 1.5),
+            "good_core": scale_images(load_image("animation/core/35.png")),
             "gun": scale_images(load_image("entities/enemy/gun.png")),
             "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
             "!": scale_images(load_image("entities/enemy/!.png"), scale= 0.8),
@@ -150,7 +150,7 @@ class Game:
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
         self.music = Music(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
