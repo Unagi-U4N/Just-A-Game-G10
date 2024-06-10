@@ -72,7 +72,7 @@ class Game:
             "npc/idle": Animation(scale_images(load_images("entities/npc/idle")), img_dur=2),
             "particle/leaf": Animation(scale_images(load_images("particles/leaf")), img_dur=10, loop=False),
             "particle/particle": Animation(scale_images(load_images("particles/particle")), img_dur=4, loop=False),
-            "core": Animation(scale_images(load_images("animation/core")), img_dur=15, loop=False),
+            "core": Animation(scale_images(load_images("animation/core"), set_scale=(1200, 675)), img_dur=15, loop=False),
             "jump_sign": Animation(scale_images(load_images("animation/jump_sign")), img_dur=10, loop=True),
             "dash_sign": Animation(scale_images(load_images("animation/dash_sign")), img_dur=15, loop=True),
             "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),

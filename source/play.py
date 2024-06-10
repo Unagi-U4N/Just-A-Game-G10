@@ -277,7 +277,7 @@ class Play():
             if self.core_animation:
                 self.display.fill((0, 0, 0))
                 self.animation.update()
-                render_img(self.animation.img(), 600, 500, self.display, centered=True)
+                render_img(self.animation.img(), 0, 0, self.display, centered=False)
                 if self.animation.done:
                     render_img(self.assets["good_core"], 600, 500, self.display, centered=True)
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
