@@ -277,9 +277,9 @@ class Play():
             if self.core_animation:
                 self.display.fill((0, 0, 0))
                 self.animation.update()
-                render_img(self.animation.img(), 600, 500, self.display, centered=True)
+                render_img(self.animation.img(), 0, 0, self.display, centered=False)
                 if self.animation.done:
-                    render_img(self.assets["good_core"], 600, 500, self.display, centered=True)
+                    render_img(self.assets["good_core"], 0, 0, self.display, centered=False)
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
                     render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
             elif not self.core_animation and self.animation.done:
@@ -548,7 +548,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
+        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation and not self.level_transitioning:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
