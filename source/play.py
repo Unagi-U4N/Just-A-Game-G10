@@ -548,7 +548,7 @@ class Play():
 
         self.mousepos = pygame.mouse.get_pos()
 
-        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation:
+        if not self.dead and not self.pause and not self.play and not self.store and not self.transitioning and not self.level_select and not self.core_animation and not self.level_transitioning:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
