@@ -78,7 +78,7 @@ class Game:
             "wall_slide_sign": Animation(scale_images(load_images("animation/wall_slide_sign")), img_dur=15, loop=True),
             "wall_jump_sign": Animation(scale_images(load_images("animation/wall_jump_sign")), img_dur=15, loop=True),
             "poison_sign": Animation(scale_images(load_images("animation/poison_sign")), img_dur=15, loop=True),
-            "good_core": scale_images(load_image("animation/core/35.png")),
+            "good_core": scale_images(load_image("animation/core/35.png"), set_scale=(1200, 675)),
             "gun": scale_images(load_image("entities/enemy/gun.png")),
             "projectile": scale_images(load_image("entities/enemy/projectile.png"), scale= 1.5),
             "!": scale_images(load_image("entities/enemy/!.png"), scale= 0.8),
