@@ -142,7 +142,7 @@ def safehouse(self):
                     if level in [1, 2, 3]:
                         render_text("Objective: Reach the end", self.font, "white", 600, 400, self.display, centered=True)
                     elif level == 4:
-                        render_text("Objective: Reach the end", self.font, "white", 600, 400, self.display, centered=True)
+                        render_text("Objective: Activate the core", self.font, "white", 600, 400, self.display, centered=True)
                         
                 else:
                     # if int(self.level.split("_")[1]) == 4:

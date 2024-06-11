@@ -323,7 +323,7 @@ class Play():
         self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
         # Check if to update the clouds
-        if self.level in ["3", "4"]:
+        if self.level in ["3", "4", "5"]:
             pass
         else:
             self.clouds.update()
@@ -753,7 +753,7 @@ class Play():
         
     def render(self):
         # Render all the assets
-        if self.level in ["3", "4"]:
+        if self.level in ["3", "4", "5"]:
             pass
         else:
             self.clouds.render(self.display, offset=self.render_scroll)
