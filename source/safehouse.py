@@ -131,23 +131,35 @@ def safehouse(self):
                 img.set_alpha(150)
                 self.display.blit(img, (0,0))
                 self.display.blit(self.assets["level_selection"], (0, 0))
+
+                # Check if the player can play the level
+                level = int(self.level.split("_")[1])
+                if level == 4:
+                        self.can_load_level = False
+                        render_text("Coming Soon", self.font2, "red", 600, 400, self.display, centered=True)
+                elif level <= int(self.player.level):
+                    self.can_load_level = True
+                    if level in [1, 2, 3]:
+                        render_text("Objective: Reach the end", self.font, "white", 600, 400, self.display, centered=True)
+                    elif level == 4:
+                        render_text("Objective: Reach the end", self.font, "white", 600, 400, self.display, centered=True)
+                        
+                else:
+                    if int(self.level.split("_")[1]) == 4:
+                        self.can_load_level = False
+                        render_text("Coming Soon", self.font2, "red", 600, 400, self.display, centered=True)
+                    else:
+                        self.can_load_level = False
+                        render_text("Locked", self.font2, "red", 600, 400, self.display, centered=True)
+                        render_text("Complete the previous level to unlock", self.font, "white", 600, 450, self.display, centered=True)
+
                 if self.level == "level_1":
                     render_text("    Level " + self.level.split("_")[1] + "   >", self.font2, "white", 600, 300, self.display, centered=True)
+                    render_text("Objective: Reach the end", self.font, "white", 600, 400, self.display, centered=True)
                 elif self.level == "level_2":
                     render_text("<   Level " + self.level.split("_")[1] + "   >", self.font2, "white", 600, 300, self.display, centered=True)
                 elif self.level == "level_3":
                     render_text("<   Level " + self.level.split("_")[1] + "   >", self.font2, "white", 600, 300, self.display, centered=True)
                 elif self.level == "level_4":
                     render_text("<   Level " + self.level.split("_")[1] + "    ", self.font2, "white", 600, 300, self.display, centered=True)
-                # Check if the player can play the level
-                if int(self.level.split("_")[1]) <= int(self.player.level):
-                    self.can_load_level = True
-                else:
-                    # if int(self.level.split("_")[1]) == 4:
-                    #     self.can_load_level = False
-                    #     render_text("Coming Soon", self.font2, "red", 600, 400, self.display, centered=True)
-                    # else:
-                    self.can_load_level = False
-                    render_text("Locked", self.font2, "red", 600, 400, self.display, centered=True)
-                    render_text("Complete the previous level to unlock", self.font, "white", 600, 450, self.display, centered=True)
       
