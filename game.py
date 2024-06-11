@@ -22,7 +22,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.loaded = False
         self.particles = []
-        self.data = ["Ivan", "Intro" , 10000, 2, 3, 1000]
+        self.data = ["Ivan", "4" , 10000, 2, 3, 1000]
         # self.data = []
         self.sparks = []    
         self.projectiles = []
@@ -150,7 +150,7 @@ class Game:
         # self.game = Play(self)
         self.profile = PlayerProfile(self)
         self.music = Music(self)
-        self.state = "start"
+        self.state = "game"
         self.cutscene = "Intro"
 
     def run(self):
