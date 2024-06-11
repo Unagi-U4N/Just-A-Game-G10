@@ -32,7 +32,8 @@ def get_cutscene(game, type, cutscenes, screen):
         Cutscenes["Ending"]["6"] = Cutscene(game, cutscenes[type]["6"][0], (150, 300), 40, 20, screen, cutscenes[type]["6"][1])             
         Cutscenes["Ending"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (150, 300), 40, 20, screen, cutscenes[type]["7"][1])
         Cutscenes["Ending"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (140, 300), 40, 20, screen, cutscenes[type]["8"][1]) 
-        Cutscenes["Ending"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (110, 250), 40, 40, screen, cutscenes[type]["9"][1])   
+        Cutscenes["Ending"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (110, 250), 40, 40, screen, cutscenes[type]["9"][1])
+        Cutscenes["Ending"]["10"] = Cutscene(game, cutscenes[type]["10"][0], (110, 250), 60, 80, screen, cutscenes[type]["10"][1]) 
     
     return Cutscenes[type]
 

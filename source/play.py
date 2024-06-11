@@ -283,11 +283,14 @@ class Play():
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
                     render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
             elif not self.core_animation and self.animation.done:
+                self.display.fill((0, 0, 0))
                 self.game.state = "cutscene"
                 self.game.cutscene = "Ending"
-                self.game.state = "game"
                 self.level = "5"
                 self.load_level(self.level)
+                self.scroll[0] += (self.player.pos[0] - self.scroll[0] - 600)
+                self.scroll[1] += (self.player.pos[1] - self.scroll[1] - 337.5)
+                self.render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
     def update(self):
 
