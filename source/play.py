@@ -101,6 +101,7 @@ class Play():
         self.animation = self.assets["core"].copy()
         self.font = pygame.font.Font(self.game.font, 36)
         self.font2 = pygame.font.Font(self.game.font, 50)
+        self.font3 = pygame.font.Font(self.game.font, 30)
 
         # Text variables
         self.reasonofdeath = None
@@ -856,6 +857,12 @@ class Play():
                 #     count += 1
                 render_img(self.game.assets["gold"], 1143, 160, self.display, centered=True)
                 render_text(str(self.player.gold), self.font, "black", 1030, 145, self.display, False)
+
+            if self.level in ["1", "2", "3"]:
+                render_text("Objective: Reach the end", self.font3, "black", 1020, 630, self.display, centered=True)
+            
+            elif self.level == "4":
+                render_text("Objective: Activate the core", self.font3, "black", 1020, 630, self.display, centered=True)
 
         img = pygame.Surface((1200, 675))
         img.fill((0,255,0))
