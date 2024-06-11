@@ -18,9 +18,9 @@ def get_cutscene(game, type, cutscenes, screen):
         Cutscenes["Intro"]["4"] = Cutscene(game, cutscenes[type]["4"][0], (50, 190), 40, 20, screen, cutscenes[type]["4"][1])  
         Cutscenes["Intro"]["5"] = Cutscene(game, cutscenes[type]["5"][0], (50, 380), 40, 20, screen, cutscenes[type]["5"][1]) 
         Cutscenes["Intro"]["6"] = Cutscene(game, cutscenes[type]["6"][0], (110, 410), 40, 20, screen, cutscenes[type]["6"][1])             
-        Cutscenes["Intro"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (110, 400), 40, 20, screen, cutscenes[type]["7"][1])
-        Cutscenes["Intro"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (110, 210), 40, 20, screen, cutscenes[type]["8"][1]) 
-        Cutscenes["Intro"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (350, 300), 40, 40, screen, cutscenes[type]["9"][1])   
+        Cutscenes["Intro"]["7"] = Cutscene(game, cutscenes[type]["7"][0], (110, 390), 40, 20, screen, cutscenes[type]["7"][1])
+        Cutscenes["Intro"]["8"] = Cutscene(game, cutscenes[type]["8"][0], (50, 80), 40, 20, screen, cutscenes[type]["8"][1]) 
+        Cutscenes["Intro"]["9"] = Cutscene(game, cutscenes[type]["9"][0], (350, 280), 40, 40, screen, cutscenes[type]["9"][1])   
     
     elif type == "Ending":
         Cutscenes["Ending"]["0"] = Cutscene(game, cutscenes[type]["0"][0], (100, 300), 40, 40, screen, cutscenes[type]["0"][1])
