@@ -360,7 +360,7 @@ class Player(PhysicsEntity):
         self.shield_dur = data[5]
 
     def airtime(self, level):
-        air = 1000 if level == "3" else 150
+        air = 1000 if level == "4" and level == "5" else 150
         if self.air_time > air and not self.wall_slide:
             return True
         
