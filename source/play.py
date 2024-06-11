@@ -286,7 +286,7 @@ class Play():
                 self.game.state = "cutscene"
                 self.game.cutscene = "Ending"
                 self.game.state = "game"
-                self.level = "4"
+                self.level = "5"
                 self.load_level(self.level)
 
     def update(self):
