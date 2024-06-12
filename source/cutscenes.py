@@ -241,7 +241,7 @@ class Dialogue(Logic):
         render_img(self.img, 655, 550, self.screen)
         render_img(scale_images(self.img, scale=0.2), 160, 610, self.screen)
         render_text(self.name, self.font, "black", 160, 610, self.screen, centered=True)
-        render_img(self.npc, 155, 530, self.screen)
+        render_img(self.npc, 165, 530, self.screen)
 
         if self.alldone:
             self.status = {msg: True for msg in self.msgs}
