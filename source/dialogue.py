@@ -2,6 +2,7 @@ from source.utils import *
 from source.cutscenes import *
 from source.ttt import *
 from source.startscreen import *
+from source.playerprofile import *
 
 # Include all dialogues here, please make sure the folder name is the same as the dialogue name, and all the dialogues and pictures are paired with numbers
 dialogues = load_dialogue()
@@ -136,6 +137,9 @@ def dialogue(self, state):
         self.game.startscreen = StartScreen(self.game)
         self.game.loaded = False
         self.game.state = "start"
+        self.game.data = []
+        self.game.startscreen = StartScreen(self.game)
+        self.game.profile = PlayerProfile(self.game)
         # self.load_level(self.level)
         # self.state = "safehouse"
 

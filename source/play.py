@@ -300,6 +300,8 @@ class Play():
                     render_text("Core activated!!!", pygame.font.Font(self.game.font, 50), (255, 255, 255), 600, 550, self.display)
                     render_img(self.assets["arrow_w"], 600, 600, self.display, centered=True)
             elif not self.core_animation and self.animation.done:
+                self.profile.data = self.player.data
+                self.profile.saveprogress()
                 self.display.fill((0, 0, 0))
                 self.game.state = "cutscene"
                 self.game.cutscene = "Ending"
